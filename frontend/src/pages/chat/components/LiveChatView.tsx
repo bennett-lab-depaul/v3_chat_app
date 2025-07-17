@@ -13,11 +13,11 @@ import ChatMessages from "./ChatMessages";
 // --------------------------------------------------------------------
 const default_message = `Chat with me!`;
 export function getRecentMessage(messages: LocalChatMessage[], fallback = default_message): string {
-  const latest = messages.reduce<LocalChatMessage | null>((acc, m) => {
-    if (m.role !== "assistant") return acc; // skip
-    return !acc || m.ts > acc.ts ? m : acc; // keep newer
-  }, null);
-  return latest ? latest.content : fallback;
+    const latest = messages.reduce<LocalChatMessage | null>((acc, m) => {
+        if (m.role !== "assistant") return acc; // skip
+        return !acc || m.ts > acc.ts ? m : acc; // keep newer
+    }, null);
+    return latest ? latest.content : fallback;
 }
 
 // ====================================================================
