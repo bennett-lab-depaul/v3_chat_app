@@ -12,10 +12,7 @@ import ChatMessages from "./ChatMessages";
 // Get the most recent message from the system
 // --------------------------------------------------------------------
 const default_message = `Chat with me!`;
-export function getRecentMessage(
-  messages: LocalChatMessage[],
-  fallback = default_message
-): string {
+export function getRecentMessage(messages: LocalChatMessage[], fallback = default_message): string {
   const latest = messages.reduce<LocalChatMessage | null>((acc, m) => {
     if (m.role !== "assistant") return acc; // skip
     return !acc || m.ts > acc.ts ? m : acc; // keep newer
@@ -26,11 +23,7 @@ export function getRecentMessage(
 // ====================================================================
 // LiveChatView (show the Avater and/or the messages from the conversation)
 // ====================================================================
-export default function LiveChatView({
-  messages,
-}: {
-  messages: LocalChatMessage[];
-}) {
+export default function LiveChatView({ messages }: { messages: LocalChatMessage[] }) {
   const [viewMode, setViewMode] = useState(4);
   const { profile } = useAuth();
 
@@ -38,10 +31,8 @@ export default function LiveChatView({
   // Main view for the page
   // --------------------------------------------------------------------
   function getView() {
-    const chatHistoryWrapper1 =
-      "flex flex-col justify-self-center mt-[1em] mb-[2rem] h-[65vh] w-full md:w-1/2 md:border-x-1 md:border-blue-200";
-    const chatHistoryWrapper2 =
-      "overflow-y-auto w-full md:w-1/2 h-1/2 md:h-full md:border-r-1 md:border-b-0 border-b-1 border-blue-200";
+    const chatHistoryWrapper1 = "flex flex-col justify-self-center mt-[1em] mb-[2rem] h-[65vh] w-full md:w-1/2 md:border-x-1 md:border-blue-200";
+    const chatHistoryWrapper2 = "overflow-y-auto w-full md:w-1/2 h-1/2 md:h-full md:border-r-1 md:border-b-0 border-b-1 border-blue-200";
 
     // Chat history or Avatar views separately
     if (viewMode == 1) {
@@ -118,8 +109,7 @@ export default function LiveChatView({
               value={3}
               onChange={(e) => setViewMode(+e.currentTarget.value)}
             >
-              {" "}
-              Chatbot (old){" "}
+              Chatbot (old)
             </ToggleButton>
             <ToggleButton
               id="avatar"
@@ -127,8 +117,7 @@ export default function LiveChatView({
               value={4}
               onChange={(e) => setViewMode(+e.currentTarget.value)}
             >
-              {" "}
-              Chatbot{" "}
+              Chatbot
             </ToggleButton>
           </ToggleButtonGroup>
         </div>
