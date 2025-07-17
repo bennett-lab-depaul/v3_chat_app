@@ -27,9 +27,9 @@ export default function LiveChatView({ messages }: { messages: LocalChatMessage[
     const [viewMode, setViewMode] = useState(4);
     const { profile } = useAuth();
 
-  // --------------------------------------------------------------------
-  // Main view for the page
-  // --------------------------------------------------------------------
+    // --------------------------------------------------------------------
+    // Main view for the page
+    // --------------------------------------------------------------------
     function getView() {
         const chatHistoryWrapper1 = "flex flex-col justify-self-center mt-[1em] mb-[2rem] h-[65vh] w-full md:w-1/2 md:border-x-1 md:border-blue-200";
         const chatHistoryWrapper2 = "overflow-y-auto w-full md:w-1/2 h-1/2 md:h-full md:border-r-1 md:border-b-0 border-b-1 border-blue-200";
