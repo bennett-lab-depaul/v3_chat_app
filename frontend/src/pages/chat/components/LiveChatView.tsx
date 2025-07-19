@@ -11,7 +11,9 @@ import ChatMessages from "./ChatMessages";
 // --------------------------------------------------------------------
 // Get the most recent message from the system
 // --------------------------------------------------------------------
-const default_message = `Chat with me!`;
+const default_message = `Chat with me! Here's a long message to ensure that the scrolling behavior works correctly. The intended behavior
+is that when this message is long enough and displays over several lines, the chat bubble should display a horizontal scrollbar instead of
+being very long and taking too much vertical space, thereby covering the recording buttons.`;
 export function getRecentMessage(messages: LocalChatMessage[], fallback = default_message): string {
     const latest = messages.reduce<LocalChatMessage | null>((acc, m) => {
         if (m.role !== "assistant") return acc; // skip
@@ -25,7 +27,7 @@ export function getRecentMessage(messages: LocalChatMessage[], fallback = defaul
 // ====================================================================
 export default function LiveChatView({ messages }: { messages: LocalChatMessage[] }) {
     const [viewMode, setViewMode] = useState(4);
-    const { profile } = useAuth();
+    const { user } = useAuth();
 
     // --------------------------------------------------------------------
     // Main view for the page
@@ -81,7 +83,7 @@ export default function LiveChatView({ messages }: { messages: LocalChatMessage[
     // --------------------------------------------------------------------
     // Return UI component
     // --------------------------------------------------------------------
-    if (profile.role === "Staff") {
+    if (user.is_staff) {
         return (
         <>
             {/* Buttons to change the view mode for the page */}

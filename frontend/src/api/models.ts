@@ -44,7 +44,7 @@ export interface Profile {
   id        : number;
   plwd      : User;
   caregiver : User;
-  role?     : "Patient" | "Caregiver" | "Staff";
+  role?     : "Patient" | "Caregiver";
   settings  : UserSettings;
   goal      : Goal;
 }
