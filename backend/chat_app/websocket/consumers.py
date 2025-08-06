@@ -17,7 +17,7 @@ from ..                      import config as cf
 from ..services.db_services  import ChatService
 from .services.chatHelpers  import generate_LLM_response
 from .services.audioHelpers import extract_audio_biomarkers, extract_text_biomarkers
-from .services.speechProvider import SpeechToTextProvider
+from .services.speechProvider import SpeechToTextProvider, TextToSpeechProvider
 
 # ------------------------------------------------------------------
 # Helper: Start a background task and log any exception it raises --- put into another file
@@ -101,6 +101,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # Create new speech provider instances
         loop_stt = asyncio.get_event_loop()
         self.stt_provider = SpeechToTextProvider(on_transcription_callback=self._handle_transcription, loop=loop_stt)
+        self.tts_provider = TextToSpeechProvider()
         self.audio_buffer = bytearray()
 
         # -----------------------------------------------------------------------
@@ -187,6 +188,11 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # Immediately send the response back through the websocket
         await self.send(json.dumps({'type': 'llm_response', 'data': system_utt, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
                 
+        # Synthesize the speech 
+        # speech = self.tts_provider.synthesize_speech(system_utt)
+        speech = self.tts_provider.synthesize_speech_gemini(system_utt)
+        fire_and_log(self._handle_speech(speech))
+        
         # -----------------------------------------------------------------------
         # 2) Background persistence & biomarkers
         # -----------------------------------------------------------------------
@@ -199,6 +205,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
         # On-utterance biomarker scores (run in a thread so we don't block the loop)
         fire_and_log(self._on_utterance_biomarkers())
+        
+    async def _handle_speech(self, audio_bytes: bytes) -> None:
+        # Splits audio data into chunks so we can send it to the frontend
+        for i in range(0, len(audio_bytes), CHUNK_SIZE):
+            chunk = audio_bytes[i:i + CHUNK_SIZE]
+            await self.send(bytes_data=chunk)
         
     # =======================================================================
     # Audio Data

@@ -14,10 +14,12 @@ export default function useLiveChat({
     onUserUtterance,
     onSystemUtterance = (_: string) => {},
     onScores          = (         ) => {},
+    onAudio           = () => {}
 } : {
     onUserUtterance   : (text: string) => void;
     onSystemUtterance : (text: string) => void;
     onScores          : (            ) => void;
+    onAudio           : (data: Blob | ArrayBuffer) => void;
 }) {
     // Misc. setup
     const qc = useQueryClient();
@@ -27,7 +29,7 @@ export default function useLiveChat({
 
     // Setup hooks: TTS, ChatSocket, AudioStreamer, ASR (order must be: TTS, ChatSocket, others)
     const { speak, systemSpeakingRef } = useTTS({ onStart: ttsStart, onDone: ttsEnd });
-    const { send } = useChatSocket({ recording, onLLMResponse: (text: string) => { onLLMres(text); speak(text); }, onScores, onUserUtt: onUserUtterance });
+    const { send } = useChatSocket({ recording, onLLMResponse: (text: string) => { onLLMres(text); speak(text); }, onScores, onUserUtt: onUserUtterance, onAudio });
     const { start: startAud, stop: stopAud                  } = useAudioStreamer({ chunkMs: 64,                              sendToServer: send });
     const { start: startASR, stop: stopASR, userSpeakingRef } = useASR({ onStart: asrStart, onDone: asrEnd, onUserUtterance, sendToServer: send });
  

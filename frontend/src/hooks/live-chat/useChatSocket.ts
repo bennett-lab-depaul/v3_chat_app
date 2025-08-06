@@ -13,7 +13,8 @@ export default function useChatSocket({
     recording, 
     onLLMResponse = (unknown)   => {}, 
     onScores      = (WSMessage) => {},
-    onUserUtt     = (text) => {}
+    onUserUtt     = (text) => {},
+    onAudio       = (data) => {},
 }) {
     // WebSocket setup    
     const [connected, setConnected] = useState(false);
