@@ -189,8 +189,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         await self.send(json.dumps({'type': 'llm_response', 'data': system_utt, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
                 
         # Synthesize the speech 
-        # speech = self.tts_provider.synthesize_speech(system_utt)
-        speech = self.tts_provider.synthesize_speech_gemini(system_utt)
+        speech = self.tts_provider.synthesize_speech(system_utt, "pcm")
         fire_and_log(self._handle_speech(speech))
         
         # -----------------------------------------------------------------------
@@ -210,7 +209,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # Splits audio data into chunks so we can send it to the frontend
         for i in range(0, len(audio_bytes), CHUNK_SIZE):
             chunk = audio_bytes[i:i + CHUNK_SIZE]
-            await self.send(bytes_data=chunk)
+            if i == 0:
+                print(chunk[:10])
+            await self.send(json.dumps({"type": "audio_chunk", "data": base64.b64encode(chunk).decode('utf-8')}))
+            # await self.send(bytes_data=chunk)
         
     # =======================================================================
     # Audio Data

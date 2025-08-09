@@ -8,6 +8,7 @@ import time
 from queue import Queue
 import base64
 from ... import config as cf
+import wave
 import logging
 
 logger = logging.getLogger(__name__)
@@ -91,12 +92,25 @@ class TextToSpeechProvider:
         self._voice = texttospeech.VoiceSelectionParams(
             language_code="en-US", ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
         )
-        self._audio_config = texttospeech.AudioConfig(
-            audio_encoding=texttospeech.AudioEncoding.PCM,
-        )
         self._gemini_client = genai.Client()
+        self._audio_config = None
                         
-    def synthesize_speech(self, text: str) -> bytes:
+    def synthesize_speech(self, text: str, encoding: str) -> bytes:
+        if encoding == "mp3":
+            self._audio_config = texttospeech.AudioConfig(
+                audio_encoding=texttospeech.AudioEncoding.MP3,
+            )
+        elif encoding == "pcm":
+            self._audio_config = texttospeech.AudioConfig(
+                audio_encoding=texttospeech.AudioEncoding.PCM,
+            )
+        elif encoding == "wav":
+            self._audio_config = texttospeech.AudioConfig(
+                audio_encoding=texttospeech.AudioEncoding.LINEAR16,
+            )
+        else:
+            logger.error(f"{cf.RED}[TTS] Unsupported audio encoding: {encoding}")
+            return None
         try:
             synthesis_input = texttospeech.SynthesisInput(text=text)
             response = self._client.synthesize_speech(
@@ -107,6 +121,18 @@ class TextToSpeechProvider:
         except Exception as e:
             logger.error(f"{cf.RED}[TTS] Error synthesizing speech: {e}")
             
+    def write_audio_bytes(self, filename: str, content: bytes):
+        with open(filename, "wb") as out:
+            out.write(content)
+        logger.info(f"{cf.RED}[TTS] Wrote audio bytes to file")
+            
+    def write_wav(self, filename: str, content: bytes, channels=1, rate=24000, sample_width=2):
+        with wave.open(filename, "wb") as wf:
+            wf.setnchannels(channels)
+            wf.setsampwidth(sample_width)
+            wf.setframerate(rate)
+            wf.writeframes(content)
+
     
     def synthesize_speech_gemini(self, text: str) -> bytes:
         try:

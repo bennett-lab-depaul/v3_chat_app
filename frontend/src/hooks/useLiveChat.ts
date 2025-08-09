@@ -19,7 +19,7 @@ export default function useLiveChat({
     onUserUtterance   : (text: string) => void;
     onSystemUtterance : (text: string) => void;
     onScores          : (            ) => void;
-    onAudio           : (data: Blob | ArrayBuffer) => void;
+    onAudio           : (data: string) => void;
 }) {
     // Misc. setup
     const qc = useQueryClient();
