@@ -1,15 +1,15 @@
 from google.cloud import speech, texttospeech
 from google import genai
 from google.genai import types
+
 import threading
 import asyncio
-import os
-import time
 from queue import Queue
 import base64
-from ... import config as cf
-import wave
 import logging
+
+from ... import config as cf
+
 
 logger = logging.getLogger(__name__)
 
@@ -18,15 +18,17 @@ SAMPLE_RATE = 16_000
 CHUNK_SIZE = 2_048  # 64ms of 16-bit PCM audio = 2048 bytes
 
 class SpeechToTextProvider:
+    '''Speech-to-Text provider that uses Google Cloud's Speech-to-Text API'''
     def __init__(self, on_transcription_callback=None, loop=None):
         self._client = speech.SpeechClient()
         self._streaming_config = None
         self._audio_buffer = Queue()
         self._streaming = False
-        self._on_transcription_callback = on_transcription_callback
+        self._on_transcription_callback = on_transcription_callback # The function to call when a complete transcription is received
         self._loop = loop or asyncio.get_event_loop()
 
     def _audio_generator(self):
+        '''Generates audio requests from the audio buffer.'''
         while self._streaming:
             if self._audio_buffer:
                 data = self._audio_buffer.get()
@@ -35,6 +37,7 @@ class SpeechToTextProvider:
                 yield speech.StreamingRecognizeRequest(audio_content=data)
 
     def start(self):
+        '''Starts the streaming process. Initializes the configs and starts a new thread to handle the streaming without blocking.'''
         self._streaming = True
         config = speech.RecognitionConfig(
             encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
@@ -49,17 +52,19 @@ class SpeechToTextProvider:
         threading.Thread(target=self._start_streaming_thread, daemon=True).start()
         
     def stop(self):
+        '''Stops the streaming process.'''
         self._streaming = False
         self._audio_buffer.put(None)
         
     def send_audio(self, data):
+        '''Sends audio data to the audio buffer. If streaming is not active, starts the streaming process.'''
         audio_bytes = base64.b64decode(data["data"])
         self._audio_buffer.put(audio_bytes)
         if not self._streaming:
             self.start()
             
-
     def _start_streaming_thread(self):
+        '''Main streaming thread. Upon the generator yielding streaming recognition requests, will send them to the Google Cloud STT API. '''
         requests = self._audio_generator()
 
         try:
@@ -70,6 +75,8 @@ class SpeechToTextProvider:
 
 
     def _listen_responses(self, responses):
+        '''Listens to the responses from the Google Cloud STT API. If the received response is final, it calls the
+        transcription callback defined in the constructor.'''
         for response in responses:
             for result in response.results:
                 if result.is_final:
@@ -86,7 +93,7 @@ class SpeechToTextProvider:
                             self._on_transcription_callback(data)
 
 class TextToSpeechProvider:
-    
+    '''TTS provider class. Uses Google's TTS API.'''
     def __init__(self):
         self._client = texttospeech.TextToSpeechClient()
         self._voice = texttospeech.VoiceSelectionParams(
@@ -96,6 +103,8 @@ class TextToSpeechProvider:
         self._audio_config = None
                         
     def synthesize_speech(self, text: str, encoding: str) -> bytes:
+        '''Synthesizes speech synchronously using the Google Cloud TTS API. Returns the 
+        audio content as bytes encoded in the specified format.'''
         if encoding == "mp3":
             self._audio_config = texttospeech.AudioConfig(
                 audio_encoding=texttospeech.AudioEncoding.MP3,
@@ -120,27 +129,16 @@ class TextToSpeechProvider:
             return response.audio_content
         except Exception as e:
             logger.error(f"{cf.RED}[TTS] Error synthesizing speech: {e}")
-            
-    def write_audio_bytes(self, filename: str, content: bytes):
-        with open(filename, "wb") as out:
-            out.write(content)
-        logger.info(f"{cf.RED}[TTS] Wrote audio bytes to file")
-            
-    def write_wav(self, filename: str, content: bytes, channels=1, rate=24000, sample_width=2):
-        with wave.open(filename, "wb") as wf:
-            wf.setnchannels(channels)
-            wf.setsampwidth(sample_width)
-            wf.setframerate(rate)
-            wf.writeframes(content)
-
     
+    # May not need if we decide to use the Google Cloud TTS instead
     def synthesize_speech_gemini(self, text: str) -> bytes:
+        '''Synthesizes speech using Google's Gemini TTS API. Returns the audio content as bytes.'''
         try:
             response = self._gemini_client.models.generate_content(
                 model="gemini-2.5-flash-preview-tts",
                 contents="Say cheerfully: " + text,
                 config=types.GenerateContentConfig(
-                    response_modalities=["AUDIO"],
+                    response_modalities=["AUDIO"], # The model will return audio content
                     speech_config=types.SpeechConfig(
                         voice_config=types.VoiceConfig(
                             prebuilt_voice_config=types.PrebuiltVoiceConfig(

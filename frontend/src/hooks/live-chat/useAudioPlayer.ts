@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import createWavFromRawPcm from "@/utils/functions/createWavFromRawPcm";
 
+// Hook that handles audio playback. Takes in parameters for the audio format.
 export default function useAudioPlayer({
 	numChannels = 1,
 	sampleRate = 24000,
@@ -9,46 +11,21 @@ export default function useAudioPlayer({
 	const [urlQueue, setUrlQueue] = useState<string[]>([]);
 	const audioElem = useRef(null);
 
-	const createWavFromRawPcm = (rawBuffer: ArrayBuffer) => {
-		const blockAlign = (numChannels * bitsPerSample) / 8;
-		const byteRate = sampleRate * blockAlign;
-		const dataSize = rawBuffer.byteLength;
-
-		const buffer = new ArrayBuffer(dataSize);
-		const view = new DataView(buffer);
-
-		const writeString = (offset: number, str: string) => {
-			for (let i = 0; i < str.length; i++) {
-				view.setUint8(offset + i, str.charCodeAt(i));
-			}
-		};
-
-		writeString(0, "RIFF");
-		view.setUint32(4, 36 + dataSize, true);
-		writeString(8, "WAVE");
-		writeString(12, "fmt ");
-		view.setUint32(16, 16, true); // PCM
-		view.setUint16(20, 1, true); // format = PCM
-		view.setUint16(22, numChannels, true);
-		view.setUint32(24, sampleRate, true);
-		view.setUint32(28, byteRate, true);
-		view.setUint16(32, blockAlign, true);
-		view.setUint16(34, bitsPerSample, true);
-		writeString(36, "data");
-		view.setUint32(40, dataSize, true);
-
-		const wav = new Uint8Array(buffer);
-		wav.set(new Uint8Array(rawBuffer));
-		return new Blob([wav], { type: "audio/wav" });
-	};
-
+    /**
+     *   Sends audio to the player. Converts the base64 string to a WAV Blob and creates a URL for playback. 
+     *   Url is then added to the queue to be played.
+     * @param data The base 64 encoded audio data string.
+     */
 	const sendAudio = (data: string) => {
 		const raw = Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
-		const wavBlob = createWavFromRawPcm(raw.buffer);
+		const wavBlob = createWavFromRawPcm(raw.buffer, numChannels, bitsPerSample, sampleRate);
 		const url = URL.createObjectURL(wavBlob);
 		setUrlQueue((prevUrlQueue) => [...prevUrlQueue, url]);
 	};
 
+    /**
+     * Plays the next audio URL in the queue.
+     */
 	useEffect(() => {
 		const playAudio = async () => {
 			const nextUrl = urlQueue[0];
@@ -77,5 +54,6 @@ export default function useAudioPlayer({
 		}
 	}, [urlQueue, playing]);
 
+    // Expose these functions and state
 	return { sendAudio, playing };
 }

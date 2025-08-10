@@ -206,13 +206,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         fire_and_log(self._on_utterance_biomarkers())
         
     async def _handle_speech(self, audio_bytes: bytes) -> None:
-        # Splits audio data into chunks so we can send it to the frontend
+        # Splits audio data into smaller chunks so we can send it to the frontend
         for i in range(0, len(audio_bytes), CHUNK_SIZE):
             chunk = audio_bytes[i:i + CHUNK_SIZE]
-            if i == 0:
-                print(chunk[:10])
             await self.send(json.dumps({"type": "audio_chunk", "data": base64.b64encode(chunk).decode('utf-8')}))
-            # await self.send(bytes_data=chunk)
         
     # =======================================================================
     # Audio Data
