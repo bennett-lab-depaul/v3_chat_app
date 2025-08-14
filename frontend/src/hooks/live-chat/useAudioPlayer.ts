@@ -1,5 +1,5 @@
 import { useRef, useCallback, useState } from "react";
-import { pcm16ToAudioBuffer } from "@/utils/functions/createWavFromRawPcm";
+import { pcm16ToAudioBuffer } from "@/utils/functions/audioHelpers";
 
 export function useAudioPlayer( {sampleRate = 24_000, numChannels = 1, bitsPerSample = 32, bufferAhead = 0.5} ) {
     const [systemSpeaking, setSystemSpeaking] = useState(false);
