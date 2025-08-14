@@ -11,6 +11,7 @@ from channels.db                import database_sync_to_async
 
 from time     import time
 from datetime import datetime, timezone
+from math     import ceil
 
 # From this project
 from ..                      import config as cf
@@ -29,7 +30,7 @@ def fire_and_log(coro):
     return asyncio.create_task(_runner())
 
 SECOND = 32_000 # How big a chunk of audio of one second is, in bytes
-CHUNK_SIZE = 4096 # How many bytes of audio we can send at a time
+CHUNK_SIZE = 8_192 # How many bytes of audio we can send at a time
 
 
 # ======================================================================= ===================================
@@ -189,7 +190,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         await self.send(json.dumps({'type': 'llm_response', 'data': system_utt, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
                 
         # Synthesize the speech 
-        speech = self.tts_provider.synthesize_speech(system_utt, "pcm")
+        speech = self.tts_provider.synthesize_speech(system_utt, "wav")
         fire_and_log(self._handle_speech(speech))
         
         # -----------------------------------------------------------------------
@@ -207,9 +208,13 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         
     async def _handle_speech(self, audio_bytes: bytes) -> None:
         # Splits audio data into smaller chunks so we can send it to the frontend
-        for i in range(0, len(audio_bytes), CHUNK_SIZE):
-            chunk = audio_bytes[i:i + CHUNK_SIZE]
-            await self.send(json.dumps({"type": "audio_chunk", "data": base64.b64encode(chunk).decode('utf-8')}))
+        n_chunks = ceil(len(audio_bytes) / CHUNK_SIZE)
+        for i in range(n_chunks):
+            chunk = audio_bytes[i * CHUNK_SIZE:(i + 1) * CHUNK_SIZE]
+            await self.send(json.dumps({
+                "type": "audio_chunk", 
+                "data": json.dumps({"data": base64.b64encode(chunk).decode('utf-8')})
+            }))
         
     # =======================================================================
     # Audio Data

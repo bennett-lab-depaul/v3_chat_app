@@ -5,7 +5,6 @@ import { BsPlayCircle, BsPauseCircle, BsStopCircle } from "react-icons/bs";
 import useLiveChat   from "@/hooks/useLiveChat";
 import LiveChatView  from "./components/LiveChatView";
 import SaveChatModal from "@/components/modals/SaveChatModal";
-import useAudioPlayer from "@/hooks/live-chat/useAudioPlayer";
 
 import { useLocalChatSession } from "@/hooks/live-chat";
 
@@ -23,15 +22,8 @@ export function Chat() {
     const onUserUtterance   = (text: string) => { pushMessage("user",      text); };
     const onSystemUtterance = (text: string) => { pushMessage("assistant", text); };
 
-    // Audio player hook
-    const { sendAudio, playing } = useAudioPlayer({ numChannels: 1, sampleRate: 24_000, bitsPerSample: 32 });
-
-    const onAudio = (data: string) => {
-        sendAudio(data);
-    }
-
     // Live-chat hook
-    const { start, stop, save } = useLiveChat({ onUserUtterance, onSystemUtterance, onScores: () => {}, onAudio });
+    const { start, stop, save } = useLiveChat({ onUserUtterance, onSystemUtterance, onScores: () => {} });
     
     // Separate recording flag that we control ourselves
     const [recording, setRecording ] = useState(false);

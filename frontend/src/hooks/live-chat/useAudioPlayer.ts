@@ -1,59 +1,54 @@
-import { useEffect, useRef, useState } from "react";
-import createWavFromRawPcm from "@/utils/functions/createWavFromRawPcm";
+import { useRef, useCallback, useState } from "react";
+import { pcm16ToAudioBuffer } from "@/utils/functions/createWavFromRawPcm";
 
-// Hook that handles audio playback. Takes in parameters for the audio format.
-export default function useAudioPlayer({
-	numChannels = 1,
-	sampleRate = 24000,
-	bitsPerSample = 32,
-}) {
-	const [playing, setPlaying] = useState(false);
-	const [urlQueue, setUrlQueue] = useState<string[]>([]);
-	const audioElem = useRef(null);
+export function useAudioPlayer( {sampleRate = 24_000, numChannels = 1, bitsPerSample = 32, bufferAhead = 0.5} ) {
+    const [systemSpeaking, setSystemSpeaking] = useState(false);
+	const audioContextRef = useRef<AudioContext>(null);
+	const scheduleTimeRef = useRef<number>(0);
 
-    /**
-     *   Sends audio to the player. Converts the base64 string to a WAV Blob and creates a URL for playback. 
-     *   Url is then added to the queue to be played.
-     * @param data The base 64 encoded audio data string.
-     */
-	const sendAudio = (data: string) => {
-		const raw = Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
-		const wavBlob = createWavFromRawPcm(raw.buffer, numChannels, bitsPerSample, sampleRate);
-		const url = URL.createObjectURL(wavBlob);
-		setUrlQueue((prevUrlQueue) => [...prevUrlQueue, url]);
-	};
-
-    /**
-     * Plays the next audio URL in the queue.
-     */
-	useEffect(() => {
-		const playAudio = async () => {
-			const nextUrl = urlQueue[0];
-			try {
-				if (urlQueue.length) {
-					audioElem.current = new Audio(nextUrl);
-
-					audioElem.current.src = nextUrl;
-					audioElem.current.autoplay = true;
-					audioElem.current.preload = "auto";
-					setPlaying(true);
-					audioElem.current.onended = () => {
-						setPlaying(false);
-						setUrlQueue((prevQ) => prevQ.slice(1));
-					};
-					audioElem.current
-						.play()
-						.catch((err) => console.error("Playback error:", err));
-				}
-			} catch (error) {
-				console.error("Error playing audio:", error);
-			}
-		};
-		if (!playing && urlQueue.length > 0) {
-			playAudio();
+	const startPlayer = useCallback(() => {
+		if (!audioContextRef.current) {
+			audioContextRef.current = new AudioContext();
+			scheduleTimeRef.current = audioContextRef.current.currentTime + bufferAhead;
 		}
-	}, [urlQueue, playing]);
+	}, [bufferAhead]);
 
-    // Expose these functions and state
-	return { sendAudio, playing };
+	const sendAudio = useCallback(
+		async (bytes: string) => {
+			if (!audioContextRef.current) return;
+			const ctx = audioContextRef.current;
+            const data = JSON.parse(bytes).data;
+			const raw = Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
+			const bufferToDecode = raw.buffer;
+			try {
+				const audioBuffer = pcm16ToAudioBuffer(bufferToDecode, sampleRate, numChannels, ctx);
+				const startTime = Math.max(scheduleTimeRef.current, ctx.currentTime + bufferAhead);
+
+				const source = ctx.createBufferSource();
+				source.buffer = audioBuffer;
+				source.connect(ctx.destination);
+				source.start(startTime);
+
+				scheduleTimeRef.current = startTime + audioBuffer.duration;
+
+                source.onended = () => {
+                    // When the last scheduled chunk ends, mark systemSpeaking false
+                    if (scheduleTimeRef.current <= ctx.currentTime + 0.01) {
+                        setSystemSpeaking(false);
+                    }
+                };
+			} catch (e) {
+				console.error("Could not decode audio data: ", e);
+			}
+		}, [sampleRate, numChannels, bitsPerSample, bufferAhead]);
+
+	const stopPlayer = useCallback(() => {
+		if (audioContextRef.current) {
+			audioContextRef.current.close();
+			audioContextRef.current = null;
+		}
+		scheduleTimeRef.current = 0;
+	}, []);
+
+	return { startPlayer, sendAudio, stopPlayer, systemSpeaking };
 }
