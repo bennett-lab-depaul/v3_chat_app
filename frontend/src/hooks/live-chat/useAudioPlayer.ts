@@ -1,7 +1,15 @@
 import { useRef, useCallback, useState } from "react";
-import { pcm16ToAudioBuffer } from "@/utils/functions/audioHelpers";
+import { pcmToAudioBuffer } from "@/utils/functions/audioHelpers";
 
-export function useAudioPlayer( {sampleRate = 24_000, numChannels = 1, bitsPerSample = 32, bufferAhead = 0.5} ) {
+/**
+ * Audio player hook.
+ * @param sampleRate The sample rate of the audio to play.
+ * @param numChannels The number of channels of the audio to play.
+ * @param bitsPerSample The bits per sample of the audio to play.
+ * @param bufferAhead How much audio should be buffered before starting to play.
+ * @returns 
+ */
+export function useAudioPlayer( {sampleRate = 24_000, numChannels = 1, bitsPerSample = 32, bufferAhead = 0.2} ) {
     const [systemSpeaking, setSystemSpeaking] = useState(false);
 	const audioContextRef = useRef<AudioContext>(null);
 	const scheduleTimeRef = useRef<number>(0);
@@ -21,7 +29,7 @@ export function useAudioPlayer( {sampleRate = 24_000, numChannels = 1, bitsPerSa
 			const raw = Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
 			const bufferToDecode = raw.buffer;
 			try {
-				const audioBuffer = pcm16ToAudioBuffer(bufferToDecode, sampleRate, numChannels, ctx);
+				const audioBuffer = pcmToAudioBuffer(bufferToDecode, sampleRate, numChannels, 16, ctx);
 				const startTime = Math.max(scheduleTimeRef.current, ctx.currentTime + bufferAhead);
 
 				const source = ctx.createBufferSource();

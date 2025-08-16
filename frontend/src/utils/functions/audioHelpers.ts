@@ -37,29 +37,63 @@ function createWavFromRawPcm(
 	return new Blob([wav], { type: "audio/wav" });
 }
 
-function pcm16ToAudioBuffer(
-	pcmData: ArrayBuffer,
-	sampleRate: number,
-	numChannels: number,
-	ctx: AudioContext
-): AudioBuffer {
-	const audioBuffer = ctx.createBuffer(
-		numChannels,
-		pcmData.byteLength / (2 * numChannels),
-		sampleRate
-	);
-	const view = new DataView(pcmData);
-	let offset = 0;
+/**
+ * Converts an Array Buffer of PCM-encoded 16 bit audio bytes into an Audio Buffer object.
+ * @param pcmData The array buffer of PCM audio bytes.
+ * @param sampleRate The sample rate of the audio.
+ * @param numChannels The number of channels the audio has (1 for mono, 2 for stereo)
+ * @param bitsPerSample The number of bits per sample of the audio, or the bit depth
+ * @param ctx The audio context to use to create the new Audio Buffer
+ * @returns An AudioBuffer object of the PCM audio
+ */
+function pcmToAudioBuffer(pcmData: ArrayBuffer, sampleRate: number, numChannels: number, bitsPerSample: number, ctx: AudioContext) {
+  const bytesPerSample = bitsPerSample / 8;
+  const totalSamples = pcmData.byteLength / (bytesPerSample * numChannels);
 
-	for (let ch = 0; ch < numChannels; ch++) {
-		const channelData = audioBuffer.getChannelData(ch);
-		for (let i = ch; i < pcmData.byteLength / 2; i += numChannels) {
-			channelData[(i - ch) / numChannels] =
-				view.getInt16(offset, true) / 0x8000;
-			offset += 2;
-		}
-	}
-	return audioBuffer;
+  const audioBuffer = ctx.createBuffer(numChannels, totalSamples, sampleRate);
+  const view = new DataView(pcmData);
+  let offset = 0;
+
+  for (let i = 0; i < totalSamples; i++) {
+    for (let ch = 0; ch < numChannels; ch++) {
+      let sample;
+
+      switch (bitsPerSample) {
+        case 8: // 8-bit PCM (unsigned)
+          sample = (view.getUint8(offset) - 128) / 128.0;
+          break;
+
+        case 16: // 16-bit PCM (signed little endian)
+          sample = view.getInt16(offset, true) / 0x8000;
+          break;
+
+        case 24: { // 24-bit PCM (signed little endian)
+          // Read 3 bytes manually since DataView has no getInt24
+          const b0 = view.getUint8(offset);
+          const b1 = view.getUint8(offset + 1);
+          const b2 = view.getUint8(offset + 2);
+          let intVal = (b2 << 16) | (b1 << 8) | b0;
+          // Sign extend 24-bit
+          if (intVal & 0x800000) intVal |= ~0xffffff;
+          sample = intVal / 0x800000;
+          break;
+        }
+
+        case 32: // 32-bit PCM (signed little endian)
+          sample = view.getInt32(offset, true) / 0x80000000;
+          break;
+
+        default:
+          throw new Error(`Unsupported bitsPerSample: ${bitsPerSample}`);
+      }
+
+      audioBuffer.getChannelData(ch)[i] = sample;
+      offset += bytesPerSample;
+    }
+  }
+
+  return audioBuffer;
 }
 
-export {createWavFromRawPcm, pcm16ToAudioBuffer}
+
+export {createWavFromRawPcm, pcmToAudioBuffer}

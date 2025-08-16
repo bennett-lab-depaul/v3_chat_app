@@ -43,6 +43,9 @@ class SpeechToTextProvider:
             encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
             sample_rate_hertz=SAMPLE_RATE,
             language_code="en-US",
+            enable_automatic_punctuation=True,
+            enable_spoken_punctuation=True,
+            model="latest_long"
         )
         self._streaming_config = speech.StreamingRecognitionConfig(
             config=config,
