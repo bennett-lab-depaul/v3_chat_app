@@ -68,7 +68,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
         # Adding one default message at the start of the chat every time (so I have a reference timestamp before every user message)
         self.context_buffer = [("assistant", "How can I help you today?", time())] + self.context_buffer
-
+        
         # Other misc. setup
         self.overlapped_speech_count  = 0.0
         self.audio_windows_count      = 0.0
