@@ -58,7 +58,7 @@ class ChatService:
     
     @staticmethod
     @transaction.atomic
-    def close_session(user, session, *, source="webapp", notes=None, topics=None, sentiment=None):
+    def close_session(user, session, *, source="webapp", notes=None, sentiment=None, topics=None):
         """
         Marks the current session inactive, fills in "ended_at", stores 
         optional metadata, and immediately opens a fresh/blank session.
@@ -79,7 +79,7 @@ class ChatService:
         if notes     is not None: session.notes     = notes
         if topics    is not None: session.topics    = topics
         if sentiment is not None: session.sentiment = sentiment
-
+        if topics    is not None: session.topics    = topics
         session.save()
        
         logger.info(f"{cf.RLINE_1}{cf.RED}[DB] ChatSession closed for {user.username} {cf.RESET}{cf.RLINE_2}")
