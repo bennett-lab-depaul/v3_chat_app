@@ -64,7 +64,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         self.context_buffer = [(m.role, m.content, m.ts.timestamp()) for m in recent]
         
         # Appends the user utterances here for sentiment and topic analysis
-        self.user_utts = [m.content for m in recent if m.role == "user"]
+        self.message_history = [m.content for m in recent]
 
         # Adding one default message at the start of the chat every time (so I have a reference timestamp before every user message)
         self.context_buffer = [("assistant", "How can I help you today?", time())] + self.context_buffer
@@ -141,6 +141,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # Update in memory context
         self.context_buffer.append((role, text, time))
         if len(self.context_buffer) > self.MAX_CONTEXT: self.context_buffer.pop(0)
+        self.message_history.append(text)
 
         # Return the updated context (if the message was from the user, this will be used for the LLM)
         if role == "user": return self.context_buffer
@@ -164,5 +165,5 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     # DB Saving
     # =======================================================================
     async def _save_to_db(self):
-        sentiment, topics = get_sentiment_topics(self.user_utts)
+        sentiment, topics = get_sentiment_topics(self.message_history)
         await database_sync_to_async(ChatService.close_session)(self.user, self.session, source=self.source, sentiment=sentiment, topics=topics)
