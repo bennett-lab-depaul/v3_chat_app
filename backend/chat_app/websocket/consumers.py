@@ -17,7 +17,6 @@ from ..services.db_services  import ChatService
 from  .services.bg_helpers   import fire_and_log
 from  .services.chatHelpers  import handle_transcription
 from  .services.audioHelpers import extract_audio_biomarkers, extract_text_biomarkers
-from .services.chatAnalysis  import get_sentiment_topics
 
 # ======================================================================= ===================================
 # ChatConsumer 
@@ -63,9 +62,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # Actually since I want to remove the "resume" chat thing, probably don't need to do this with the context buffer (loading in old data)
         self.context_buffer = [(m.role, m.content, m.ts.timestamp()) for m in recent]
         
-        # Appends the user utterances here for sentiment and topic analysis
-        self.message_history = [m.content for m in recent]
-
         # Adding one default message at the start of the chat every time (so I have a reference timestamp before every user message)
         self.context_buffer = [("assistant", "How can I help you today?", time())] + self.context_buffer
         
@@ -89,7 +85,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         --- Originally had pausing in here, but im just changing it so disconnects end the chat. ---
         """
         # 1) Close the ChatSession in the DB
-        if self.session.is_active: await self._save_to_db()
+        if self.session.is_active: await database_sync_to_async(ChatService.close_session)(self.user, self.session, source=self.source)
 
         # Cancel background tasks (if any -- none right now)
         for task in getattr(self, "_bg_tasks", []): task.cancel()
@@ -110,7 +106,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         if   data["type"] == "overlapped_speech" : await self._handle_overlap(data=data)
         elif data["type"] == "audio_data"        : await self._handle_audio_data(data)
         elif data["type"] == "transcription"     : await handle_transcription(data, msg_callback=self._add_message_CB, send_callback=self.send, bio_callback=self._utt_bio)
-        elif data["type"] == "end_chat"          : await self._save_to_db()
+        elif data["type"] == "end_chat"          : await database_sync_to_async(ChatService.close_session)(self.user, self.session, source=self.source)
 
     # -----------------------------------------------------------------------
     # Overlapped Speech
@@ -141,7 +137,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # Update in memory context
         self.context_buffer.append((role, text, time))
         if len(self.context_buffer) > self.MAX_CONTEXT: self.context_buffer.pop(0)
-        self.message_history.append(text)
 
         # Return the updated context (if the message was from the user, this will be used for the LLM)
         if role == "user": return self.context_buffer
@@ -160,10 +155,3 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # Update turntaking (12 audio windows for 1 minute of data)
         self.audio_windows_count += 1
         self.overlapped_speech_count = self.overlapped_speech_count / (self.audio_windows_count / 12)
-        
-    # =======================================================================
-    # DB Saving
-    # =======================================================================
-    async def _save_to_db(self):
-        sentiment, topics = get_sentiment_topics(self.message_history)
-        await database_sync_to_async(ChatService.close_session)(self.user, self.session, source=self.source, sentiment=sentiment, topics=topics)

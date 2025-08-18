@@ -50,9 +50,14 @@ def get_topics(text): # From freeCodeCamp
     return str(topics)[1:-1].replace("'", "")
 
 
-def get_sentiment_topics(messages):
-    '''Gets the sentiment and topics of an array of user utterances.'''
-    message_text = " ".join(messages)
+def get_sentiment_topics(msgs):
+    '''Gets the sentiment and topics of a set of user utterances.'''
+    message_text = "Message message message message message"
+    try:
+        messages = [msg for msg in msgs]
+        message_text = " ".join(messages)
+    except:
+        None
     # Sentiment
     try:    
         sentiment = sentiment_scores(message_text)

@@ -3,6 +3,7 @@ from django.utils import timezone
 from ..models     import ChatSession, ChatMessage, ChatBiomarkerScore
 
 from .. import config as cf
+from .db_helpers import get_sentiment_topics
 
 import logging
 logger = logging.getLogger(__name__)
@@ -69,10 +70,12 @@ class ChatService:
         # -----------------------------------------------------------------------
         # Get all messages for this session
         # ----------------------------------------------------------------------- 
-        #msgs = (ChatMessage.objects
-        #    .filter(session=session)             # could also stack .filter(role="user")
-        #    .order_by("ts")                      # or "start_ts", "id" ?
-        #    .values_list("content", flat=True))  # returns a queryset of strings
+        msgs = (ChatMessage.objects
+           .filter(session=session)             # could also stack .filter(role="user")
+           .order_by("ts")                      # or "start_ts", "id" ?
+           .values_list("content", flat=True))  # returns a queryset of strings
+        
+        sentiment, topics = get_sentiment_topics(msgs)
 
         # ToDo: Probably should calculate the topics and sentiment right here using helper functions
         # Topics and sentiment won't be sent as arguments, they will be calculated here
