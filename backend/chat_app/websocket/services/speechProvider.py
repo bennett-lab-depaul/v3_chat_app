@@ -2,6 +2,8 @@ from google.cloud import speech, texttospeech
 from google import genai
 from google.genai import types
 
+from datetime import datetime, timedelta
+
 import threading
 import asyncio
 from queue import Queue
@@ -45,7 +47,9 @@ class SpeechToTextProvider:
             language_code="en-US",
             enable_automatic_punctuation=True,
             enable_spoken_punctuation=True,
-            model="latest_long"
+            model="latest_long",
+            use_enhanced=True,
+            enable_word_time_offsets=True,
         )
         self._streaming_config = speech.StreamingRecognitionConfig(
             config=config,
@@ -85,6 +89,7 @@ class SpeechToTextProvider:
                 if result.is_final:
                     transcript = result.alternatives[0].transcript
                     logger.info(f"{cf.RED}[Transcription] Received final transcription: {transcript}.")
+                    word_timestamps = self._get_word_timestamps(datetime.now(), result.alternatives[0].words)
                     if self._on_transcription_callback:
                         data = {"type": "transcript", "data": transcript}
                         if asyncio.iscoroutinefunction(self._on_transcription_callback):
@@ -94,6 +99,15 @@ class SpeechToTextProvider:
                             )
                         else:
                             self._on_transcription_callback(data)
+                            
+    def _get_word_timestamps(self, now, words):
+        timestamps = [{
+            "word": word.word, 
+            "start": now + word.start_time, 
+            "end": now + word.end_time
+        } for word in words]
+        return timestamps
+            
 
 class TextToSpeechProvider:
     '''TTS provider class. Uses Google's TTS API.'''
