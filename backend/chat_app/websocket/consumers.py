@@ -101,7 +101,9 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         self.overlapped_speech_events = []  # List of timestamps (ToDo: Add this to the DB somehow)
         # Create new speech provider instances
         loop_stt = asyncio.get_event_loop()
-        self.stt_provider = SpeechToTextProvider(on_transcription_callback=self._handle_transcription, loop=loop_stt)
+        
+        # TODO: Define a function for on_timestamps_callback to perform when we receive word-level timestamps
+        self.stt_provider = SpeechToTextProvider(on_transcription_callback=self._handle_transcription, on_timestamps_callback=None, loop=loop_stt)
         self.tts_provider = TextToSpeechProvider()
         self.audio_buffer = bytearray()
 
