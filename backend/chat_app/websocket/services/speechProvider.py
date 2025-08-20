@@ -84,7 +84,7 @@ class SpeechToTextProvider:
 
     def _listen_responses(self, responses):
         '''Listens to the responses from the Google Cloud STT API. If the received response is final, it calls the
-        transcription callback defined in the constructor.'''
+        transcription callback defined in the constructor, as well as the word timestamps callback from the constructor.'''
         for response in responses:
             for result in response.results:
                 if result.is_final:
@@ -110,6 +110,8 @@ class SpeechToTextProvider:
                             self._on_timestamps_callback(word_timestamps)
                             
     def _get_word_timestamps(self, now, words):
+        ''' Gets word-level timestamps of an array of WordInfo objects. Will return an array of dictionaries
+        with the word, word start timestamp, and word end timestamp (as a datetime.datetime object).'''
         timestamps = [{
             "word": word.word, 
             "start": now + word.start_time, 
