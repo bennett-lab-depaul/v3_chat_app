@@ -42,7 +42,6 @@ class Command(BaseCommand):
         # Also create settings and goal objects for the new Profile
         UserSettings.objects.create(user=profile)
         Goal        .objects.create(user=profile, target=5, start_date=two_days_ago)
-
         # Add sample ChatSessions
         self.seed_chats(plwd, days_back=10)
 

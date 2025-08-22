@@ -8,6 +8,7 @@ from .views import (
     ProfileView, SignupView,                 # Auth / Profile
     MyTokenObtainPairView,                   # JWT login
     ChatSessionViewSet, ReminderViewSet,     # Collection endpoints
+    DownloadDataView                         # Download data endpoint
 )
 
 # ------------------------------------------------------------------
@@ -30,6 +31,7 @@ urlpatterns = [
     # Single-row resources (one per user)
     path("goal/",             GoalView.as_view(), name="goal"    ),
     path("settings/", UserSettingsView.as_view(), name="settings"),
+    path("download/", DownloadDataView.as_view(), name="download"),
 
     # Profile & signup
     path("profile/", ProfileView.as_view(), name="profile"),
