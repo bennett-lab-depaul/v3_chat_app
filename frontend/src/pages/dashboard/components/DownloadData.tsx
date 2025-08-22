@@ -1,10 +1,6 @@
 import { downloadData } from "@/api";
-import { useAuth } from "@/context/AuthProvider";
-import { useDownload } from "@/hooks/queries/useDownload";
 
 export function DownloadData() {
-    const { profile         } = useAuth();
-
     const download = async () => {
         const { fileName, fileContents } = await downloadData();
         // console.log(download)
