@@ -3,9 +3,9 @@ from django.db           import transaction
 from django.utils        import timezone
 from django.contrib.auth import get_user_model
 
-from datetime        import timedelta
+from datetime        import timedelta, date, time
 from random          import random
-from chat_app.models import Profile, UserSettings, Goal, ChatSession, ChatMessage, ChatBiomarkerScore
+from chat_app.models import Profile, UserSettings, Goal, ChatSession, ChatMessage, ChatBiomarkerScore, Reminder
 
 # Demo data
 USERNAMES     = ("demo_patient", "demo_caregiver", "buddy_user", "buddy_care")
@@ -44,6 +44,9 @@ class Command(BaseCommand):
         Goal        .objects.create(user=profile, target=5, start_date=two_days_ago)
         # Add sample ChatSessions
         self.seed_chats(plwd, days_back=10)
+        
+        # Add sample Reminders
+        self.seed_reminders(profile, num_reminders=5)
 
         # --------------------------------------------------------------------
         # Second profile
@@ -55,6 +58,7 @@ class Command(BaseCommand):
         UserSettings.objects.create(user=profile_2)
         Goal        .objects.create(user=profile_2, target=5, start_date=two_days_ago)
         self.seed_chats(plwd_2, days_back=10)
+        self.seed_reminders(profile_2, num_reminders=5)
 
 
     # ====================================================================
@@ -90,3 +94,32 @@ class Command(BaseCommand):
                     score.save(update_fields=["ts"])
 
             #print(f"Seeded ChatSession for {(now_utc - day_offset).date()}")
+            
+     # ====================================================================
+    # Seed Reminders into the DB for a user
+    # ====================================================================
+    def seed_reminders(self, plwd, num_reminders=5):
+        now_utc = timezone.now()
+        for i in range(1, num_reminders+1):
+            day_offset = timedelta(days=i)
+            
+            start_day = (now_utc - day_offset).date()
+            end_day   = start_day
+            start_time = time(0, 0, 0)
+            end_time = time(2, 0, 0)
+            title = f"Reminder {i}"
+
+            # Create a Reminder object
+            reminder = Reminder.objects.create(user=plwd, title=title, start=start_day, end=end_day, 
+                                               startTime=start_time, endTime=end_time, daysOfWeek=[])
+            reminder.save()
+            
+        # Create repeating Reminder
+        start_day = now_utc.date()
+        end_day = (now_utc + timedelta(weeks=5)).date()
+        start_time = time(hour=0, minute=0, second=0)
+        end_time = time(hour=2, minute=0, second=0)
+        reminder = Reminder.objects.create(user=plwd, title="Repeat reminder", start=start_day, 
+                                           end=end_day, startTime=start_time, endTime=end_time,
+                                           daysOfWeek=[3])
+        reminder.save()
