@@ -41,6 +41,7 @@ def format_goal(goal: Goal):
     =========================================================
                             User Goal   
     =========================================================
+    Current: {goal.current}
     Target: {goal.target} 
     Period: {goal.period} 
     Start date: {goal.start_date} 
@@ -56,7 +57,10 @@ def format_settings(settings: UserSettings):
     """
     settings_dict = model_to_dict(settings)
     for field in settings_dict:
-        settings_str += f"""{field}: {settings_dict[field]}
+        if field == 'id' or field == 'user':
+            pass
+        else:
+            settings_str += f"""{field}: {settings_dict[field]}
         """
     return settings_str
 
@@ -68,14 +72,10 @@ def format_reminders(reminders):
     =========================================================
     """
     for reminder in reminders:
-        title_str = f"Title: {reminder.title}"
-        start_str = f"Start: {reminder.start}T{reminder.startTime}"
-        end_str = f"End: {reminder.end}T{reminder.endTime}"
-        days_str = f"Repeats every {[days[day] for day in reminder.daysOfWeek]}"
-        reminders_str += f"""{title_str}
-        {start_str}
-        {end_str}
-        {days_str}
+        reminders_str += f"""Title: {reminder.title}"
+        Start: {reminder.start}T{reminder.startTime}
+        End: {reminder.end}T{reminder.endTime}
+        Repeats every {[days[day] for day in reminder.daysOfWeek]}
         """
     return reminders_str
 
@@ -104,9 +104,7 @@ def format_session(session: ChatSession):
     Notes: {session.notes} 
     Topics: {session.topics} 
     Sentiment: {session.sentiment}
-                Messages: 
     {format_messages(messages)}
-                Scores: 
     {format_scores(scores)}
     """
     return session_str
