@@ -1,54 +1,122 @@
-import json
+from django.forms.models import model_to_dict
 
 from ..models import Profile, Goal, UserSettings, Reminder, ChatSession, ChatMessage, ChatBiomarkerScore
 
 
 def get_download_data(profile: Profile):
     user = profile.plwd
-    caregiver = profile.caregiver
     goal = Goal.objects.get(user=profile)
     settings = UserSettings.objects.get(user=profile)
     reminders = Reminder.objects.filter(user=profile)
     chat_sessions = ChatSession.objects.filter(user=user).order_by("-date")
 
-    reminder_str_arr = [f"Title: {reminder.title} Start: {reminder.start}T{reminder.startTime} End: {reminder.end}T{reminder.endTime} Days: {reminder.daysOfWeek}"for reminder in reminders]
-    chat_str_arr = [get_session_str(session) for session in chat_sessions]
-
     data_str = f"""{user.first_name} {user.last_name}'s data
     
-    Profile details:
-    Patient: {user.first_name} {user.last_name}
+    {format_profile(profile)}
     
-    Primary Caregiver: {caregiver.first_name} {caregiver.last_name}
+    {format_goal(goal)}
     
-    Current goal:
-    Target: {goal.target} Period: {goal.period} Start date: {goal.start_date} Auto Renew: {goal.auto_renew}
+    {format_settings(settings)}
     
-    User Settings: 
-    PatientViewOverall: {settings.patientViewOverall} PatientCanSchedule: {settings.patientCanSchedule}
+    {format_reminders(reminders)}
     
-    Reminders:
-    {chr(10).join(reminder_str_arr)}
-    
-    Chat sessions:
-    {chr(10).join(chat_str_arr)}"""
+    {format_sessions(chat_sessions)}"""
     return data_str
 
-def get_session_str(session: ChatSession):
+def format_profile(profile: Profile):
+    user = profile.plwd
+    caregiver = profile.caregiver
+    profile_str = f"""
+    =========================================================
+                        Profile Information
+    =========================================================
+    Patient: {user.first_name} {user.last_name}
+    Primary Caregiver: {caregiver.first_name} {caregiver.last_name}
+    Other Linked Users:
+    """
+    return profile_str
+
+def format_goal(goal: Goal):
+    goal_str = f"""
+    =========================================================
+                            User Goal   
+    =========================================================
+    Target: {goal.target} 
+    Period: {goal.period} 
+    Start date: {goal.start_date} 
+    Auto Renews?: {goal.auto_renew}
+    """
+    return goal_str
+    
+def format_settings(settings: UserSettings):
+    settings_str = f"""
+    =========================================================
+                         User Settings   
+    =========================================================
+    """
+    settings_dict = model_to_dict(settings)
+    for field in settings_dict:
+        settings_str += f"""{field}: {settings_dict[field]}
+        """
+    return settings_str
+
+def format_reminders(reminders):
+    days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    reminders_str = """
+    =========================================================
+                            Reminders                       
+    =========================================================
+    """
+    for reminder in reminders:
+        title_str = f"Title: {reminder.title}"
+        start_str = f"Start: {reminder.start}T{reminder.startTime}"
+        end_str = f"End: {reminder.end}T{reminder.endTime}"
+        days_str = f"Repeats every {[days[day] for day in reminder.daysOfWeek]}"
+        reminders_str += f"""{title_str}
+        {start_str}
+        {end_str}
+        {days_str}
+        """
+    return reminders_str
+
+# ChatSession formatting helpers
+def format_messages(messages):
+    messages_str = "            Messages:"
+    for message in messages:
+        messages_str += f"""
+        {message.role}: {message.content} ({message.ts})"""
+    return messages_str
+
+def format_scores(scores):
+    scores_str = "          Scores:"
+    for score in scores:
+        scores_str += f"""
+        {score.score_type}: {score.score} ({score.ts})"""
+    return scores_str
+
+def format_session(session: ChatSession):
     messages = ChatMessage.objects.filter(session=session).order_by("ts")
     scores = ChatBiomarkerScore.objects.filter(session=session).order_by("ts")
     
-    messages_str = [f"{message.role}: {message.content} ({message.ts})" for message in messages]
-    scores_str = [f"{score.score_type}: {score.score} ({score.ts})" for score in scores]
-    
-    data_str = f"""Chat Session on {session.date} until {session.end_ts} ({session.duration} seconds): {session.source}
-    
-    Notes: {session.notes} Topics: {session.topics} Sentiment: {session.sentiment}
-    
-    Messages: 
-    {chr(10).join(messages_str)}
-    
-    Scores: 
-    {chr(10).join(scores_str)}
+    session_str = f"""
+    Chat Session on {session.date} -- {session.end_ts} ({session.duration} seconds)
+    Source: {session.source}
+    Notes: {session.notes} 
+    Topics: {session.topics} 
+    Sentiment: {session.sentiment}
+                Messages: 
+    {format_messages(messages)}
+                Scores: 
+    {format_scores(scores)}
     """
-    return data_str
+    return session_str
+
+def format_sessions(sessions):
+    sessions_str = """
+    =========================================================
+                         Chat Sessions  
+    =========================================================
+    """
+    for session in sessions:
+        sessions_str += format_session(session)
+    return sessions_str
