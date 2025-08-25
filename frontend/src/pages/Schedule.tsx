@@ -76,7 +76,7 @@ export default function Schedule() {
 function toFcEvents(reminders: Reminder[]) {
     return reminders.map(r => {
         // Has weekly repetition -> use RRULE
-        if (r.daysOfWeek.length) {
+        if (r.daysOfWeek?.length) {
             return {
                 id   : r.id.toString(),
                 title: r.title,

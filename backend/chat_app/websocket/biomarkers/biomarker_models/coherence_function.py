@@ -1,7 +1,5 @@
 import pandas as pd
 import numpy as np
-import openpyxl
-from datetime import datetime
 from sklearn.metrics.pairwise import cosine_similarity
 
 """
@@ -231,28 +229,112 @@ def coherence(data, vectors, stop_list=None, entropy=None, norm=True, f_weight='
 
     
 
-    # create excel file name based on timestamp
-    now = datetime.now()
-    file_name = now.strftime("%Y%m%d%H%M%S")
-
-    # filtered_df.to_excel(f"coherence_values{file_name}.xlsx")
-        
     # return mean_rc_coherence,mean_lc_coherence,mean_gc_coherence
     return mean_gc_coherence
 
 
 
+# ======================================================================= ===================================
+# Redo
+# ======================================================================= ===================================
+# Work in progress, trying to make this code cleaner/more understandable...
+# Also may be easier to calculate some of these things with the format of the data...
 
-if __name__ =='__main__':
-    v = pd.read_csv('new_LSA.csv',index_col=0)
-    en = pd.read_csv('Hoffman_entropy_53758.csv')
-    stop = pd.read_table('stoplist.txt',header=None)
-    speech = pd.read_excel('/Users/rohithperumandla/Desktop/Research/Interface_code/speech_system_v5/Working_code/speech_data_test_from_convo2.xlsx')
-    # speech.columns = ['V1', 'V2']
+# Custom function to calculate sqrt(sum(x^2))
+def calculate_vector_norm(vec):
+    return np.sqrt(np.sum(vec**2))
+
+def coherence_v2(context_buffer, data, vectors, entropy, stop_list, f_weight="logfreq", norm=True, winsize=20,):
+    vlength = vectors.shape[1]
+
+    # Okay for now we will just go with it
+    df = data.copy()
+    df.columns = ["participants", "response"]
+    df[["global_coherence", "local_coherence", "robot_coherence"]] = [np.nan, np.nan, np.nan]
+
+    # Clean and lowercase the "response" text
+    speech = data["response"].str.lower().str.replace('[^\w\s]', '').str.strip()
+
+    # Get change points where the speaker changes (check if a rows 'participants' value differs from the previous row)
+    new  = data.index[data["participants"] != data["participants"].shift(1)].tolist()
+    nnew = len(new)
+
+    allresp = np.zeros((nnew, vlength))
     
-    mean_gc_coherence = coherence(speech ,vectors=v, entropy=en, stop_list=stop)
+    startdata = df.iloc[new, :]
 
-    # print(f"Mean RC Coherence: {mean_rc_coherence}")
-    # print(f"Mean LC Coherence: {mean_lc_coherence}")
-    print(f"Mean GC Coherence: {mean_gc_coherence}")
+    # --------------------------------------------------------------------
+    # Calculate coherence for each response in the dataset
+    # --------------------------------------------------------------------
+    """
+    So we have speaker change points, we use those to get complete utterances.
+    Then 
+    """
+    # For each of the messages... (only use the users speech)
+    for i in range(len(context_buffer)):
+        # ---- Sometimes we might do both though? ----
+        if context_buffer[i][0] != "user": continue
 
+        # Prepare the data
+        text    = context_buffer[i][1].lower().replace('[^\w\s]', '').strip()
+        n_words = len(text)
+        windows = np.full ((n_words, winsize), '', dtype=object)
+        win_vec = np.zeros((n_words, vlength))
+
+        # =======================================================================
+        # 
+        # =======================================================================
+        for j in range(n_words):
+            winstart = max(0, j - winsize + 1)  
+            winend = j + 1  # Range end is exclusive, so add 1 to include winend
+
+            windows[j, :winend - winstart] = text[winstart:winend]
+            words = [word for word in windows[j, :] if word in vectors.index]
+
+            word_counts = pd.Series(words).value_counts()
+
+            if   f_weight == 'logfreq' : words_matrix = np.log10(word_counts + 1).to_frame()
+            elif f_weight == 'none'    : words_matrix = pd.DataFrame(1, index=word_counts.index, columns=['count'])
+            else:                        words_matrix = word_counts.to_frame()
+            words_matrix = words_matrix.sort_index()
+            
+            # --------------------------------------------------------------------
+            # Stop words, normalization, & entropy
+            # --------------------------------------------------------------------
+            # Remove stop words if required
+            w2 = words_matrix if (stop_list is None) else words_matrix.loc[~words_matrix.index.isin(stop_list)]
+  
+            # Special case for one word: compute sqrt(sum(x^2)) for a single vector (flattened)
+            # General case for multiple words: compute sqrt(sum(x^2)) for each row (word vector)
+            if   norm and len(w2) == 1: vnorm = calculate_vector_norm(vectors.loc[w2.index].values.flatten())
+            elif norm:                  vnorm = vectors.loc[w2.index].apply(calculate_vector_norm, axis=1)
+            else:                       vnorm = 1
+    
+            # Extract entropy values corresponding to the words in w2
+            entro = 1 if (entropy is None) else entropy[vectors.index.isin(w2.index)]
+
+            # --------------------------------------------------------------------
+            # Calculate & compute the column means of cvec
+            # --------------------------------------------------------------------
+            try:
+                # Reshape w2.values.flatten() and entro to align with the dimensions of vectors
+                w2_array    = np.nan_to_num(w2.values.flatten().reshape(-1, 1), nan=0)
+                entro_array = np.nan_to_num(entro              .reshape(-1, 1), nan=0)
+                vnorm_array = np.nan_to_num(np.array(vnorm)    .reshape(-1, 1), nan=0)
+
+                # Calculate cvec
+                calc = vectors.loc[w2.index].values * w2_array * entro_array / vnorm_array
+                cvec = pd.DataFrame(calc, index=w2.index, columns=vectors.columns)
+    
+            except Exception as e: print(f"Error occurred: {e}"); continue
+
+            # Equivalent to 'numeric' check in R
+            if cvec.ndim == 1: win_vec[j, :] = cvec
+            else:              win_vec[j, :] = cvec.mean(axis=0)
+
+
+        # =======================================================================
+        # 
+        # =======================================================================
+        win_vec = np.nan_to_num(win_vec, nan=0)
+        

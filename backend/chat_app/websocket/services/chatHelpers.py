@@ -1,45 +1,40 @@
+""" 
+=======================================================================
+        Process the users message & reply with the LLM ASAP 
+======================================================================= 
+"""
+import json, logging, base64
+from math import ceil
+logger = logging.getLogger(__name__)
 
-from time import time
-from ...  import config as cf
+from time        import time
+from ...         import config        as cf
+from ...services import logging_utils as lu 
 
-from ..biomarkers.biomarker_config import LAST_X_CHAT_ENTRIES
-# history = chat_history[-LAST_X_CHAT_ENTRIES:]
-
-logger = cf.logging.getLogger("__asr__") # ---- why does this say ASR again??
-
-# ======================================================================= ===================================
-# LLM Helpers
-# ======================================================================= ===================================
 ERROR_UTTERANCE = "I'm sorry, I encountered an error while processing your request."
+test = "\033[42m"
 
+# ======================================================================= ===================================
 # Generate LLM Response
+# ======================================================================= ===================================
 async def generate_LLM_response(context_buffer):
     """
     Original stop characters included punctuation (but not all? '!')...
         stop=["<|end|>", ".", "?"]
+
+    Wrap the response logic in a try-except block. If the model throws an error, return a default response.
     """
-    # -----------------------------------------------------------------------
     # 1) Prepare a prompt for the LLM
-    # -----------------------------------------------------------------------
     full_prompt = prepare_LLM_input(context_buffer)
 
-    # -----------------------------------------------------------------------
     # 2) Get a response from the LLM (hosted on a webserver)
-    # -----------------------------------------------------------------------
-    LLM_start_time = time()
-
-    # Wrap the response logic in a try-except block. If the model throws an error, return a default response.
     try:
-        output = await cf.llm(full_prompt, max_tokens=cf.MAX_LENGTH, stop=["<|end|>"], echo=True) # 
+        output = await cf.llm(full_prompt, max_tokens=cf.MAX_LENGTH, stop=["<|end|>", "\n"], echo=True) 
         system_utt = (output["choices"][0]["text"].split("<|assistant|>")[-1]).strip()
 
-    except Exception as e: logger.error(f"Error in get_LLM_response: {e}"); system_utt = ERROR_UTTERANCE
+    except Exception as e: 
+        logger.error(f"Error in get_LLM_response: {e}"); system_utt = ERROR_UTTERANCE
 
-    # -----------------------------------------------------------------------
-    # 3) Log the response time and return
-    # -----------------------------------------------------------------------
-    logger.info(f"{cf.CYAN}[LLM] Received response in:    {(time() - LLM_start_time):6.4f}s {cf.RESET}")
-    
     return system_utt
 
 # -----------------------------------------------------------------------

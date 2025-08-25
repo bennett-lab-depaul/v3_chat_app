@@ -102,7 +102,7 @@ async def extract_text_biomarkers(context_buffer):
     
     # Run heavy function in thread pool
     utterance_biomarkers = await loop.run_in_executor(_POOL, lambda: generate_utterance_biomarkers(context_buffer))
-    logger.info(f"{cf.CYAN}[Bio] Biomarkers done in:      {(time()-t0):5.4f}s {cf.RESET}")
+    logger.info(f"{cf.MAGENTA}[Bio] Biomarkers done in:      {(time()-t0):5.4f}s {cf.RESET}")
 
     # Return the biomarkers
     return utterance_biomarkers 

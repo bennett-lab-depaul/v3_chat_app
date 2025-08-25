@@ -47,7 +47,7 @@ class ReminderSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Reminder
         fields = ("id", "title", "notes", "start", "end", "startTime", "endTime", "daysOfWeek")
-        read_only_fields = ("id")
+        read_only_fields = ("id",)
         
 class GoalSerializer(serializers.ModelSerializer):
     current   = serializers.IntegerField(read_only=True)

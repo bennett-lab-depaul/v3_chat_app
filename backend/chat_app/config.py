@@ -17,13 +17,15 @@ THIS_LANGUAGE = "en-US"
 MAX_LENGTH = 256
 PROMPT = "You are an assistant for dementia patients. Provide any response as much short as possible."
 
+# TODO: Find all imports using these and make them use the new logging_utils.py file instead
 # Colors for logging
-RED    = "\033[0;31m"
-GREEN  = "\033[0;32m"
-YELLOW = "\033[0;33m"
-BLUE   = "\033[0;34m"
-CYAN   = "\033[0;96m"
-RESET  = "\033[0m"
+RED     = "\033[0;31m"
+GREEN   = "\033[0;32m"
+YELLOW  = "\033[0;33m"
+BLUE    = "\033[0;34m"
+CYAN    = "\033[0;96m"
+MAGENTA = "\033[35m"
+RESET   = "\033[0m"
 
 # Horizontal line breaks
 HLINE   = "-----------------------------------------------------------------------"

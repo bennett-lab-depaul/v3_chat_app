@@ -16,18 +16,10 @@ from math     import ceil
 # From this project
 from ..                      import config as cf
 from ..services.db_services  import ChatService
-from .services.chatHelpers  import generate_LLM_response
-from .services.audioHelpers import extract_audio_biomarkers, extract_text_biomarkers
+from .services.bg_helpers    import fire_and_log
+from .services.chatHelpers   import generate_LLM_response
+from .services.audioHelpers  import extract_audio_biomarkers, extract_text_biomarkers
 from .services.speechProvider import SpeechToTextProvider, TextToSpeechProvider
-
-# ------------------------------------------------------------------
-# Helper: Start a background task and log any exception it raises --- put into another file
-# ------------------------------------------------------------------
-def fire_and_log(coro):
-    async def _runner():
-        try: await coro
-        except Exception: logger.exception("Background task crashed")
-    return asyncio.create_task(_runner())
 
 SECOND = 32_000 # How big a chunk of audio of one second is, in bytes
 CHUNK_SIZE = 8_192 # How many bytes of audio we can send at a time
