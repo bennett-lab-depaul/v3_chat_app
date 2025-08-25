@@ -41,8 +41,8 @@ _POOL = ThreadPoolExecutor(max_workers=4)
 def handle_audio_data(data):
     try:
         # Decode the received base64 data to bytes & get the sample rate
-        audio_bytes, sample_rate = data['data'], data["sampleRate"]
-        logger.info(f"{cf.YELLOW}[Aud] Audio data received: {len(audio_bytes):,} bytes at {sample_rate:,}Hz")
+        audio_bytes, sample_rate = data["data"], data["sampleRate"]
+        logger.info(f"{cf.CYAN}[Aud] Audio data received: {len(audio_bytes):,} bytes at {sample_rate:,}Hz {cf.RESET}")
         
         # Normalize audio data
         audio_array = np.frombuffer(audio_bytes, dtype=np.int16)
