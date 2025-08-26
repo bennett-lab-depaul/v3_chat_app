@@ -124,7 +124,7 @@ class TextToSpeechProvider:
         self._voice = texttospeech.VoiceSelectionParams(
             language_code="en-US", ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
         )
-        # self._gemini_client = genai.Client(api_key=os.getenv('GEMINI_KEY'))
+        # self._gemini_client = genai.Client()
         self._audio_config = None
                         
     def synthesize_speech(self, text: str, encoding: str) -> bytes:
@@ -171,6 +171,7 @@ class TextToSpeechProvider:
     #                         )
     #                     )
     #                 ),
+    #                 thinking_config=types.ThinkingConfig(thinking_budget=0), # Disables thinking
     #             )
     #         )
     #         data = response.candidates[0].content.parts[0].inline_data.data
