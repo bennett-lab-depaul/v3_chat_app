@@ -42,7 +42,7 @@ export default function useLiveChat({
 		recording,
 		onLLMResponse: (text: string) => {
 			onLLMres(text);
-			speak(text);
+			// speak(text);
 		},
 		onScores,
 		onUserUtt: onUserUtterance,
