@@ -4,11 +4,8 @@ from google.genai import types
 
 from datetime import datetime, timedelta
 
-import threading
-import asyncio
+import threading, asyncio, base64, logging, os
 from queue import Queue
-import base64
-import logging
 
 from ... import config as cf
 
@@ -127,7 +124,7 @@ class TextToSpeechProvider:
         self._voice = texttospeech.VoiceSelectionParams(
             language_code="en-US", ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
         )
-        self._gemini_client = genai.Client()
+        self._gemini_client = genai.Client(api_key=os.getenv('GEMINI_KEY'))
         self._audio_config = None
                         
     def synthesize_speech(self, text: str, encoding: str) -> bytes:
