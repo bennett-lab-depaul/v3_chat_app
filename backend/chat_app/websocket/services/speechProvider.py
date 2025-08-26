@@ -124,7 +124,7 @@ class TextToSpeechProvider:
         self._voice = texttospeech.VoiceSelectionParams(
             language_code="en-US", ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
         )
-        self._gemini_client = genai.Client(api_key=os.getenv('GEMINI_KEY'))
+        # self._gemini_client = genai.Client(api_key=os.getenv('GEMINI_KEY'))
         self._audio_config = None
                         
     def synthesize_speech(self, text: str, encoding: str) -> bytes:
@@ -156,25 +156,25 @@ class TextToSpeechProvider:
             logger.error(f"{cf.RED}[TTS] Error synthesizing speech: {e}")
     
     # May not need if we decide to use the Google Cloud TTS instead
-    def synthesize_speech_gemini(self, text: str) -> bytes:
-        '''Synthesizes speech using Google's Gemini TTS API. Returns the audio content as bytes.'''
-        try:
-            response = self._gemini_client.models.generate_content(
-                model="gemini-2.5-flash-preview-tts",
-                contents="Say cheerfully: " + text,
-                config=types.GenerateContentConfig(
-                    response_modalities=["AUDIO"], # The model will return audio content
-                    speech_config=types.SpeechConfig(
-                        voice_config=types.VoiceConfig(
-                            prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                            voice_name='Kore',
-                            )
-                        )
-                    ),
-                )
-            )
-            data = response.candidates[0].content.parts[0].inline_data.data
-            logger.info(f"{cf.YELLOW}[TTS] Speech synthesized")
-            return data
-        except Exception as e:
-            logger.error(f"{cf.RED}[TTS] Error synthesizing speech: {e}")
+    # def synthesize_speech_gemini(self, text: str) -> bytes:
+    #     '''Synthesizes speech using Google's Gemini TTS API. Returns the audio content as bytes.'''
+    #     try:
+    #         response = self._gemini_client.models.generate_content(
+    #             model="gemini-2.5-flash-preview-tts",
+    #             contents="Say cheerfully: " + text,
+    #             config=types.GenerateContentConfig(
+    #                 response_modalities=["AUDIO"], # The model will return audio content
+    #                 speech_config=types.SpeechConfig(
+    #                     voice_config=types.VoiceConfig(
+    #                         prebuilt_voice_config=types.PrebuiltVoiceConfig(
+    #                         voice_name='Kore',
+    #                         )
+    #                     )
+    #                 ),
+    #             )
+    #         )
+    #         data = response.candidates[0].content.parts[0].inline_data.data
+    #         logger.info(f"{cf.YELLOW}[TTS] Speech synthesized")
+    #         return data
+    #     except Exception as e:
+    #         logger.error(f"{cf.RED}[TTS] Error synthesizing speech: {e}")
