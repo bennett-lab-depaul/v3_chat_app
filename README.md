@@ -82,7 +82,7 @@ SSH:/home/user/
  │   │
  │   ├── llama_api/
  │   │   ├── compose.yaml         # Deployment (GPU) mode -- download Llama web API image
- │   │   ├── dummy_compose.yaml   # Sandbox (CPU) mode -- same "API" as GPU, just returns dummy responses
+ │   │   ├── dummy_compose.yaml   # Sandbox (CPU) mode -- returns dummy responses
 +│   │   └── Phi-3_finetuned.gguf # LLM model (isn't actually here, accesses via volume)
  │   │
  │   ├── nginx/
