@@ -50,6 +50,7 @@ The web app can be accessed through localhost:5173 in your browser.
 
 Useful commands:
 * `sudo docker logs backend` (also used with the other containers)
+* More in `chat_app_deployment`
 
 <hr>
 </details>
