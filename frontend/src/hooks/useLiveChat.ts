@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQueryClient      } from "@tanstack/react-query";
-import { useChatSocket, useAudioStreamer, useASR, useTTS } from "@/hooks/live-chat";
+import { useChatSocket, useAudioStreamer } from "@/hooks/live-chat";
 import { useAudioPlayer } from "./live-chat/useAudioPlayer";
 
-import   useLatencyLogger      from "@/hooks/useLatencyLogger";
-import { logText, logOverlap } from '@/utils/loggingHelpers';
+import { logText } from '@/utils/loggingHelpers';
 
 // --------------------------------------------------------------------
 // Hook that handles everything involved with the chat
@@ -22,27 +21,18 @@ export default function useLiveChat({
 }) {
     // Misc. setup
     const qc = useQueryClient();
-    const { asrStart, asrEnd, llmEnd, ttsStart, ttsEnd } = useLatencyLogger();
     const onLLMres = (text: string) => {
-		llmEnd();
 		logText(`[LLM] Response:   ${text}`);
 		onSystemUtterance(text);
 	};
     const [recording, setRecording] = useState(false);
 
-    // Setup hooks: TTS, ChatSocket, AudioStreamer, ASR (order must be: TTS, ChatSocket, others)
-    const { speak, systemSpeakingRef } = useTTS({
-		onStart: ttsStart,
-		onDone: ttsEnd,
-	});
-
-    const { startPlayer, sendAudio, stopPlayer, systemSpeaking} = useAudioPlayer({sampleRate: 24_000, numChannels: 1, bitsPerSample: 32, bufferAhead: 0.2})
+    const { startPlayer, sendAudio, stopPlayer, systemSpeaking } = useAudioPlayer({sampleRate: 24_000, numChannels: 1, bitsPerSample: 32, bufferAhead: 0.2})
 
 	const { send } = useChatSocket({
 		recording,
 		onLLMResponse: (text: string) => {
 			onLLMres(text);
-			// speak(text);
 		},
 		onScores,
 		onUserUtt: onUserUtterance,
@@ -52,24 +42,6 @@ export default function useLiveChat({
 		chunkMs: 64,
 		sendToServer: send,
 	});
-	const {
-		start: startASR,
-		stop: stopASR,
-		userSpeakingRef,
-	} = useASR({
-		onStart: asrStart,
-		onDone: asrEnd,
-		onUserUtterance,
-		sendToServer: send,
-	});
- 
-    // Speech overlap detection
-    useEffect(() => {
-		if (systemSpeaking && userSpeakingRef.current) {
-			logOverlap();
-			send({ type: "overlapped_speech", data: Date.now() });
-		}
-	}, [systemSpeaking, userSpeakingRef.current]); 
 
     // Start, Stop, & Save
     const start = () => {

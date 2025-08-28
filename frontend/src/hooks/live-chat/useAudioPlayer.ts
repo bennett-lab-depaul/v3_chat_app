@@ -1,6 +1,7 @@
 import { useRef, useCallback, useState } from "react";
 
 import { pcmToAudioBuffer } from "@/utils/functions/audioHelpers";
+import   useLatencyLogger      from "@/hooks/useLatencyLogger";
 
 /**
  * Audio player hook.
@@ -14,6 +15,9 @@ export function useAudioPlayer( {sampleRate = 24_000, numChannels = 1, bitsPerSa
     const [systemSpeaking, setSystemSpeaking] = useState(false);
 	const audioContextRef = useRef<AudioContext>(null);
 	const scheduleTimeRef = useRef<number>(0);
+    const firstAudio = useRef<boolean>(false);
+
+    const { ttsStart, ttsEnd } = useLatencyLogger();
 
 	const startPlayer = useCallback(() => {
 		if (!audioContextRef.current) {
@@ -36,14 +40,21 @@ export function useAudioPlayer( {sampleRate = 24_000, numChannels = 1, bitsPerSa
 				const source = ctx.createBufferSource();
 				source.buffer = audioBuffer;
 				source.connect(ctx.destination);
+                if (!firstAudio.current) {
+                    firstAudio.current = true;
+                    ttsStart();
+                    setSystemSpeaking(true);
+                }
 				source.start(startTime);
 
 				scheduleTimeRef.current = startTime + audioBuffer.duration;
 
                 source.onended = () => {
-                    // When the last scheduled chunk ends, mark systemSpeaking false
+                    // When the last scheduled chunk ends, mark systemSpeaking false and log end of tts
                     if (scheduleTimeRef.current <= ctx.currentTime + 0.01) {
                         setSystemSpeaking(false);
+                        firstAudio.current = false;
+                        ttsEnd();
                     }
                 };
 			} catch (e) {
