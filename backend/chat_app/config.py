@@ -12,6 +12,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 USE_CLOUD     = False  # (return default values instead of using the cloud APIs while testing)
 USE_LLM       = os.getenv("APP_ENVIRONMENT", "production") != "sandbox" # (don't actually need to load the LLM to test)
 THIS_LANGUAGE = "en-US"
+RHUBARB_PATH  = "backend\chat_app\rhubarb"
 
 # LLM Parameters
 MAX_LENGTH = 256
