@@ -16,11 +16,12 @@ import { useLocalChatSession } from "@/hooks/live-chat";
 // ToDo: Might need to add the user/token stuff to the websocket
 export function Chat() {
     const navigate = useNavigate();
+    const [botMessage, setBotMessage] = useState("Chat with me!")
 
     // Local (frontend, view-related only) chat tracking
     const { pushMessage, session } = useLocalChatSession();
     const onUserUtterance   = (text: string) => { pushMessage("user",      text); };
-    const onSystemUtterance = (text: string) => { pushMessage("assistant", text); };
+    const onSystemUtterance = (text: string) => { pushMessage("assistant", text); setBotMessage(text); };
   
     // Live-chat hook
     const { start, stop, save } = useLiveChat({ onUserUtterance, onSystemUtterance, onScores: () => {} });
@@ -49,7 +50,7 @@ export function Chat() {
         </div>
 
         {/* View of the chatHistory and/or Avatar */}
-        <LiveChatView messages={session.messages}/> 
+        <LiveChatView messages={session.messages} botMessage={botMessage}/> 
 
         {/* SaveChatModal, controlled with props */}
         <SaveChatModal show={showModal} onClose={() => setShowModal(false)} saveChat={saveChat}/>
