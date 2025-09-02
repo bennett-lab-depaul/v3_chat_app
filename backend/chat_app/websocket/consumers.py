@@ -18,9 +18,9 @@ from ..services              import logging_utils as lu
 from ..                      import config as cf
 from ..services.db_services  import ChatService
 from .services.bg_helpers    import fire_and_log
-from .services.chatHelpers   import generate_LLM_response
+from .services.chatHelpers   import handle_transcription, handle_stt_output
 from .services.audioHelpers  import extract_audio_biomarkers, extract_text_biomarkers
-from .services.speechProvider import SpeechToTextProvider, TextToSpeechProvider
+from .services.speechProvider import SpeechToTextProvider
 
 SECOND = 32_000 # How big a chunk of audio of one second is, in bytes
 CHUNK_SIZE = 8_192 # How many bytes of audio we can send at a time
@@ -97,8 +97,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # Create new speech provider instances
         loop_stt = asyncio.get_event_loop()
         # TODO: Define a function for on_timestamps_callback to perform when we receive word-level timestamps
-        self.stt_provider = SpeechToTextProvider(on_transcription_callback=self._handle_transcription, on_timestamps_callback=None, loop=loop_stt)
-        self.tts_provider = TextToSpeechProvider()
+        self.stt_provider = SpeechToTextProvider(handle_stt_output, self._add_message_CB, self.send, self._utt_bio, None, loop_stt)
         self.audio_buffer = bytearray()
 
         # -----------------------------------------------------------------------
@@ -139,7 +138,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # Overlapped Speech
         if   data["type"] == "overlapped_speech" : await self._handle_overlap(data=data)
         elif data["type"] == "audio_data"   : await self._handle_audio_data   (data)
-        elif data["type"] == "transcription": await self._handle_transcription(data)
+        elif data["type"] == "transcription": await handle_transcription(data, self._add_message_CB, self.send, self._utt_bio)
         elif data["type"] == "end_chat"     : await database_sync_to_async(ChatService.close_session)(self.user, self.session, source=self.source)
         elif data["type"] == "toggle_stream": self._toggle_stream(data)
         
@@ -175,54 +174,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
         # Return the updated context (if the message was from the user, this will be used for the LLM)
         if role == "user": return self.context_buffer
-    
-    # Process and respond to the user's utterance text
-    async def _handle_transcription(self, data):
-        t0 = time()
-        text = data["data"]
-        logger.info(f"{cf.YELLOW}[LLM] User utt received {text.lower()}  {cf.RESET}")
-        
-        # Send the transcribed user utterance to the frontend; assumes the backend is handling all the STT
-        await self.send(json.dumps({'type': 'user_utt', 'data': text, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
-        
-
-        # -----------------------------------------------------------------------
-        # 1) Process the users message & reply with the LLM ASAP
-        # -----------------------------------------------------------------------
-        await self._add_message_CB(role="user", text=text, time=time())
-
-        # -----------------------------------------------------------------------
-        # 2) Get the LLMs response (awaited since it is the most important/longest process)
-        # -----------------------------------------------------------------------
-        t1 = time(); logger.info(f"{lu.YELLOW}[LLM] Sending LLM request... {lu.RESET}")
-        system_utt = await generate_LLM_response(self.context_buffer)
-        t2 = time(); logger.info(f"{lu.YELLOW}[LLM] LLM response received: (in {(t2-t1):.4f}) \n{lu.BG_MAGENTA}{system_utt} {lu.RESET}")
-        
-        # Immediately send the response back through the websocket
-        await self.send(json.dumps({'type': 'llm_response', 'data': system_utt, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
-                
-        # Synthesize the speech 
-        speech = self.tts_provider.synthesize_speech(system_utt, "wav")
-        fire_and_log(self._handle_speech(speech))
-        t3 = time(); logger.info(f"{lu.YELLOW}[LLM] Response sent {(t3-t2):.4f}s ({(t3-t0):.4f}s total). {lu.RESET}")
-        
-        # -----------------------------------------------------------------------
-        # 2) Background persistence & biomarkers
-        # -----------------------------------------------------------------------
-        await self._add_message_CB(role="assistant", text=system_utt, time=time())
-
-        # On-utterance biomarker scores (run in a thread so we don't block the loop)
-        fire_and_log(self._utt_bio())
-        
-    async def _handle_speech(self, audio_bytes: bytes) -> None:
-        # Splits audio data into smaller chunks so we can send it to the frontend
-        n_chunks = ceil(len(audio_bytes) / CHUNK_SIZE)
-        for i in range(n_chunks):
-            chunk = audio_bytes[i * CHUNK_SIZE:(i + 1) * CHUNK_SIZE]
-            await self.send(json.dumps({
-                "type": "audio_chunk", 
-                "data": json.dumps({"data": base64.b64encode(chunk).decode('utf-8')})
-            }))
         
     # =======================================================================
     # Audio Data
