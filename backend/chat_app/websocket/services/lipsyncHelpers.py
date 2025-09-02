@@ -35,7 +35,7 @@ def run_rhubarb(infile: str, outfile: str):
         logger.error(f"{cf.RED}Rhubarb executable not found at {rhubarb_path}. Please check your configuration.")
         return
     
-    command = [rhubarb_path, '-o', outfile, infile, "-r", "phonetic", "-f", "json"]
+    command = ["./{rhubarb_path}", '-o', outfile, infile, "-r", "phonetic", "-f", "json"]
     
     try:
         subprocess.run(command, check=True)
