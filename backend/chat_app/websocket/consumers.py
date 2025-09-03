@@ -23,7 +23,6 @@ from .services.audioHelpers  import extract_audio_biomarkers, extract_text_bioma
 from .services.speechProvider import SpeechToTextProvider
 
 SECOND = 32_000 # How big a chunk of audio of one second is, in bytes
-CHUNK_SIZE = 8_192 # How many bytes of audio we can send at a time
 
 
 # ======================================================================= ===================================
@@ -59,7 +58,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             get_or_create_active_session(user) will return a chat if it's still active. The consumer builds a brand-new 
             context_buffer from those persisted messages so the LLM has context.
         """
-        # -----------------------------------------------------------------------
+       # -----------------------------------------------------------------------
         # 1) Authentication Block 
         # -----------------------------------------------------------------------
         # Authenticate before accepting connection (uses custom "unauth" code)
@@ -69,10 +68,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         self.user   = self.scope["user"]
         self.source = self.scope.get("source", "unknown")
         await self.accept()
-
         logger.info(f"{cf.RLINE_1}{cf.RED}[WS] ChatSession opened for {self.user} from {self.source} {cf.RESET}{cf.RLINE_2}")
         
-
         # I don't think any frontend uses these during the chat right now, but I'll leave this option in
         self.return_biomarkers = False # (self.source in ["webapp"])
 
@@ -85,7 +82,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # TODO: I added the timestamps in just now for biomarker scores, but I actually don't really like how this works at the moment...
         # Actually since I want to remove the "resume" chat thing, probably don't need to do this with the context buffer (loading in old data)
         self.context_buffer = [(m.role, m.content, m.ts.timestamp()) for m in recent]
-        
+
         # Adding one default message at the start of the chat every time (so I have a reference timestamp before every user message)
         self.context_buffer = [("assistant", "How can I help you today?", time())] + self.context_buffer
 
@@ -96,7 +93,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         
         # Create new speech provider instances
         loop_stt = asyncio.get_event_loop()
-        # TODO: Define a function for on_timestamps_callback to perform when we receive word-level timestamps
+        # TODO: Define a function for ts_callback to perform when we receive word-level timestamps
         self.stt_provider = SpeechToTextProvider(handle_stt_output, self._add_message_CB, self.send, self._utt_bio, None, loop_stt)
         self.audio_buffer = bytearray()
 
@@ -135,13 +132,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     # Handle Incoming Data
     # ======================================================================= ===================================
     async def receive_json(self, data, **kwargs):
-        # Overlapped Speech
         if   data["type"] == "overlapped_speech" : await self._handle_overlap(data=data)
-        elif data["type"] == "audio_data"   : await self._handle_audio_data   (data)
-        elif data["type"] == "transcription": await handle_transcription(data, self._add_message_CB, self.send, self._utt_bio)
-        elif data["type"] == "end_chat"     : await database_sync_to_async(ChatService.close_session)(self.user, self.session, source=self.source)
+        elif data["type"] == "audio_data"        : await self._handle_audio_data(data)
+        elif data["type"] == "transcription"     : await handle_transcription(data, msg_callback=self._add_message_CB, send_callback=self.send, bio_callback=self._utt_bio)
+        elif data["type"] == "end_chat"          : await database_sync_to_async(ChatService.close_session)(self.user, self.session, source=self.source)
         elif data["type"] == "toggle_stream": self._toggle_stream(data)
-        
+
     # -----------------------------------------------------------------------
     # Overlapped Speech
     # -----------------------------------------------------------------------
@@ -159,7 +155,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         utterance_biomarkers = await extract_text_biomarkers(self.context_buffer)
         fire_and_log(database_sync_to_async(ChatService.add_biomarkers_bulk)(self.session, utterance_biomarkers))
         if self.return_biomarkers: await self.send(json.dumps({"type": "biomarker_scores", "data": utterance_biomarkers}))
-        
+    
     async def _add_message_CB(self, role, text, time):
         """
         Add messages to the database & update the local context.
@@ -180,7 +176,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     # =======================================================================
     async def _handle_audio_data(self, data):
         
-         # Generate the transcript from the audio data
+         # Send audio to the speech to text provider
         self.stt_provider.send_audio(data)
                             
         # # Generate the audio-related biomarker scores

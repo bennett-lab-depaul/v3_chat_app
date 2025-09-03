@@ -17,7 +17,6 @@ from .bg_helpers import fire_and_log
 ERROR_UTTERANCE = "I'm sorry, I encountered an error while processing your request."
 test = "\033[42m"
 
-SECOND = 32_000 # How big a chunk of audio of one second is, in bytes
 CHUNK_SIZE = 8_192 # How many bytes of audio we can send at a time
 
 # ======================================================================= ===================================
@@ -67,7 +66,7 @@ async def handle_stt_output(data, msg_callback, send_callback, bio_callback):
     fire_and_log(handle_speech(speech, send_callback))
     logger.info(f"{lu.YELLOW}[LLM] Response sent to frontend. {lu.RESET}")
     
-async def handle_speech(audio_bytes: bytes, send_callback) -> None:
+async def handle_speech(audio_bytes: bytes, send_callback: function) -> None:
         # Splits audio data into smaller chunks so we can send it to the frontend
         n_chunks = ceil(len(audio_bytes) / CHUNK_SIZE)
         for i in range(n_chunks):
