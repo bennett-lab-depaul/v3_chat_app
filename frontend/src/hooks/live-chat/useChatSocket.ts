@@ -51,6 +51,8 @@ export default function useChatSocket({
             onUserUtt(data);
         } else if (type === "audio_chunk") {
             onAudio(data);
+        } else if (type === "lipsync_data") {
+            console.log("Received lipsync data: ", data)
         }
     }, [onLLMResponse, onScores]);
 
