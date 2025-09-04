@@ -3,17 +3,82 @@
         Process the users message & reply with the LLM ASAP 
 ======================================================================= 
 """
-import json, logging, base64
+import json, logging, asyncio, base64
 from math import ceil
 logger = logging.getLogger(__name__)
 
 from time        import time
+from datetime    import datetime, timezone
 from ...         import config        as cf
 from ...services import logging_utils as lu 
+from .speechProvider import TextToSpeechProvider
+from .bg_helpers import fire_and_log
 
 ERROR_UTTERANCE = "I'm sorry, I encountered an error while processing your request."
 test = "\033[42m"
 
+CHUNK_SIZE = 8_192 # How many bytes of audio we can send at a time
+
+# ======================================================================= ===================================
+# Process the users message & reply with the LLM ASAP
+# ======================================================================= ===================================
+async def handle_transcription(data, msg_callback, send_callback, bio_callback):
+    """ Takes three callbacks from the consumers object """
+    t0 = time()
+    
+    # -----------------------------------------------------------------------
+    # 1) Process the users message
+    # -----------------------------------------------------------------------
+    text = data["data"].lower()
+    logger.info(f"{lu.YELLOW}[LLM] User utt received: \n{lu.BG_GREEN}{text} {lu.RESET}")
+
+    # Fire-and-forget DB write for the "user" message & update in-memory context
+    context_buffer = await msg_callback(role="user", text=text, time=time())
+
+    # -----------------------------------------------------------------------
+    # 2) Get the LLMs response (awaited since it is the most important/longest process)
+    # -----------------------------------------------------------------------
+    t1 = time(); logger.info(f"{lu.YELLOW}[LLM] Sending LLM request... {lu.RESET}")
+    system_utt = await generate_LLM_response(context_buffer)
+    t2 = time(); logger.info(f"{lu.YELLOW}[LLM] LLM response received: (in {(t2-t1):.4f}) \n{lu.BG_MAGENTA}{system_utt} {lu.RESET}")
+
+    # Immediately send the response back through the websocket
+    await send_callback(json.dumps({'type': 'llm_response', 'data': system_utt, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
+    t3 = time(); logger.info(f"{lu.YELLOW}[LLM] Response sent {(t3-t2):.4f}s ({(t3-t0):.4f}s total). {lu.RESET}")
+
+    # -----------------------------------------------------------------------
+    # 3) Background persistence & biomarkers
+    # -----------------------------------------------------------------------
+    # Fire-and-forget DB write for the "assistant" message & update in-memory context
+    await msg_callback(role="assistant", text=system_utt, time=time())
+
+    # On-utterance Biomarkers: fire-and-forget so long jobs don't block the next turn (could also use the context buffer here)
+    asyncio.create_task(bio_callback())
+    return system_utt
+    
+async def handle_stt_output(data, msg_callback, send_callback, bio_callback):
+    user_utt = data['data']
+    
+    await send_callback(json.dumps({'type': 'user_utt', 'data': user_utt, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
+    logger.info(f"{lu.YELLOW}[LLM] Sent user utterance to frontend: {user_utt} {lu.RESET}")
+    
+    system_utt = await handle_transcription(data, msg_callback, send_callback, bio_callback)
+    
+    # Synthesize the speech 
+    tts_provider = TextToSpeechProvider()
+    speech = tts_provider.synthesize_speech(system_utt, "wav")
+    fire_and_log(handle_speech(speech, send_callback))
+    logger.info(f"{lu.YELLOW}[LLM] Response sent to frontend. {lu.RESET}")
+    
+async def handle_speech(audio_bytes: bytes, send_callback) -> None:
+        # Splits audio data into smaller chunks so we can send it to the frontend
+        n_chunks = ceil(len(audio_bytes) / CHUNK_SIZE)
+        for i in range(n_chunks):
+            chunk = audio_bytes[i * CHUNK_SIZE:(i + 1) * CHUNK_SIZE]
+            await send_callback(json.dumps({
+                "type": "audio_chunk", 
+                "data": json.dumps({"data": base64.b64encode(chunk).decode('utf-8')})
+            }))
 # ======================================================================= ===================================
 # Generate LLM Response
 # ======================================================================= ===================================
