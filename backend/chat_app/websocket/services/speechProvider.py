@@ -29,6 +29,7 @@ class SpeechToTextProvider:
         self._bio_callback = bio_callback
         self.ts_callback = on_timestamps_callback # The function to call when word-level timestamps are received
         self._loop = loop or asyncio.get_event_loop()
+        self._recent_transcript = None
 
     def _audio_generator(self):
         '''Generates audio requests from the audio buffer.'''
@@ -89,10 +90,13 @@ class SpeechToTextProvider:
             for result in response.results:
                 if result.is_final:
                     transcript = result.alternatives[0].transcript
-                    logger.info(f"{cf.RED}[Transcription] Received final transcription: {transcript}.")
+                    if transcript == self._recent_transcript: # in case of duplicate final transcripts
+                        continue
+                    self._recent_transcript = transcript
+                    logger.info(f"{cf.RED}[Transcription] Received final transcription: {transcript}")
                     word_timestamps = self._get_word_timestamps(datetime.now(), result.alternatives[0].words)
                     if self._transcript_callback:
-                        data = {"type": "transcript", "data": transcript}
+                        data = {"type": "user_utt", "data": transcript}
                         if asyncio.iscoroutinefunction(self._transcript_callback):
                             asyncio.run_coroutine_threadsafe(
                                 self._transcript_callback(data, self._msg_callback, self._send_callback, self._bio_callback),

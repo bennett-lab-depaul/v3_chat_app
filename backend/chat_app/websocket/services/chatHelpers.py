@@ -54,11 +54,15 @@ async def handle_transcription(data, msg_callback, send_callback, bio_callback):
 
     # On-utterance Biomarkers: fire-and-forget so long jobs don't block the next turn (could also use the context buffer here)
     asyncio.create_task(bio_callback())
-
-async def handle_stt_output(data, msg_callback, send_callback, bio_callback):
-    system_utt = data['data']
+    return system_utt
     
-    await handle_transcription(data, msg_callback, send_callback, bio_callback)
+async def handle_stt_output(data, msg_callback, send_callback, bio_callback):
+    user_utt = data['data']
+    
+    await send_callback(json.dumps({'type': 'user_utt', 'data': user_utt, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
+    logger.info(f"{lu.YELLOW}[LLM] Sent user utterance to frontend: {user_utt} {lu.RESET}")
+    
+    system_utt = await handle_transcription(data, msg_callback, send_callback, bio_callback)
     
     # Synthesize the speech 
     tts_provider = TextToSpeechProvider()
@@ -66,7 +70,7 @@ async def handle_stt_output(data, msg_callback, send_callback, bio_callback):
     fire_and_log(handle_speech(speech, send_callback))
     logger.info(f"{lu.YELLOW}[LLM] Response sent to frontend. {lu.RESET}")
     
-async def handle_speech(audio_bytes: bytes, send_callback: function) -> None:
+async def handle_speech(audio_bytes: bytes, send_callback) -> None:
         # Splits audio data into smaller chunks so we can send it to the frontend
         n_chunks = ceil(len(audio_bytes) / CHUNK_SIZE)
         for i in range(n_chunks):
