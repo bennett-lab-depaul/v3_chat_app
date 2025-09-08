@@ -52,7 +52,7 @@ export default function useChatSocket({
         } else if (type === "audio_chunk") {
             onAudio(data);
         } else if (type === "lipsync_data") {
-            console.log("Received lipsync data: ", data)
+            console.log("Received lipsync data")
         }
     }, [onLLMResponse, onScores]);
 

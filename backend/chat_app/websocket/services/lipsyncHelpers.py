@@ -52,6 +52,7 @@ def load_rhubarb_json(file_path: str):
     file_path = f"{os.getcwd()}/chat_app/rhubarb/outputs/{file_path}"
     
     try:
+        data = None
         with open(file_path, 'r') as f:
             data = json.dumps(json.load(f))
         logger.info(f"{cf.YELLOW}Loaded Rhubarb JSON data from {file_path}.")
