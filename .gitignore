@@ -44,4 +44,3 @@ frontend/package-lock.json
 
 # VS Code
 .vscode/*
-tsconfig.json
