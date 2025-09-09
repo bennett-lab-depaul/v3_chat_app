@@ -22,7 +22,7 @@ export function getRecentMessage(messages: LocalChatMessage[], fallback = defaul
 // ====================================================================
 // LiveChatView (show the Avater and/or the messages from the conversation)
 // ====================================================================
-export default function LiveChatView({ messages }: { messages: LocalChatMessage[] }) {
+export default function LiveChatView({ messages, animation }: { messages: LocalChatMessage[], animation: string }) {
     const [viewMode, setViewMode] = useState(4);
 
     // --------------------------------------------------------------------
@@ -34,14 +34,14 @@ export default function LiveChatView({ messages }: { messages: LocalChatMessage[
 
         // Chat history or Avatar views separately
         if      (viewMode == 1) {return (<div className={chatHistoryWrapper1}> <ChatMessages messages      = {                  messages  }/> </div>);}
-        else if (viewMode == 3) {return (<div className="h-[65vh] mb-[2rem]">  <AvatarView  chatbotMessage = { getRecentMessage(messages) }/> </div>);}
+        else if (viewMode == 3) {return (<div className="h-[65vh] mb-[2rem]">  <AvatarView animation={animation}  chatbotMessage = { getRecentMessage(messages) }/> </div>);}
 
         // Default / main view for the app -- keeping the other ones still though for debugging (want to be able to see the chat history)
         else if (viewMode == 4) {
             return (
                 <div className="h-[65vh] mb-[2rem]">
                     <div className="my-[1rem] flex justify-center border-1 border-black p-[1em] rounded-lg mx-[25%]"> { getRecentMessage(messages) } </div>
-                    <div className="h-full mt-[1em] w-full"> <Avatar /> </div>
+                    <div className="h-full mt-[1em] w-full"> <Avatar animation={animation} /> </div>
                 </div>
             );
         }
@@ -51,7 +51,7 @@ export default function LiveChatView({ messages }: { messages: LocalChatMessage[
             return (
                 <div className="flex md:flex-row flex-col h-[65vh] mt-[1em] w-full mb-[2rem]">
                     <div className={chatHistoryWrapper2}               > <ChatMessages messages      = {                  messages  }/> </div>
-                    <div className="md:w-1/2 w-[100vw] md:h-full h-1/2"> <AvatarView  chatbotMessage = { getRecentMessage(messages) }/> </div>
+                    <div className="md:w-1/2 w-[100vw] md:h-full h-1/2"> <AvatarView animation={animation} chatbotMessage = { getRecentMessage(messages) }/> </div>
                 </div> 
                 );
         }

@@ -49,7 +49,7 @@ export function Chat() {
         </div>
 
         {/* View of the chatHistory and/or Avatar */}
-        <LiveChatView messages={session.messages}/> 
+        <LiveChatView messages={session.messages} animation={'NOD YES'} /> 
 
         {/* SaveChatModal, controlled with props */}
         <SaveChatModal show={showModal} onClose={() => setShowModal(false)} saveChat={saveChat}/>
