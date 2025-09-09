@@ -13,9 +13,8 @@ import ChatHistory from "@/pages/dashboard/components/ChatHistory";
 // ====================================================================
 // Kinda want to break up into weeks and do today, this week, last week etc.
 export function History() {
-    const { data: sessions, isLoading } = useChatSessions();
+    const { data: sessions, isLoading, refresh } = useChatSessions();
     const [viewMode, setViewMode] = useState(0); // 0: chat, 1: week, 2: month ?
-
 
     // Sort chats utility
     const sortChats = () => { console.log("sortChats() not implemented yet..."); }
@@ -29,7 +28,8 @@ export function History() {
         <div className="flex align-middle gap-[1rem]">
             {/* Title & Sort Option */}
             <span className={h3}> Chat History </span>
-            <button onClick={sortChats} className="text-violet-500 underline hover:text-purple-900"> Sort Newest to Oldest </button>
+            <button onClick={sortChats      } className="text-violet-500 underline hover:text-purple-900"> Sort Newest to Oldest </button>
+            <button onClick={() => refresh()} className="text-violet-500 underline hover:text-purple-900"> Refresh </button>
 
             {/* Buttons to change the view mode for the page */}
             <div className="ml-auto flex justify-center">

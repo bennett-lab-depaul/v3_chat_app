@@ -1,45 +1,78 @@
+""" 
+=======================================================================
+        Process the users message & reply with the LLM ASAP 
+======================================================================= 
+"""
+import json, asyncio, logging
+logger = logging.getLogger(__name__)
 
-from time import time
-from ...  import config as cf
+from time        import time
+from datetime    import datetime, timezone
+from ...         import config        as cf
+from ...services import logging_utils as lu 
 
-from ..biomarkers.biomarker_config import LAST_X_CHAT_ENTRIES
-# history = chat_history[-LAST_X_CHAT_ENTRIES:]
-
-logger = cf.logging.getLogger("__asr__") # ---- why does this say ASR again??
-
-# ======================================================================= ===================================
-# LLM Helpers
-# ======================================================================= ===================================
 ERROR_UTTERANCE = "I'm sorry, I encountered an error while processing your request."
+test = "\033[42m"
 
+# ======================================================================= ===================================
+# Process the users message & reply with the LLM ASAP
+# ======================================================================= ===================================
+async def handle_transcription(data, msg_callback, send_callback, bio_callback):
+    """ Takes three callbacks from the consumers object """
+    t0 = time()
+    
+    # -----------------------------------------------------------------------
+    # 1) Process the users message
+    # -----------------------------------------------------------------------
+    text = data["data"].lower()
+    logger.info(f"{lu.YELLOW}[LLM] User utt received: \n{lu.BG_GREEN}{text} {lu.RESET}")
+
+    # Fire-and-forget DB write for the "user" message & update in-memory context
+    context_buffer = await msg_callback(role="user", text=text, time=time())
+
+    # -----------------------------------------------------------------------
+    # 2) Get the LLMs response (awaited since it is the most important/longest process)
+    # -----------------------------------------------------------------------
+    t1 = time(); logger.info(f"{lu.YELLOW}[LLM] Sending LLM request... {lu.RESET}")
+    system_utt = await generate_LLM_response(context_buffer)
+    t2 = time(); logger.info(f"{lu.YELLOW}[LLM] LLM response received: (in {(t2-t1):.4f}) \n{lu.BG_MAGENTA}{system_utt} {lu.RESET}")
+
+    # Immediately send the response back through the websocket
+    await send_callback(json.dumps({'type': 'llm_response', 'data': system_utt, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
+    t3 = time(); logger.info(f"{lu.YELLOW}[LLM] Response sent {(t3-t2):.4f}s ({(t3-t0):.4f}s total). {lu.RESET}")
+
+    # -----------------------------------------------------------------------
+    # 3) Background persistence & biomarkers
+    # -----------------------------------------------------------------------
+    # Fire-and-forget DB write for the "assistant" message & update in-memory context
+    await msg_callback(role="assistant", text=system_utt, time=time())
+
+    # On-utterance Biomarkers: fire-and-forget so long jobs don't block the next turn (could also use the context buffer here)
+    asyncio.create_task(bio_callback())
+
+
+
+# ======================================================================= ===================================
 # Generate LLM Response
+# ======================================================================= ===================================
 async def generate_LLM_response(context_buffer):
     """
     Original stop characters included punctuation (but not all? '!')...
         stop=["<|end|>", ".", "?"]
+
+    Wrap the response logic in a try-except block. If the model throws an error, return a default response.
     """
-    # -----------------------------------------------------------------------
     # 1) Prepare a prompt for the LLM
-    # -----------------------------------------------------------------------
     full_prompt = prepare_LLM_input(context_buffer)
 
-    # -----------------------------------------------------------------------
     # 2) Get a response from the LLM (hosted on a webserver)
-    # -----------------------------------------------------------------------
-    LLM_start_time = time()
-
-    # Wrap the response logic in a try-except block. If the model throws an error, return a default response.
     try:
-        output = await cf.llm(full_prompt, max_tokens=cf.MAX_LENGTH, stop=["<|end|>"], echo=True) # 
+        output = await cf.llm(full_prompt, max_tokens=cf.MAX_LENGTH, stop=["<|end|>", "\n"], echo=True) 
         system_utt = (output["choices"][0]["text"].split("<|assistant|>")[-1]).strip()
 
-    except Exception as e: logger.error(f"Error in get_LLM_response: {e}"); system_utt = ERROR_UTTERANCE
+    except Exception as e: 
+        logger.error(f"Error in get_LLM_response: {e}"); system_utt = ERROR_UTTERANCE
 
-    # -----------------------------------------------------------------------
-    # 3) Log the response time and return
-    # -----------------------------------------------------------------------
-    logger.info(f"{cf.CYAN}[LLM] Received response in:    {(time() - LLM_start_time):6.4f}s {cf.RESET}")
-    
     return system_utt
 
 # -----------------------------------------------------------------------

@@ -30,5 +30,5 @@ export function useModelQuery<T>({queryKey, queryFn, empty, staleTime=DEFAULT_ST
     }, [query.isError, query.error]);
 
     // Return
-    return {...query, data: query.data ?? empty,};
+    return {...query, data: query.data ?? empty, refresh: query.refetch,};
 }

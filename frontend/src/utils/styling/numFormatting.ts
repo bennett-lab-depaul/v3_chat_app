@@ -31,7 +31,7 @@ export const msgDateFormat = new Intl.DateTimeFormat("en-US", {
 });
 
 
-export function formatElapsed(ms: number) {
+export function formatElapsed_s(ms: number) {
     const totalSeconds = Math.floor(ms / 1000);
     const h = Math.floor( totalSeconds / 3600);
     const m = Math.floor((totalSeconds % 3600) / 60);
@@ -41,4 +41,20 @@ export function formatElapsed(ms: number) {
     return h
         ? `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`
         : `${m}:${String(s).padStart(2, "0")}`;
+}
+
+export function formatElapsed(ms: number) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const h = Math.floor( totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    const msRemainder = ms % 1000;
+
+    // Always show 3-digit ms 
+    const msStr = String(msRemainder).padStart(3, "0");
+
+    // "H:MM:SS.mmm" if ≥ 1h, otherwise "M:SS.mmm"
+    return h
+        ? `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}.${msStr}`
+        : `${m}:${String(s).padStart(2, "0")}.${msStr}`;
 }

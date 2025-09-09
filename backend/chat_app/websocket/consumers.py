@@ -1,48 +1,28 @@
 # =======================================================================
 # Processes incoming messages, scores them, and responds
 # =======================================================================
-from django.apps import apps
-
-import json, asyncio, logging
-logger = logging.getLogger(__name__)
-
+from django.apps                import apps
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db                import database_sync_to_async
 
-from time     import time
-from datetime import datetime, timezone
+# Logging
+from time import time
+import json, asyncio, logging
+logger = logging.getLogger(__name__)
 
 # From this project
-from ..                      import config as cf
+from ..                      import config        as cf
+from ..services              import logging_utils as lu 
 from ..services.db_services  import ChatService
-from  .services.chatHelpers  import generate_LLM_response
+from  .services.bg_helpers   import fire_and_log
+from  .services.chatHelpers  import handle_transcription
 from  .services.audioHelpers import extract_audio_biomarkers, extract_text_biomarkers
-
-# ------------------------------------------------------------------
-# Helper: Start a background task and log any exception it raises --- put into another file
-# ------------------------------------------------------------------
-def fire_and_log(coro):
-    async def _runner():
-        try: await coro
-        except Exception: logger.exception("Background task crashed")
-    return asyncio.create_task(_runner())
-
 
 # ======================================================================= ===================================
 # ChatConsumer 
 # ======================================================================= ===================================
 class ChatConsumer(AsyncJsonWebsocketConsumer):
-    """
-    Have the ability here to add optional ASR/TTS in the frontend or backend by using different endpoints. If
-    a text message is received, assume ASR/TTS was done in the frontend and just reply with a message (could
-    also base this on the "source" field). If audio of a shorter length is received (would be every ~100 ms
-    or so), then we know we should be doing ASR/TTS in the backend here. The longer, 5 second, audio data we
-    receive is for the opensmile biomarkers, so a different "type" would be used for shorter audio.
-
-    * ToDo: send_json or do json.dumps inside send ?
-
-    """
-    MAX_CONTEXT = 10  # (how many recent messages to keep for the LLM)
+    MAX_CONTEXT = 5  # (how many recent messages to keep for the LLM)
 
     # =======================================================================
     # Open WebSocket Connection
@@ -54,7 +34,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             this is how we will do it. If the current active chat source is "buddyrobot" or "qtrobot" and we are connecting
             from "webapp" or "mobile", disable the chat functionality but send updates for the each utterance so the UI
             can follow along with each message in real time. 
-            ToDo: If the current ChatSession source is webapp and we are a robot, close it and remake a new one automatically.
 
         2) Load or create active session
             get_or_create_active_session(user) will return a chat if it's still active. The consumer builds a brand-new 
@@ -68,10 +47,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         self.user   = self.scope["user"]
         self.source = self.scope.get("source", "unknown")
         await self.accept()
-
         logger.info(f"{cf.RLINE_1}{cf.RED}[WS] ChatSession opened for {self.user} from {self.source} {cf.RESET}{cf.RLINE_2}")
         
-
         # I don't think any frontend uses these during the chat right now, but I'll leave this option in
         self.return_biomarkers = False # (self.source in ["webapp"])
 
@@ -81,11 +58,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         self.session = await database_sync_to_async(ChatService.get_or_create_active_session)(self.user, source=self.source)
         recent = await database_sync_to_async(lambda: list(self.session.messages.all().order_by("-start_ts")[: self.MAX_CONTEXT])[::-1])()
 
-        # ToDo: Check if the incoming source matches or doesn't match the source of the loaded session
-        # if not, do something....
-
-        # ToDo: I added the timestamps in just now for biomarker scores, but I actually don't really like how this works at the moment...
+        # TODO: I added the timestamps in just now for biomarker scores, but I actually don't really like how this works at the moment...
+        # Actually since I want to remove the "resume" chat thing, probably don't need to do this with the context buffer (loading in old data)
         self.context_buffer = [(m.role, m.content, m.ts.timestamp()) for m in recent]
+
+        # Adding one default message at the start of the chat every time (so I have a reference timestamp before every user message)
+        self.context_buffer = [("assistant", "How can I help you today?", time())] + self.context_buffer
 
         # Other misc. setup
         self.overlapped_speech_count  = 0.0
@@ -104,83 +82,65 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def disconnect(self, code):
         """
         # DO NOT close the session -- just clean local state.
+        --- Originally had pausing in here, but im just changing it so disconnects end the chat. ---
         """
         # 1) Close the ChatSession in the DB
-        
+        if self.session.is_active: await database_sync_to_async(ChatService.close_session)(self.user, self.session, source=self.source)
 
         # Cancel background tasks (if any -- none right now)
         for task in getattr(self, "_bg_tasks", []): task.cancel()
         await asyncio.gather(*getattr(self, "_bg_tasks", []), return_exceptions=True)
 
         # Reset some properties for the next connection
-        self.context_buffer = []
+        self.context_buffer           = []
         self.overlapped_speech_count  = 0.0
         self.audio_windows_count      = 0.0
         self.overlapped_speech_events = []
 
         logger.info(f"Client disconnected:  {code}") 
 
-
     # ======================================================================= ===================================
     # Handle Incoming Data
     # ======================================================================= ===================================
     async def receive_json(self, data, **kwargs):
-        # Overlapped Speech
-        if data["type"] == "overlapped_speech": 
-            self.overlapped_speech_count += 1
-            self.overlapped_speech_events.append(time())
-            logger.info(f"{cf.YELLOW}Overlapped speech detected. Count: {self.overlapped_speech_count} {cf.RESET}")
-    
-        # Audio data or text transcription
-        elif data["type"] == "audio_data"   : await self._handle_audio_data   (data)
-        elif data["type"] == "transcription": await self._handle_transcription(data)
-        elif data["type"] == "end_chat"     : await database_sync_to_async(ChatService.close_session)(self.user, self.session, source=self.source)
+        if   data["type"] == "overlapped_speech" : await self._handle_overlap(data=data)
+        elif data["type"] == "audio_data"        : await self._handle_audio_data(data)
+        elif data["type"] == "transcription"     : await handle_transcription(data, msg_callback=self._add_message_CB, send_callback=self.send, bio_callback=self._utt_bio)
+        elif data["type"] == "end_chat"          : await database_sync_to_async(ChatService.close_session)(self.user, self.session, source=self.source)
+
+    # -----------------------------------------------------------------------
+    # Overlapped Speech
+    # -----------------------------------------------------------------------
+    async def _handle_overlap(self, data=None):
+        self.overlapped_speech_count += 1
+        self.overlapped_speech_events.append(time())
+        logger.info(f"{lu.YELLOW}Overlapped speech detected. Count: {self.overlapped_speech_count} {lu.RESET}")
 
     # =======================================================================
     # Text Transcriptions
     # =======================================================================
-    # On-Utterance Biomarkers (saves them to the DB as soon as we get them)
-    async def _on_utterance_biomarkers(self):
+    # TODO: Because altered_grammar specifically is so slow, they will actually go to the db out of order. Need to add a manual time setting argument.
+    async def _utt_bio(self):
+        """ On-Utterance Biomarkers (saves them to the DB as soon as we get them). """
         utterance_biomarkers = await extract_text_biomarkers(self.context_buffer)
         fire_and_log(database_sync_to_async(ChatService.add_biomarkers_bulk)(self.session, utterance_biomarkers))
         if self.return_biomarkers: await self.send(json.dumps({"type": "biomarker_scores", "data": utterance_biomarkers}))
     
-    # Process and respond to the users utterance text
-    async def _handle_transcription(self, data):
-        t0 = time()
-        text = data["data"].lower()
-        logger.info(f"{cf.YELLOW}[LLM] User utt received {text}  {cf.RESET}")
-
-        # -----------------------------------------------------------------------
-        # 1) Process the users message & reply with the LLM ASAP
-        # -----------------------------------------------------------------------
+    async def _add_message_CB(self, role, text, time):
+        """
+        Add messages to the database & update the local context.
+            - Role must be "user" or "assistant"
+        """
         # Fire-and-forget DB write for the user message
-        fire_and_log(database_sync_to_async(ChatService.add_message)(self.session, "user", text))
+        fire_and_log(database_sync_to_async(ChatService.add_message)(self.session, role, text))
 
-        # Update in-memory context
-        self.context_buffer.append(("user", text, time()))
+        # Update in memory context
+        self.context_buffer.append((role, text, time))
         if len(self.context_buffer) > self.MAX_CONTEXT: self.context_buffer.pop(0)
 
-        # Get the LLMs response (awaited since it is the most important/longest process)
-        system_utt = await generate_LLM_response(self.context_buffer)
-
-        # Immediately send the response back through the websocket
-        await self.send(json.dumps({'type': 'llm_response', 'data': system_utt, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
-        logger.info(f"{cf.YELLOW}[LLM] Response sent in {(time()-t0):.4f}s. {system_utt}  {cf.RESET}")
-
-        # -----------------------------------------------------------------------
-        # 2) Background persistence & biomarkers
-        # -----------------------------------------------------------------------
-        # LLM/Assistant message
-        fire_and_log(database_sync_to_async(ChatService.add_message)(self.session, "assistant", system_utt))
-
-        # Update the in-memory buffer again
-        self.context_buffer.append(("assistant", system_utt, time()))
-        if len(self.context_buffer) > self.MAX_CONTEXT: self.context_buffer.pop(0)
-
-        # On-utterance biomarker scores (run in a thread so we don't block the loop)
-        fire_and_log(self._on_utterance_biomarkers())
-
+        # Return the updated context (if the message was from the user, this will be used for the LLM)
+        if role == "user": return self.context_buffer
+        
     # =======================================================================
     # Audio Data
     # =======================================================================

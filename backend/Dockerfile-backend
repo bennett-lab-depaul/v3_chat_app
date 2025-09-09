@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install -y \
     portaudio19-dev \
     python3-pyaudio \
     libasound2-dev \
-    openjdk-17-jre-headless
+    openjdk-21-jre-headless
 
 # --------------------------------------------------------------------
 # Install Python dependencies

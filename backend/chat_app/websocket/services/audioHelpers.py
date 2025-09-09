@@ -42,7 +42,7 @@ def handle_audio_data(data):
     try:
         # Decode the received base64 data to bytes & get the sample rate
         audio_bytes, sample_rate = base64.b64decode(data["data"]), data["sampleRate"]
-        logger.info(f"{cf.YELLOW}[Aud] Audio data received: {len(audio_bytes):,} bytes at {sample_rate:,}Hz")
+        logger.info(f"{cf.CYAN}[Aud] Audio data received: {len(audio_bytes):,} bytes at {sample_rate:,}Hz {cf.RESET}")
         
         # Normalize audio data
         audio_array = np.frombuffer(audio_bytes, dtype=np.int16)
@@ -102,7 +102,7 @@ async def extract_text_biomarkers(context_buffer):
     
     # Run heavy function in thread pool
     utterance_biomarkers = await loop.run_in_executor(_POOL, lambda: generate_utterance_biomarkers(context_buffer))
-    logger.info(f"{cf.CYAN}[Bio] Biomarkers done in:      {(time()-t0):5.4f}s {cf.RESET}")
+    logger.info(f"{cf.MAGENTA}[Bio] Biomarkers done in:      {(time()-t0):5.4f}s {cf.RESET}")
 
     # Return the biomarkers
     return utterance_biomarkers 
