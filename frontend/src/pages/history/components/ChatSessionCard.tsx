@@ -18,7 +18,6 @@ export default function ChatSessionCard({ session, sessions } : { session: ChatS
     const navigate = useNavigate();
     const toChatDetails = () => { navigate("/chatDetails", { state: { chatSession: session } }) };
 
-    console.log(session)
     // Get scores to compare this chat against
     const chatDate = new Date(session.date);
     const prevScores = averageScore(getSessionsBefore(sessions, chatDate));
@@ -48,6 +47,7 @@ export default function ChatSessionCard({ session, sessions } : { session: ChatS
             <div className="flex flex-col my-[0.25rem] py-[0.5rem] gap-[0.5rem] items-start">
                 <span> <b>Topics covered:</b> {session.topics} </span>
                 <span> <b>Sentiment:</b> {session.sentiment} </span>
+                <span> <b>VAD Scores:</b> {JSON.stringify(session.vad_scores)} </span>
                 <span className="fst-italic"> <b>ToDo:</b> Composite score </span>
             </div>
 
