@@ -61,10 +61,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # TODO: I added the timestamps in just now for biomarker scores, but I actually don't really like how this works at the moment...
         # Actually since I want to remove the "resume" chat thing, probably don't need to do this with the context buffer (loading in old data)
         self.context_buffer = [(m.role, m.content, m.ts.timestamp()) for m in recent]
-
+        
         # Adding one default message at the start of the chat every time (so I have a reference timestamp before every user message)
         self.context_buffer = [("assistant", "How can I help you today?", time())] + self.context_buffer
-
+        
         # Other misc. setup
         self.overlapped_speech_count  = 0.0
         self.audio_windows_count      = 0.0
@@ -155,4 +155,3 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # Update turntaking (12 audio windows for 1 minute of data)
         self.audio_windows_count += 1
         self.overlapped_speech_count = self.overlapped_speech_count / (self.audio_windows_count / 12)
-     
