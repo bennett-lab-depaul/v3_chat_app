@@ -95,6 +95,7 @@ export interface ChatSession {
 
   topics    : string[];        // stored as JSONField
   sentiment : number | null;
+  vad_scores: JSON | null;
   notes     : string | null;
 
   messages        : ChatMessage[];

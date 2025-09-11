@@ -27,7 +27,7 @@ def sentiment_scores(sentence): # From Geeks for Geeks
     else:                                     return "Neutral"
     
 def get_topics(text): # From freeCodeCamp
-    stopwords = stopwords.words("english")
+    eng_stopwords = stopwords.words("english")
     #convert article to tokens
     tokens = word_tokenize(text)
     
@@ -35,7 +35,7 @@ def get_topics(text): # From freeCodeCamp
     alpha_lower_tokens = [word.lower() for word in tokens if word.isalpha()]
 
     #remove stopwords
-    alpha_no_stopwords = [word for word in alpha_lower_tokens if word not in stopwords]
+    alpha_no_stopwords = [word for word in alpha_lower_tokens if word not in eng_stopwords]
 
     #Count word
     BoW = Counter(alpha_no_stopwords)
@@ -56,7 +56,7 @@ def get_sentiment_topics(messages):
     topics = get_topics(text)
     return sentiment, topics
 
-vad_scores = pd.read_csv("nrc-vad.csv", index_col="Word")
+vad_scores = pd.read_csv("chat_app/services/nrc-vad.csv", index_col="term")
 def get_vad_scores(messages):
     text = get_message_text(messages)
     # Clean text up (maybe use re here too?)

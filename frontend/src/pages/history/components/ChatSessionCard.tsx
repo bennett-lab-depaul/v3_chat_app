@@ -18,6 +18,7 @@ export default function ChatSessionCard({ session, sessions } : { session: ChatS
     const navigate = useNavigate();
     const toChatDetails = () => { navigate("/chatDetails", { state: { chatSession: session } }) };
 
+    console.log(session)
     // Get scores to compare this chat against
     const chatDate = new Date(session.date);
     const prevScores = averageScore(getSessionsBefore(sessions, chatDate));
