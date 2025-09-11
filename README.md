@@ -72,7 +72,9 @@ SSH:/home/user/
 +│   │   │   │   ├── new_LSA.csv
  │   │   │   │   └── ...
  │   │   │   └── ...
-+│   │   ├── .env                 # Created programmatically during startup script
+ │   │   │
++│   │   ├── google-stt-key.json
+ │   │   ├── requirements-web.txt
  │   │   └── ...
  │   │
  │   ├── frontend/

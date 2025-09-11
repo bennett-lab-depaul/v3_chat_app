@@ -4,13 +4,15 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const defaultModel = 'gemini-2.0-flash-live-001';
 const defaultSampleRateHertz = 16_000;
 
+// Configuration from .env variables
+const apiKey = import.meta.env.VITE_SPEECH_KEY || "";
+
 /*  ====================================================================
  *  GeminiASR
  *  ====================================================================
  *  Wrapper around Gemini streaming ASR.
  *
  *  constructor(opts) expects:
- *      apiKey                   : Google AI key
  *      onUtterance(text)        : final transcript callback
  *      onPartial(text)          : (optional) partial transcript callback
  *      onUserSpeakingChange(b)  : (optional) speaking flag callback
@@ -22,7 +24,7 @@ const defaultSampleRateHertz = 16_000;
  *  stop_stream()                : close session
  * ==================================================================== */
 export class GeminiASR {
-    constructor({ apiKey, onUtterance, onPartial, onUserSpeakingChange, onUserSpeakingStart, model, sourceSampleRateHertz }) {
+    constructor({ onUtterance, onPartial, onUserSpeakingChange, onUserSpeakingStart, model, sourceSampleRateHertz }) {
         if (!apiKey) throw new Error('GeminiASR requires an API key.');
 
         this.genai = new GoogleGenerativeAI({ apiKey });
@@ -87,7 +89,6 @@ export class GeminiASR {
  *  Uses the same live session mode but asks for AUDIO responses.
  *
  *  constructor(opts) expects:
- *      apiKey                 : Google AI key
  *      onStart() / onDone()   : (optional) hooks
  *      model                  : live model name (default flash-live)
  *
@@ -95,7 +96,7 @@ export class GeminiASR {
  *  stop()       : cancel current playback
  *  ==================================================================== */
 export class GeminiTTS {
-    constructor({ apiKey, onStart, onDone, model }) {
+    constructor({ onStart, onDone, model }) {
         if (!apiKey) throw new Error('GeminiTTS requires an API key.');
         
         this.genai   = new GoogleGenerativeAI({ apiKey });
