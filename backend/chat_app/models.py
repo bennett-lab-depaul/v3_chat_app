@@ -38,7 +38,7 @@ class ChatSession(models.Model):
     notes     = models.TextField(**init_args)
     topics    = models.CharField(**init_args, max_length=255, default="N/A")
     sentiment = models.CharField(**init_args, max_length=255, default="N/A")
-    vad_scores = models.JSONField(**init_args)
+    vad_scores = models.JSONField(**init_args, default="N/A")
 
     class Meta:
         constraints = [UniqueConstraint(fields=["user"], condition=Q(is_active=True), name="unique_active_session_per_user",),] # One active session per user

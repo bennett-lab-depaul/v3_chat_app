@@ -11,10 +11,6 @@ from nltk.corpus          import stopwords
 
 from collections import Counter
 
-def get_message_text(messages, sender="You"):
-    return " ".join([message["message"] for message in messages if (message["sender"] == sender)])
-
-
 def sentiment_scores(sentence): # From Geeks for Geeks
     # Create a SentimentIntensityAnalyzer object.
     sentiment_analyzer = SentimentIntensityAnalyzer()
@@ -51,14 +47,14 @@ def get_topics(text): # From freeCodeCamp
     return str(topics)[1:-1].replace("'", "")
 
 def get_sentiment_topics(messages):
-    text = get_message_text(messages)
+    text = " ".join(messages)
     sentiment = sentiment_scores(text)
     topics = get_topics(text)
     return sentiment, topics
 
 vad_scores = pd.read_csv("chat_app/services/nrc-vad.csv", index_col="term")
 def get_vad_scores(messages):
-    text = get_message_text(messages)
+    text = " ".join(messages)
     # Clean text up (maybe use re here too?)
     words = text.lower().split()
     

@@ -45,7 +45,7 @@ class ChatService:
         msgs = (ChatMessage.objects
            .filter(session=session)             # could also stack .filter(role="user")
            .order_by("ts")                      # or "start_ts", "id" ?
-           .values_list("content", flat=True))  # returns a queryset of strings
+           .values_list("content", flat=True))  # returns a queryset of strings (<QuerySet ['msg1', msg2', ...']>)
         
         sentiment, topics = get_sentiment_topics(msgs)
         vad_scores = get_vad_scores(msgs)
