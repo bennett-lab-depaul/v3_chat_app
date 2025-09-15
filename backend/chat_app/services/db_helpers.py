@@ -62,12 +62,12 @@ def get_vad_scores(messages):
     vad_scores_list = [vad_scores.loc[word] for word in words if word in vad_scores.index]
     
     # Return zero/neutral scores if no words are found
-    if not vad_scores_list: return 0.0, 0.0, 0.0
+    if not vad_scores_list: 
+        return 0.0, 0.0, 0.0
     
     # Calculate the average VAD scores
     vad_scores_df  = pd.DataFrame(vad_scores_list)
     average_scores = vad_scores_df.mean()
     
     valence, arousal, dominance = average_scores["valence"], average_scores["arousal"], average_scores["dominance"]
-    
-    return json.dumps({'valence': valence, 'arousal': arousal, 'dominance': dominance})
+    return {'valence': valence, 'arousal': arousal, 'dominance': dominance}

@@ -43,7 +43,8 @@ class ChatService:
         # Get all messages for this session
         # ----------------------------------------------------------------------- 
         msgs = (ChatMessage.objects
-           .filter(session=session)             # could also stack .filter(role="user")
+           .filter(session=session)
+           .filter(role="user")
            .order_by("ts")                      # or "start_ts", "id" ?
            .values_list("content", flat=True))  # returns a queryset of strings (<QuerySet ['msg1', msg2', ...']>)
         

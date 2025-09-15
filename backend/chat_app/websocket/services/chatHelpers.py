@@ -63,6 +63,7 @@ async def handle_stt_output(data, msg_callback, send_callback, bio_callback):
     logger.info(f"{lu.YELLOW}[LLM] Sent user utterance to frontend: {user_utt} {lu.RESET}")
     
     system_utt = await handle_transcription(data, msg_callback, send_callback, bio_callback)
+    # Could add get_vad_scores here to send to frontend
     
     # Synthesize the speech 
     tts_provider = TextToSpeechProvider()

@@ -21,6 +21,9 @@ export default function ChatSessionCard({ session, sessions } : { session: ChatS
     // Get scores to compare this chat against
     const chatDate = new Date(session.date);
     const prevScores = averageScore(getSessionsBefore(sessions, chatDate));
+    const valence = Math.round(session.vad_scores?.valence * 100) / 100;
+    const arousal = Math.round(session.vad_scores?.arousal * 100) / 100;
+    const dominance = Math.round(session.vad_scores?.dominance * 100) / 100;
 
     // Setup
     const duration = Math.ceil(session.duration / 60);
@@ -47,7 +50,7 @@ export default function ChatSessionCard({ session, sessions } : { session: ChatS
             <div className="flex flex-col my-[0.25rem] py-[0.5rem] gap-[0.5rem] items-start">
                 <span> <b>Topics covered:</b> {session.topics} </span>
                 <span> <b>Sentiment:</b> {session.sentiment} </span>
-                <span> <b>VAD Scores:</b> {JSON.stringify(session.vad_scores)} </span>
+                <span className="text-left"> <b>VAD Scores: </b> {valence}, {arousal}, {dominance} </span>
                 <span className="fst-italic"> <b>ToDo:</b> Composite score </span>
             </div>
 
