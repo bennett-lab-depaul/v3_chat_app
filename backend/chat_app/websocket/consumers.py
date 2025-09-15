@@ -68,7 +68,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         self.user   = self.scope["user"]
         self.source = self.scope.get("source", "unknown")
         await self.accept()
-        logger.info(f"{cf.RLINE_1}{cf.RED}[WS] ChatSession opened for {self.user} from {self.source} {cf.RESET}{cf.RLINE_2}")
         
         # I don't think any frontend uses these during the chat right now, but I'll leave this option in
         self.return_biomarkers = False # (self.source in ["webapp"])
@@ -102,6 +101,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # -----------------------------------------------------------------------
         # This is where we could potentially have a connection on the robot and web app and monitor the conversation in real time
         if self.return_biomarkers: await self.send_json({"type": "history", "messages": self.context_buffer})
+        
+        logger.info(f"{cf.RLINE_1}{cf.RED}[WS] ChatSession opened for {self.user} from {self.source} {cf.RESET}{cf.RLINE_2}")
                 
 
     # -----------------------------------------------------------------------
