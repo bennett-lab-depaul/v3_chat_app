@@ -33,7 +33,7 @@ async def handle_transcription(data, msg_callback, send_callback, bio_callback):
     logger.info(f"{lu.YELLOW}[LLM] User utt received: \n{lu.BG_GREEN}{text} {lu.RESET}")
 
     # Fire-and-forget DB write for the "user" message & update in-memory context
-    context_buffer = await msg_callback(role="user", text=text, time=time())
+    context_buffer = await msg_callback(role="user", text=data['data'], time=time())
 
     # -----------------------------------------------------------------------
     # 2) Get the LLMs response (awaited since it is the most important/longest process)
