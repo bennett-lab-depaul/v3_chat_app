@@ -76,7 +76,7 @@ class Command(BaseCommand):
             # 1) Create a ChatSession object
             session = ChatSession.objects.create(user=plwd_user, source="webapp", is_active=False, end_ts=ended_at)
             session.date = started_at
-            session.vad_scores = {"valence": round(random(), 3), "arousal": round(random(), 3), "dominance": round(random(), 3)}
+            session.vad_scores = {"valence": round(random(), 3) - 1.5, "arousal": round(random(), 3), "dominance": round(random(), 3)}
             session.save(update_fields=["date", "vad_scores"])
 
             # 2) Add ChatMessages to the ChatSession (message timestamps spaced 20 seconds apart)
