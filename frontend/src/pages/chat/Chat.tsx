@@ -35,7 +35,15 @@ export function Chat() {
     const endChatModal = () => {         setShowModal(true ); if (!recording) { pauseChat(); }; }; 
     const saveChat     = () => { save(); setShowModal(false); navigate("/progress"); }; // use the stop speaking callback
 
-
+    const [animation, setAnimation] = useState('HEAD TILT');
+    const cycleAnimation = () => {
+        console.log("Cycling animation")
+        const animations = ['NOD YES', 'SHAKE NO', 'HEAD TILT', 'EMBARRASSED'];
+        const currentIndex = animations.indexOf(animation);
+        const nextIndex = (currentIndex + 1) % animations.length;
+        setAnimation(animations[nextIndex]);
+        console.log("Cycled animation to: " + animations[nextIndex]);
+    }
     // --------------------------------------------------------------------
     // Return UI elements
     // --------------------------------------------------------------------
@@ -49,7 +57,8 @@ export function Chat() {
         </div>
 
         {/* View of the chatHistory and/or Avatar */}
-        <LiveChatView messages={session.messages} animation={'NOD YES'} /> 
+        <LiveChatView messages={session.messages} animation={animation} /> 
+        <button  className="w-fit h-fit p-5 border-1-solid border-black" onClick={() => {cycleAnimation()}}>Cycle animation</button>
 
         {/* SaveChatModal, controlled with props */}
         <SaveChatModal show={showModal} onClose={() => setShowModal(false)} saveChat={saveChat}/>
