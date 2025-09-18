@@ -2,8 +2,10 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Default Arguments
 const defaultModel = 'gemini-2.0-flash-live-001';
-const apiKey = import.meta.env.VITE_SPEECH_KEY || '';
 const defaultSampleRateHertz = 16_000;
+
+// Configuration from .env variables
+const apiKey = import.meta.env.VITE_SPEECH_KEY || "";
 
 /*  ====================================================================
  *  GeminiASR
@@ -11,7 +13,6 @@ const defaultSampleRateHertz = 16_000;
  *  Wrapper around Gemini streaming ASR.
  *
  *  constructor(opts) expects:
- *      apiKey                   : Google AI key
  *      onUtterance(text)        : final transcript callback
  *      onPartial(text)          : (optional) partial transcript callback
  *      onUserSpeakingChange(b)  : (optional) speaking flag callback
@@ -101,7 +102,6 @@ export class GeminiASR {
  *  Uses the same live session mode but asks for AUDIO responses.
  *
  *  constructor(opts) expects:
- *      apiKey                 : Google AI key
  *      onStart() / onDone()   : (optional) hooks
  *      model                  : live model name (default flash-live)
  *
