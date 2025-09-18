@@ -1,3 +1,4 @@
+import { DownloadData } from "./components/DownloadData";
 import PerformanceTrack from "./components/PerformanceTrack";
 import WeeklyChats from "./components/WeeklyChats";
 
@@ -6,6 +7,7 @@ export function Dashboard() {
     return (
     <div className="d-flex flex-col mx-[1rem] mb-[1rem]">  
         <PerformanceTrack/>
+        <DownloadData />
         <WeeklyChats/>
     </div>
     );

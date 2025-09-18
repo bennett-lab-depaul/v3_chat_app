@@ -5,8 +5,9 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 # Can I move the serializers.py file into this folder ?
 from ..models      import                    Goal,           UserSettings,           Reminder,           ChatSession
-from  .serializers import ProfileSerializer, GoalSerializer, UserSettingsSerializer, ReminderSerializer, ChatSessionSerializer, SignupSerializer
+from  .serializers import ProfileSerializer, GoalSerializer, UserSettingsSerializer, ReminderSerializer, ChatSessionSerializer, SignupSerializer, DownloadDataSerializer
 from  .mixins      import ProfileMixin
+from ..helpers.downloadHelpers     import get_download_data
 
 # ======================================================================= ===================================
 # Single-object endpoints (no list, one-to-one)
@@ -38,6 +39,14 @@ class UserSettingsView(ProfileMixin, generics.RetrieveUpdateAPIView):
         profile = self.get_profile()
         settings, _ = UserSettings.objects.get_or_create(user=profile)
         return settings
+    
+class DownloadDataView(ProfileMixin, generics.RetrieveAPIView):
+    """View to request the user's data to download. Returns a formatted string of the user's data."""
+    serializer_class   = DownloadDataSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_object(self):
+        return self.get_profile()
 
 # ======================================================================= ===================================
 # List + Create
