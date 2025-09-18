@@ -1,10 +1,8 @@
 from google.cloud import speech, texttospeech
-from google import genai
-from google.genai import types
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
-import threading, asyncio, base64, logging, os
+import threading, asyncio, base64, logging
 from queue import Queue
 
 from ... import config as cf
