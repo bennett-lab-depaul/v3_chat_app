@@ -76,9 +76,6 @@ class Command(BaseCommand):
             session = ChatSession.objects.create(user=plwd_user, source="webapp", is_active=False, end_ts=ended_at)
             session.date = started_at
             session.save(update_fields=["date"])
-            
-            ChatVADScores.objects.create(session=session, valence=round(random(), 3) - 1.5, 
-                                         arousal=round(random(), 3) - 1.5, dominance=round(random(), 3) - 1.5)
 
             # 2) Add ChatMessages to the ChatSession (message timestamps spaced 20 seconds apart)
             for idx, text in enumerate(DEMO_MESSAGES):

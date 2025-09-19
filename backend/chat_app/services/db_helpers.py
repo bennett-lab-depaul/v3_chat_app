@@ -53,7 +53,7 @@ def get_sentiment_topics(messages):
     return sentiment, topics
 
 vad_scores = pd.read_csv("chat_app/services/nrc-vad.csv", index_col="term")
-def get_vad_scores(messages):
+def get_vad_scores(messages) -> tuple[float, float, float]:
     text = " ".join(messages)
     # Clean text up (maybe use re here too?)
     words = text.lower().split()
