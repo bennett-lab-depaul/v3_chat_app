@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 
 from datetime        import timedelta, date, time
 from random          import random
-from chat_app.models import Profile, UserSettings, Goal, ChatSession, ChatMessage, ChatBiomarkerScore, Reminder
+from chat_app.models import Profile, UserSettings, Goal, ChatSession, ChatMessage, ChatBiomarkerScore, ChatVADScores, Reminder
 
 # Demo data
 USERNAMES     = ("demo_patient", "demo_caregiver", "buddy_user", "buddy_care")
@@ -76,8 +76,10 @@ class Command(BaseCommand):
             # 1) Create a ChatSession object
             session = ChatSession.objects.create(user=plwd_user, source="webapp", is_active=False, end_ts=ended_at)
             session.date = started_at
-            session.vad_scores = {"valence": round(random(), 3) - 1.5, "arousal": round(random(), 3) - 1.5, "dominance": round(random(), 3) - 1.5}
-            session.save(update_fields=["date", "vad_scores"])
+            session.save(update_fields=["date"])
+            
+            ChatVADScores.objects.create(session=session, valence=round(random(), 3) - 1.5, 
+                                         arousal=round(random(), 3) - 1.5, dominance=round(random(), 3) - 1.5)
 
             # 2) Add ChatMessages to the ChatSession (message timestamps spaced 20 seconds apart)
             for idx, text in enumerate(DEMO_MESSAGES):

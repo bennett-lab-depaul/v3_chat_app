@@ -66,8 +66,12 @@ def get_vad_scores(messages):
         return 0.0, 0.0, 0.0
     
     # Calculate the average VAD scores
-    vad_scores_df  = pd.DataFrame(vad_scores_list)
-    average_scores = vad_scores_df.mean()
-    
-    valence, arousal, dominance = average_scores["valence"], average_scores["arousal"], average_scores["dominance"]
-    return {'valence': valence, 'arousal': arousal, 'dominance': dominance}
+    try:
+        vad_scores_df  = pd.DataFrame(vad_scores_list)
+        average_scores = vad_scores_df.mean()
+        
+        valence, arousal, dominance = average_scores["valence"], average_scores["arousal"], average_scores["dominance"]
+        return valence, arousal, dominance
+    except Exception as e:
+        print(f"Error calculating VAD scores: {e}")
+        return None, None, None

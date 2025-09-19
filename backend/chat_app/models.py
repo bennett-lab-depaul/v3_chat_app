@@ -38,7 +38,6 @@ class ChatSession(models.Model):
     notes     = models.TextField(**init_args)
     topics    = models.CharField(**init_args, max_length=255, default="N/A")
     sentiment = models.CharField(**init_args, max_length=255, default="N/A")
-    vad_scores = models.JSONField(**init_args, max_length=255, default="N/A")
 
     class Meta:
         constraints = [UniqueConstraint(fields=["user"], condition=Q(is_active=True), name="unique_active_session_per_user",),] # One active session per user
@@ -109,6 +108,17 @@ class ChatBiomarkerScore(models.Model):
         ordering = ["-ts", "score_type", "id"]
 
     def __str__(self): return f"{self.score_type:16}: {self.score:.4f}"
+    
+# =======================================================================
+# ChatVADScores -- one of these is assigned to each ChatSession
+# =======================================================================    
+class ChatVADScores(models.Model):
+    session = models.OneToOneField(ChatSession, on_delete=models.CASCADE, related_name="vad_scores")
+    valence = models.FloatField()
+    arousal = models.FloatField()
+    dominance = models.FloatField()
+        
+    def __str__(self): return f"Valence: {self.valence:.4f}, Arousal: {self.arousal:.4f}, Dominance: {self.dominance:.4f}"
 
 # =======================================================================
 # Non-Chat Models

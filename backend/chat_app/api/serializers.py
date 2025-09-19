@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import ChatSession, ChatMessage, ChatBiomarkerScore, Profile, UserSettings, Reminder, Goal
+from ..models import ChatSession, ChatMessage, ChatBiomarkerScore, ChatVADScores, Profile, UserSettings, Reminder, Goal
 
 from django.contrib.auth import get_user_model
 from django.db           import transaction
@@ -18,10 +18,16 @@ class BiomarkerSerializer(serializers.ModelSerializer):
         model  = ChatBiomarkerScore
         fields = ("id", "score_type", "score", "ts")
         read_only_fields = fields
+        
+class VADScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatVADScores
+        fields = ("valence", "arousal", "dominance")
 
 class ChatSessionSerializer(serializers.ModelSerializer):
     messages       = ChatMessageSerializer(many=True, read_only=True)
     biomarkers     = BiomarkerSerializer  (many=True, read_only=True, source="biomarker_scores")
+    vad_scores     = VADScoreSerializer   (many=False, read_only=True)
     start_ts       = serializers.SerializerMethodField()
     duration       = serializers.SerializerMethodField()
     average_scores = serializers.SerializerMethodField()

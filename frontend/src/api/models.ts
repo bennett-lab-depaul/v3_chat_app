@@ -81,6 +81,14 @@ export interface ChatBiomarkerScore {
   ts         : string;
 }
 
+// VAD Scores
+export interface ChatVADScores {
+    id       : number;
+    valence  : number;
+    arousal  : number;
+    dominance: number;
+}
+
 // ChatSessions
 export interface ChatSession {
   id        : number;
@@ -95,7 +103,7 @@ export interface ChatSession {
 
   topics    : string[];        // stored as JSONField
   sentiment : number | null;
-  vad_scores: any    | null;
+  vad_scores: ChatVADScores | null;
   notes     : string | null;
 
   messages        : ChatMessage[];

@@ -1,6 +1,6 @@
 from django.db    import transaction
 from django.utils import timezone
-from ..models     import ChatSession, ChatMessage, ChatBiomarkerScore
+from ..models     import ChatSession, ChatMessage, ChatBiomarkerScore, ChatVADScores
 
 from .. import config as cf
 from .db_helpers import get_sentiment_topics, get_vad_scores
@@ -31,7 +31,7 @@ class ChatService:
     
     @staticmethod
     @transaction.atomic
-    def close_session(user, session, *, source="webapp", notes=None, sentiment=None, topics=None, vad_scores=None):
+    def close_session(user, session, *, source="webapp", notes=None):
         """
         Marks the current session inactive, fills in "ended_at", stores 
         optional metadata, and immediately opens a fresh/blank session.
@@ -49,14 +49,22 @@ class ChatService:
            .values_list("content", flat=True))  # returns a queryset of strings (<QuerySet ['msg1', msg2', ...']>)
         
         sentiment, topics = get_sentiment_topics(msgs)
-        vad_scores = get_vad_scores(msgs)
+        valence, arousal, dominance = get_vad_scores(msgs)
 
         # ToDo: Probably should calculate the topics and sentiment right here using helper functions
         # Topics and sentiment won't be sent as arguments, they will be calculated here
         if notes     is not None: session.notes     = notes
         if topics    is not None: session.topics    = topics
         if sentiment is not None: session.sentiment = sentiment
-        if vad_scores is not None: session.vad_scores = vad_scores
+        if valence is not None:
+            ChatVADScores.objects.update_or_create(
+                session=session,
+                defaults={
+                    "valence": valence,
+                    "arousal": arousal,
+                    "dominance": dominance
+                }
+            )
         session.save()
        
         logger.info(f"{cf.RLINE_1}{cf.RED}[DB] ChatSession closed for {user.username} {cf.RESET}{cf.RLINE_2}")
