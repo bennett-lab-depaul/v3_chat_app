@@ -27,7 +27,7 @@ export default function useLiveChat({
 	};
     const [recording, setRecording] = useState(false);
 
-    const { startPlayer, sendAudio, stopPlayer, systemSpeaking } = useAudioPlayer({sampleRate: 24_000, numChannels: 1, bitsPerSample: 32, bufferAhead: 0.2})
+    const { startPlayer, sendAudio, stopPlayer, systemSpeaking } = useAudioPlayer({sampleRate: 24_000, numChannels: 1, bitsPerSample: 16, bufferAhead: 0.2})
 
 	const { send } = useChatSocket({
 		recording,

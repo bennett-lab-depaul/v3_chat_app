@@ -21,7 +21,7 @@ export function IsCaregiver() {
     const { user, profile } = useAuth();
     return (user.id === profile.caregiver.id) ? <Outlet /> : <Navigate to="/dashboard" replace />;
 }
-// Only caregivers can view
+// Only patients can view
 export function IsPatient() {
     const { user, profile } = useAuth();
     return (user.id === profile.plwd.id) ? <Outlet /> : <Navigate to="/dashboard" replace />;

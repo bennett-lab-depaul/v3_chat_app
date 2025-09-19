@@ -32,7 +32,7 @@ export default function Login() {
     <form onSubmit={handleSubmit}>
         <div className="flex flex-col h-[100vh] justify-center items-center  ">
        
-            <h1 className="font-mono text-lg">AI Assistant Chat</h1>
+            <h1 className="font-mono text-lg">Welcome to CogniBot!</h1>
 
             <div className="flex flex-col gap-2 border-1 border-gray-400 rounded-lg p-4 md:w-1/2">
                 <label>Username</label><input required autoComplete="username"                          name="username" value={form.username} onChange={handleChange} className={loginStyle}/>

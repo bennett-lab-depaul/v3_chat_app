@@ -134,3 +134,8 @@ export interface SignupResponse {
 
 // User verification token
 export type Tokens = { access: string; refresh: string, user: User };
+
+export interface Download {
+    fileName            : string;
+    fileContents        : string;
+}
