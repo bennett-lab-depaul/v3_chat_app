@@ -3,11 +3,12 @@ import { AuthProvider            } from "@/context/AuthProvider";
 
 import { Unprotected, Protected, AppLayout, IsCaregiver, IsPatient } from "@/routes";
 
-import { Dashboard, History, ChatDetails, Chat, ProgressSummary } from "@/pages";
+import { Dashboard, History, ChatDetails, Chat, ProgressSummary, Goal } from "@/pages";
 import Login           from "@/pages/Login";
 import SignUp          from "@/pages/SignUp";
 import Schedule        from "@/pages/Schedule";
 
+import "./App.css";
 
 // --------------------------------------------------------------------
 // Routes and Pages
@@ -40,6 +41,7 @@ export default function App() {
                 <Route path="/history"  element={<History         />} />
                 <Route path="/schedule" element={<Schedule        />} />
                 <Route path="/progress" element={<ProgressSummary />} />
+                <Route path="/goal"     element={<Goal            />} />
                 
             </Route>
 
