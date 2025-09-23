@@ -1,7 +1,7 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { Spinner } from "../components/Spinner";
 
-import { setAccess, User, Profile, getProfile } from "@/api"
+import { getAccess, setAccess, User, Profile, getProfile } from "@/api"
 import * as authApi  from "@/api/auth";
 
 // Create the context (describes what any component will get when it calls useAuth())
@@ -17,13 +17,13 @@ const AuthContext = createContext<AuthCtx>(null!);
 // ====================================================================
 // AuthProvider 
 // ====================================================================
-// Local state only holds User & Profile data, client.ts manages access tokens.
+// Local state only holds User & Profile data
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user,    setUser   ] = useState<User   >();
     const [profile, setProfile] = useState<Profile>();
     const [error,   setError  ] = useState<string >(); 
     const [loading, setLoading] = useState(false);
-
+    
     // Login
     const login  = async (username: string, password: string) => {
         try {
@@ -32,9 +32,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const response = await authApi.login(username, password);  // { access, user }
             setAccess(response.access);
             setUser  (response.user  ); 
+            localStorage.setItem('authTokens', JSON.stringify(response));
+            
             // Fetch user profile; blocks until the profile returns and we have data to populate pages
             await getProfile().then(setProfile).catch(console.error);
-
         } catch (err) { 
             setError((err as Error).message); 
             console.log((err as Error).message); 
@@ -42,12 +43,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } finally     { setLoading(false); }
     };
 
+    const refreshAccess = async () => {
+        const authTokens = JSON.parse(localStorage.getItem('authTokens'));
+        if (!authTokens) {
+            logout();
+            return;
+        }
+
+        try {
+            setLoading(true);
+            setUser(authTokens.user);
+            setAccess(authTokens.access);
+            await getProfile().then(setProfile).catch(console.error);
+        } catch (err) {
+            setError((err as Error).message); 
+            console.log((err as Error).message); 
+            throw err; // ToDo: Add toast back here
+        } finally     { 
+            setLoading(false); 
+        }
+    }
+
     // Logout (reset the User and Profile to undefined)
     const logout = () => { 
         setAccess(undefined); 
         setUser(undefined); 
         setProfile(undefined); 
+        localStorage.removeItem('authTokens')
     };
+
+    useEffect(() => {
+		const initAuth = async () => {
+            if (!getAccess()) {
+				await refreshAccess();
+			} else {
+                await getProfile().then(setProfile).catch(console.error);
+            }
+			setLoading(false);
+		};
+
+		initAuth();
+	}, []);
 
     // Return AuthContext
     return (
