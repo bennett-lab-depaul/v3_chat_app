@@ -64,9 +64,9 @@ export function Chat() {
         <SaveChatModal show={showModal} onClose={() => setShowModal(false)} saveChat={saveChat}/>
 
         {/* Buttons for starting/pausing the chat & saving the chat history/ending the chat */}
-        <div className="flex flex-row justify-center mb-[1em] pt-[5vh] gap-[4em] items-center">
+        <div className="flex flex-row justify-center mb-[1em] gap-[4em] items-center">
             <RecordButton recording={recording} stopRecording={pauseChat} startRecording={startChat}/>
-            <button className={stopStyle} onClick={endChatModal}> <BsStopCircle size={50} color={"black"} /> End Chat </button>
+            <button className={stopStyle} onClick={endChatModal}> <BsStopCircle size={75} color={"black"} /> End Chat </button>
         </div>
 
     </>
@@ -78,7 +78,7 @@ export function Chat() {
 function RecordButton({ recording, stopRecording, startRecording } : { recording: boolean, stopRecording: () => void, startRecording: () => void }) {
     const style = "flex flex-col gap-2 items-center";
 
-    const icon    = recording ? <BsPauseCircle size={50} style={{color: "black"}}/> : <BsPlayCircle size={50} style={{color: "black"}}/>;
+    const icon    = recording ? <BsPauseCircle size={75} style={{color: "black"}}/> : <BsPlayCircle size={75} style={{color: "black"}}/>;
     const text    = recording ? "Pause Chat" : "Start Chat";
     const onClick = recording ? stopRecording : startRecording;
 
