@@ -62,7 +62,7 @@ Useful commands:
 ```diff
 
 SSH:/home/user/
- ├── v2_benchmarking/
+ ├── v3_chat_app/
  │   ├── backend/
  │   │   ├── Dockerfile-backend
  │   │   ├── backend/             # Django app
