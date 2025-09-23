@@ -52,7 +52,7 @@ The web app can be accessed through localhost:5173 in your browser.
     * Downloads required, non-tracked files from cloud storage
     * Clones the repo & copies the non-tracked files (model files) into their proper locations 
     * Builds the Docker containers & starts the app
-
+9. Go to cognibot.org/ once the deployment finishes
 
 Useful commands:
 * `sudo docker logs backend` (also used with the other containers)
