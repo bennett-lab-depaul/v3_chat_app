@@ -36,45 +36,41 @@ export default function LiveChatView({ messages }: { messages: LocalChatMessage[
 
         // Chat history or Avatar views separately
         if (viewMode == 1) {
-        return (
-            <div className={chatHistoryWrapper1}>
-            <ChatMessages messages={messages} />
-            </div>
-        );
+            return (
+                <div className={chatHistoryWrapper1}>
+                <ChatMessages messages={messages} />
+                </div>
+            );
         } else if (viewMode == 3) {
-        return (
-            <div className="h-[65vh] mb-[2rem]">
-            <AvatarView chatbotMessage={getRecentMessage(messages)} />
-            </div>
-        );
+            return (
+                <div className="h-[65vh] mb-[2rem]">
+                <AvatarView chatbotMessage={getRecentMessage(messages)} />
+                </div>
+            );
         }
 
         // Default / main view for the app -- keeping the other ones still though for debugging (want to be able to see the chat history)
         else if (viewMode == 4) {
-        return (
-            <div className="h-[65vh] mb-[2rem]">
-            <div className="my-[1rem] flex justify-center border-1 border-black p-[1em] rounded-lg mx-[25%] overflow-y-scroll h-[10vh]">
-                {getRecentMessage(messages)}
-            </div>
-            <div className="h-[60vh] mt-[1em] w-full">
-                <Avatar />
-            </div>
-            </div>
-        );
+            return (
+                <div className="flex flex-row justify-center h-[70vh] m-[1rem]">
+                    <div className="w-1/5" />
+                    <AvatarView chatbotMessage={getRecentMessage(messages)} />
+                </div>
+            );
         }
 
         // Combined split view
         else if (viewMode == 2) {
-        return (
-            <div className="flex md:flex-row flex-col h-[65vh] mt-[1em] w-full mb-[2rem]">
-            <div className={chatHistoryWrapper2}>
-                <ChatMessages messages={messages} />{" "}
-            </div>
-            <div className="md:w-1/2 w-[100vw] md:h-full h-[65vh]">
-                <AvatarView chatbotMessage={getRecentMessage(messages)} />{" "}
-            </div>
-            </div>
-        );
+            return (
+                <div className="flex md:flex-row flex-col h-[65vh] mt-[1em] w-full mb-[2rem]">
+                <div className={chatHistoryWrapper2}>
+                    <ChatMessages messages={messages} />{" "}
+                </div>
+                <div className="md:w-1/2 w-[100vw] md:h-full h-[65vh]">
+                    <AvatarView chatbotMessage={getRecentMessage(messages)} />{" "}
+                </div>
+                </div>
+            );
         }
     }
 
