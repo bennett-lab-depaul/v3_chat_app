@@ -1,6 +1,6 @@
 import { useAuth } from "@/context/AuthProvider";
 import { useChatSessions } from "@/hooks/queries/useChatSessions";
-import { ChatWeek, groupSessionsByWeek } from "@/utils/functions/getChatWeeks";
+import { ChatWeek, getChatsInWeek, getCurrentWeek } from "@/utils/functions/getChatWeeks";
 
 
 export default function WeekTrack() {
@@ -11,37 +11,8 @@ export default function WeekTrack() {
     }
 
     const role = profile.role.toLowerCase();
-    const weeks: ChatWeek[] = groupSessionsByWeek(sessions);
-    const week = weeks[weeks.length - 1];
-    if (week.end < new Date()) {
-        week.start = new Date();
-    }
-
-    const sameDay = (d1: Date, d2: Date) => {
-        return d1.getFullYear() === d2.getFullYear() &&
-            d1.getMonth()    === d2.getMonth() &&
-            d1.getDate()     === d2.getDate();
-    }
-
-    const getChatsForDay = (day: Date) => {
-        return week.sessions.filter(s => {
-            const d = new Date(s.date);
-            return sameDay(d, day);
-        }).length;
-    }
-
-    const dayTracks = [];
-    for (let i = 0; i < 7; i++) {
-        const day = new Date(week.start);
-        day.setDate(day.getDate() + i);
-        const chats = getChatsForDay(day);
-        if (sameDay(day, new Date())) {
-            dayTracks.push({ day: "Today", chats: chats });
-        } else {
-            const weekday = day.toLocaleString('en-us', {  weekday: 'short' });
-            dayTracks.push({ day: weekday, chats: chats });
-        }
-    }
+    const week = getCurrentWeek(sessions, 1);
+    const dayTracks = getChatsInWeek(week);
 
     return (
         <div className="flex flex-row gap-5 justify-center">
