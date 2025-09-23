@@ -17,7 +17,7 @@ Everything is wrapped in docker-compose.yaml and the frontend and backend APIs a
 
 ## How to Run
 
-<details closed> <summary>Locally</summary>
+<details closed> <summary>Locally (Outdated)</summary>
 
 ### Frontend
 1. `cd` into the `frontend` directory
@@ -39,14 +39,20 @@ The web app can be accessed through localhost:5173 in your browser.
 <details closed> <summary>Deployed (Google Cloud)</summary>
 <br>
 
-1. SSH into the cloud instance
-2. Upload `deploy_app.sh` (untracked file)
-3. Run `bash deploy_app.sh`
+1. Clone the deployment repo at https://github.com/amurphy99/chat_app_deployment
+2. Make a branch of chat_app_deployment and name it
+3. In chat_app_deployment/blob/main/utils/env_config.sh, change line 47 to point at the branch you want to deploy from the v3_chat_app repo
+4. Modify deploy_app.sh line 9 to the branch you made in step 2
+5. Add any new env variables necessary
+6. Go to Google Cloud Console > Compute Engine > VM Instances and SSH into the v2-testing-gpu instance
+7. Upload your copy of deploy_app.sh
+8. Run bash deploy_app.sh
     * More info on how this works: https://github.com/amurphy99/chat_app_deployment
     * Installs docker & updates other dependencies
     * Downloads required, non-tracked files from cloud storage
     * Clones the repo & copies the non-tracked files (model files) into their proper locations 
     * Builds the Docker containers & starts the app
+
 
 Useful commands:
 * `sudo docker logs backend` (also used with the other containers)
