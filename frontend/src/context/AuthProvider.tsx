@@ -5,7 +5,13 @@ import { setAccess, User, Profile, getProfile } from "@/api"
 import * as authApi  from "@/api/auth";
 
 // Create the context (describes what any component will get when it calls useAuth())
-interface AuthCtx { user?: User; profile?: Profile, login(username: string, password: string): Promise<void>; logout(): void; }
+interface AuthCtx { 
+    user?: User; 
+    profile?: Profile, 
+    login(username: string, password: string): Promise<void>; 
+    logout(): void; 
+}
+
 const AuthContext = createContext<AuthCtx>(null!);
 
 // ====================================================================
@@ -23,21 +29,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             // POST to /token/ & get Token/User information
             setLoading(true);
-            const response = await authApi.login(username, password);  // { access, refresh, user }
+            const response = await authApi.login(username, password);  // { access, user }
             setAccess(response.access);
             setUser  (response.user  ); 
-            
-            console.log(response.user.first_name, response.user.last_name)
-
             // Fetch user profile; blocks until the profile returns and we have data to populate pages
             await getProfile().then(setProfile).catch(console.error);
 
-        } catch (err) { setError((err as Error).message); console.log((err as Error).message); throw err; // ToDo: Add toast back here
+        } catch (err) { 
+            setError((err as Error).message); 
+            console.log((err as Error).message); 
+            throw err; // ToDo: Add toast back here
         } finally     { setLoading(false); }
     };
 
     // Logout (reset the User and Profile to undefined)
-    const logout = () => { setAccess(undefined); setUser(undefined); setProfile(undefined); };
+    const logout = () => { 
+        setAccess(undefined); 
+        setUser(undefined); 
+        setProfile(undefined); 
+    };
 
     // Return AuthContext
     return (

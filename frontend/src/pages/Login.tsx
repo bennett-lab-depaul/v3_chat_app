@@ -20,9 +20,14 @@ export default function Login() {
         try {
             setLoading(true);
             await login(form.username, form.password);
-            toast.success("Logged in!"); navigate("/dashboard");
-        } catch (err) { toast.error((err as Error).message); console.log((err as Error).message);
-        } finally     { setLoading(false); }
+            toast.success("Logged in!"); 
+            navigate("/dashboard");
+        } catch (err) { 
+            toast.error((err as Error).message); 
+            console.log((err as Error).message);
+        } finally     { 
+            setLoading(false); 
+        }
     };
 
     const loginStyle = "p-2 border-b-1 border-gray-400";

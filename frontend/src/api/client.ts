@@ -24,9 +24,13 @@ export async function request<T> (path: string, opts: RequestInit={}): Promise<T
     if (response.status === 401) {
         // Try to refresh the access token before trying again
         const r = await fetch(`${API_URL}/token/refresh/`, { method: "POST", credentials: "include", });
-        if (r.ok) {const { access: newAccess } = (await r.json()) as { access: string }; setAccess(newAccess);
-        response = await doFetch(newAccess); // retry with fresh token
-        }
+        if (r.ok) {
+			const { access: newAccess } = (await r.json()) as {
+				access: string;
+			};
+			setAccess(newAccess);
+			response = await doFetch(newAccess); // retry with fresh token
+		}
     }
 
     // It failed again...
