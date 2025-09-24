@@ -32,6 +32,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const response = await authApi.login(username, password);  // { access, user }
             setAccess(response.access);
             setUser  (response.user  ); 
+            localStorage.clear();
             localStorage.setItem('authTokens', JSON.stringify(response));
             
             // Fetch user profile; blocks until the profile returns and we have data to populate pages
@@ -57,7 +58,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             await getProfile().then(setProfile).catch(console.error);
         } catch (err) {
             setError((err as Error).message); 
-            console.log((err as Error).message); 
+            console.log((err as Error).message);
+            setAccess(undefined);
+            localStorage.clear();
             throw err; // ToDo: Add toast back here
         } finally     { 
             setLoading(false); 
@@ -69,7 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setAccess(undefined); 
         setUser(undefined); 
         setProfile(undefined); 
-        localStorage.removeItem('authTokens')
+        localStorage.clear();
     };
 
     useEffect(() => {
