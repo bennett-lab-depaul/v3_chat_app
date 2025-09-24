@@ -1,6 +1,6 @@
 import { useAuth } from "@/context/AuthProvider";
 import { useChatSessions } from "@/hooks/queries/useChatSessions";
-import { ChatWeek, getChatsInWeek, getCurrentWeek } from "@/utils/functions/getChatWeeks";
+import { getChatsInWeek, getCurrentWeek } from "@/utils/functions/getChatWeeks";
 
 
 export default function WeekTrack() {
