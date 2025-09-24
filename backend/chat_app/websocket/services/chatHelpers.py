@@ -68,10 +68,12 @@ async def handle_stt_output(data, msg_callback, send_callback, bio_callback):
     # Synthesize the speech 
     tts_provider = TextToSpeechProvider()
     speech = tts_provider.synthesize_speech(system_utt, "wav")
-    to_wav_file(speech, "output.wav")
-    run_rhubarb("output.wav", "output.json")
-    rhubarb_data = load_rhubarb_json("output.json")
-    await send_callback(json.dumps({'type': 'lipsync_data', 'data': rhubarb_data}))
+    
+    # TODO: turn on when ready to test lipsync stuff
+    # to_wav_file(speech, "output.wav")
+    # run_rhubarb("output.wav", "output.json")
+    # rhubarb_data = load_rhubarb_json("output.json")
+    # await send_callback(json.dumps({'type': 'lipsync_data', 'data': rhubarb_data}))
     fire_and_log(handle_speech(speech, send_callback))
     logger.info(f"{lu.YELLOW}[LLM] Response sent to frontend. {lu.RESET}")
     
