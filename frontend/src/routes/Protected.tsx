@@ -29,7 +29,7 @@ export function Protected() {
 // Users who are logged in already can't get to the signup or login pages
 export function Unprotected() {
     const { user } = useAuth();
-    return user ? <Navigate to="/dashboard" replace /> : <Outlet />;
+    return user ? <Navigate to="/goal" replace /> : <Outlet />;
 }
 
 // =======================================================================
@@ -38,10 +38,10 @@ export function Unprotected() {
 // Only caregivers can view
 export function IsCaregiver() {
     const { user, profile } = useAuth();
-    return (user.id === profile.caregiver.id) ? <Outlet /> : <Navigate to="/dashboard" replace />;
+    return (user.id === profile.caregiver.id) ? <Outlet /> : <Navigate to="/goal" replace />;
 }
 // Only patients can view
 export function IsPatient() {
     const { user, profile } = useAuth();
-    return (user.id === profile.plwd.id) ? <Outlet /> : <Navigate to="/dashboard" replace />;
+    return (user.id === profile.plwd.id) ? <Outlet /> : <Navigate to="/chat" replace />;
 }
