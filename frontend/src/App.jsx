@@ -3,7 +3,7 @@ import { AuthProvider            } from "@/context/AuthProvider";
 
 import { Unprotected, Protected, AppLayout, IsCaregiver, IsPatient } from "@/routes";
 
-import { Dashboard, History, ChatDetails, Chat, ProgressSummary, Goal } from "@/pages";
+import { Dashboard, History, ChatDetails, Chat, ProgressSummary, Goal, ChatAlbum } from "@/pages";
 import Login           from "@/pages/Login";
 import SignUp          from "@/pages/SignUp";
 import Schedule        from "@/pages/Schedule";
@@ -42,6 +42,7 @@ export default function App() {
                 <Route path="/schedule" element={<Schedule        />} />
                 <Route path="/progress" element={<ProgressSummary />} />
                 <Route path="/goal"     element={<Goal            />} />
+                <Route path="/album"    element={<ChatAlbum       />} />
                 
             </Route>
 
