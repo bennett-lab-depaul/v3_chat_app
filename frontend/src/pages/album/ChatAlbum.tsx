@@ -29,8 +29,8 @@ export function ChatAlbum() {
     return (
         <>
         <div className="mt-[1rem] ml-[2rem]">
-            <button onClick={() => {changeDisplay()}}>
-                { display == "grid" ?
+            <button onClick={() => {changeDisplay()}} >
+                { display == "list" ?
                     <IoGridOutline size={50} /> :
                     <IoList size={50} /> }
             </button>
