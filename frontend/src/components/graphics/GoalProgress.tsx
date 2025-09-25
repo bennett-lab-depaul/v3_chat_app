@@ -1,16 +1,19 @@
-import   ProgressBar   from "react-bootstrap/ProgressBar";
+import LinearProgress from '@mui/material/LinearProgress';
 import { useAuth     } from "@/context/AuthProvider";
-import { PATIENT_HEX } from "@/utils/styling/colors";
 
 // Patient Goal Progress Bar
 export default function GoalProgress () {
     const { profile } = useAuth();
+    const barColor = profile.role == "Patient" ? "patient-text" : "caregiver-text";
     const current = profile.goal.current;
     const target  = profile.goal.target
 
     const percent = Math.round((current / target) * 100);
-    const label   = `${current} / ${target}`;
-    const bgColor = `background-color=${PATIENT_HEX}`;
 
-    return  <ProgressBar variant={bgColor} now={percent} label={label} />;
+    return (
+        <div className={barColor}>
+            <LinearProgress variant={"determinate"} color={"inherit"} value={percent} sx={{ height: "3rem", borderRadius: "2rem", border: "solid black"}} />
+            <h2 className="text-black w-full text-center">{current} / {target} </h2>
+        </div>
+    )
 }
