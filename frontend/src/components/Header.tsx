@@ -18,6 +18,7 @@ const TITLES: Record<string, string> = {
     "/history"      : "Chat History",
     "/schedule"     : "Schedule",
     "/goal"         : "Goal",
+    "/album"        : "Chat Album",
     default         : "Cognibot",
 };
 
@@ -41,12 +42,16 @@ export default function Header() {
 
                 {/* Navigation Links */}
                 <nav className="flex gap-4 text-xl">
-                    {isCare ? null : <NavLink to="/chat" className={navLinkCls}> Chat </NavLink>}
                     <NavLink to="/goal"      className={navLinkCls}> Goal      </NavLink>
-                    <NavLink to="/dashboard" className={navLinkCls}> Dashboard </NavLink>
-                    <NavLink to="/history"   className={navLinkCls}> History   </NavLink>
-                    <NavLink to="/progress"  className={navLinkCls}> Progress  </NavLink>
+                    <NavLink to="/album"     className={navLinkCls}> Album     </NavLink>
+                    {isCare ? 
+                        <NavLink to="/history"   className={navLinkCls}> Practice  </NavLink> :
+                        <NavLink to="/chat"      className={navLinkCls}> Chat      </NavLink>
+                    }
                     <NavLink to="/schedule"  className={navLinkCls}> Schedule  </NavLink>
+                    <NavLink to="/dashboard" className={navLinkCls}> Analysis  </NavLink>
+                    {/* <NavLink to="/history"   className={navLinkCls}> History   </NavLink> */}
+                    {/* <NavLink to="/progress"  className={navLinkCls}> Progress  </NavLink> */}
                 </nav>
 
                 {/* Right Side Icons */}

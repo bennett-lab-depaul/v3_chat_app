@@ -13,3 +13,12 @@
 .patient-text {
     color: oklch(62.7% 0.194 149.214);
 }
+
+.hidden-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hidden-scrollbar {
+    -ms-overflow-style: none; 
+    scrollbar-width: none;
+}

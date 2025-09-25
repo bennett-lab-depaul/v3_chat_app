@@ -12,7 +12,7 @@ export function Goal() {
         "You're making wonderful progress! Keep going!"
 
     return (
-        <div className="d-flex flex-col mx-[1rem] my-[1rem] h-full gap-5">  
+        <div className="d-flex flex-col mx-[5rem] my-[1rem] h-full gap-5">  
             <br />
             <Avatar />
             <h3 className="m-[2rem] text-center"><b>{msg}</b></h3>
