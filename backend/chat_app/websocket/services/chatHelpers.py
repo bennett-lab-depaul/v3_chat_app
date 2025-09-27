@@ -3,16 +3,22 @@
         Process the users message & reply with the LLM ASAP 
 ======================================================================= 
 """
-import json, asyncio, logging
+import json, logging, asyncio, base64
+from math import ceil
 logger = logging.getLogger(__name__)
 
 from time        import time
 from datetime    import datetime, timezone
 from ...         import config        as cf
 from ...services import logging_utils as lu 
+from .speechProvider import TextToSpeechProvider
+from .bg_helpers import fire_and_log
+from .lipsyncHelpers import to_wav_file, run_rhubarb, load_rhubarb_json
 
 ERROR_UTTERANCE = "I'm sorry, I encountered an error while processing your request."
 test = "\033[42m"
+
+CHUNK_SIZE = 8_192 # How many bytes of audio we can send at a time
 
 # ======================================================================= ===================================
 # Process the users message & reply with the LLM ASAP
@@ -28,7 +34,7 @@ async def handle_transcription(data, msg_callback, send_callback, bio_callback):
     logger.info(f"{lu.YELLOW}[LLM] User utt received: \n{lu.BG_GREEN}{text} {lu.RESET}")
 
     # Fire-and-forget DB write for the "user" message & update in-memory context
-    context_buffer = await msg_callback(role="user", text=text, time=time())
+    context_buffer = await msg_callback(role="user", text=data['data'], time=time())
 
     # -----------------------------------------------------------------------
     # 2) Get the LLMs response (awaited since it is the most important/longest process)
@@ -49,9 +55,37 @@ async def handle_transcription(data, msg_callback, send_callback, bio_callback):
 
     # On-utterance Biomarkers: fire-and-forget so long jobs don't block the next turn (could also use the context buffer here)
     asyncio.create_task(bio_callback())
-
-
-
+    return system_utt
+    
+async def handle_stt_output(data, msg_callback, send_callback, bio_callback):
+    user_utt = data['data']
+    
+    await send_callback(json.dumps({'type': 'user_utt', 'data': user_utt, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
+    logger.info(f"{lu.YELLOW}[LLM] Sent user utterance to frontend: {user_utt} {lu.RESET}")
+    
+    system_utt = await handle_transcription(data, msg_callback, send_callback, bio_callback)
+    
+    # Synthesize the speech 
+    tts_provider = TextToSpeechProvider()
+    speech = tts_provider.synthesize_speech(system_utt, "wav")
+    
+    # TODO: turn on when ready to test lipsync stuff
+    # to_wav_file(speech, "output.wav")
+    # run_rhubarb("output.wav", "output.json")
+    # rhubarb_data = load_rhubarb_json("output.json")
+    # await send_callback(json.dumps({'type': 'lipsync_data', 'data': rhubarb_data}))
+    fire_and_log(handle_speech(speech, send_callback))
+    logger.info(f"{lu.YELLOW}[LLM] Response sent to frontend. {lu.RESET}")
+    
+async def handle_speech(audio_bytes: bytes, send_callback) -> None:
+        # Splits audio data into smaller chunks so we can send it to the frontend
+        n_chunks = ceil(len(audio_bytes) / CHUNK_SIZE)
+        for i in range(n_chunks):
+            chunk = audio_bytes[i * CHUNK_SIZE:(i + 1) * CHUNK_SIZE]
+            await send_callback(json.dumps({
+                "type": "audio_chunk", 
+                "data": json.dumps({"data": base64.b64encode(chunk).decode('utf-8')})
+            }))
 # ======================================================================= ===================================
 # Generate LLM Response
 # ======================================================================= ===================================

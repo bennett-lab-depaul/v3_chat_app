@@ -4,6 +4,33 @@
 
 @import "tailwindcss"; 
 
+.bubble {
+  position: relative;
+  display: inline-block;
+  padding: 2rem;
+  background-color: lightblue;
+}
+
+.bubble:before {
+  content: "";
+  position: absolute;
+  padding: 2rem 4rem;
+  bottom: -4rem;
+  left: -4px;
+  background-color: lightblue;
+  border-bottom-right-radius: 4rem 3rem;
+}
+
+.bubble:after {
+  content: "";
+  position: absolute;
+  padding: 2rem 4rem;
+  bottom: -4rem;
+  left: -4rem;
+  background-color: white;
+  border-bottom-right-radius: 4rem 3rem;
+}
+
 /*
 .linkActive {
     color: #7f22fe;

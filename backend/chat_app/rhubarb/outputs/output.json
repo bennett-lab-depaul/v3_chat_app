@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "soundFile": "/app/chat_app/rhubarb/outputs/output.wav",
+    "duration": 4.37
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.18, "value": "X" },
+    { "start": 0.18, "end": 0.26, "value": "A" },
+    { "start": 0.26, "end": 0.36, "value": "C" },
+    { "start": 0.36, "end": 0.43, "value": "B" },
+    { "start": 0.43, "end": 0.71, "value": "F" },
+    { "start": 0.71, "end": 0.78, "value": "B" },
+    { "start": 0.78, "end": 0.98, "value": "D" },
+    { "start": 0.98, "end": 1.06, "value": "C" },
+    { "start": 1.06, "end": 1.15, "value": "A" },
+    { "start": 1.15, "end": 1.41, "value": "B" },
+    { "start": 1.41, "end": 1.49, "value": "A" },
+    { "start": 1.49, "end": 1.66, "value": "C" },
+    { "start": 1.66, "end": 1.87, "value": "B" },
+    { "start": 1.87, "end": 2.01, "value": "C" },
+    { "start": 2.01, "end": 2.13, "value": "A" },
+    { "start": 2.13, "end": 2.17, "value": "E" },
+    { "start": 2.17, "end": 2.28, "value": "B" },
+    { "start": 2.28, "end": 2.56, "value": "F" },
+    { "start": 2.56, "end": 2.63, "value": "E" },
+    { "start": 2.63, "end": 2.70, "value": "F" },
+    { "start": 2.70, "end": 2.84, "value": "G" },
+    { "start": 2.84, "end": 2.91, "value": "C" },
+    { "start": 2.91, "end": 3.12, "value": "B" },
+    { "start": 3.12, "end": 3.33, "value": "C" },
+    { "start": 3.33, "end": 3.47, "value": "H" },
+    { "start": 3.47, "end": 3.54, "value": "C" },
+    { "start": 3.54, "end": 3.68, "value": "E" },
+    { "start": 3.68, "end": 3.75, "value": "C" },
+    { "start": 3.75, "end": 3.89, "value": "B" },
+    { "start": 3.89, "end": 4.17, "value": "A" },
+    { "start": 4.17, "end": 4.37, "value": "X" }
+  ]
+}

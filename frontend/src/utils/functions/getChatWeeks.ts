@@ -9,25 +9,29 @@ export interface ChatWeek {
     prevScores : Record<BiomarkerType, number>;
 }
 
+export interface ChatsPerDay {
+    day   : string;  // "Mon", "Tue", ..., "Today"
+    chats : number;  // Number of chats on that day
+}
+
 
 // ====================================================================
 // Groups chat-sessions into Monday-to-Sunday buckets
 // ====================================================================
-const weekStartsOn = 1; // 0 = Sunday, 1 = Monday
-export function groupSessionsByWeek(sessions: ChatSession[]): ChatWeek[] {
+export function groupSessionsByWeek(sessions: ChatSession[], weekStartsOn: 0 | 1 = 1): ChatWeek[] {
     if (!sessions.length) return [];
 
     // Sort the chats and get the start of the first week
     const sorted = [...sessions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     const firstChatDate = new Date(sorted[0].date);
-    const firstMonday  = startOfWeek(firstChatDate, weekStartsOn);
+    const weekStart  = startOfWeek(firstChatDate, weekStartsOn);
 
     // --------------------------------------------------------------------
     // Iterate and bucket
     // --------------------------------------------------------------------
     // Prepare objects to store the results
     const result : ChatWeek[]    = [];
-    let cursor   : Date          = new Date(firstMonday);
+    let cursor   : Date          = new Date(weekStart);
     let bucket   : ChatSession[] = [];
 
     for (const chat of sorted) {
@@ -61,6 +65,47 @@ export function groupSessionsByWeek(sessions: ChatSession[]): ChatWeek[] {
     return result;
 }
 
+export function getCurrentWeek(sessions: ChatSession[], weekStartsOn: 0 | 1 = 1): ChatWeek | null {
+    const now = new Date();
+    const sorted = [...sessions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    const weekStart  = startOfWeek(new Date(), weekStartsOn);
+    const weekEnd    = endOfWeek(weekStart, weekStartsOn, true);
+    let bucket: ChatSession[] = [];
+
+    for (const chat of sorted) {
+        const chatDate = new Date(chat.date);
+        if (chatDate > weekEnd) {
+            break;
+        }
+        if (chatDate >= weekStart) {
+            bucket.push(chat);
+        }
+    }
+
+    return ({
+        start: weekStart,
+        end: weekEnd,
+        sessions: bucket,
+        prevScores: null,
+    })
+}
+
+export function getChatsInWeek(week: ChatWeek): ChatsPerDay[] {
+    const dayTracks: ChatsPerDay[] = [];
+    for (let i = 0; i < 7; i++) {
+        const day = new Date(week.start);
+        day.setDate(day.getDate() + i);
+        const chats = getChatsForDay(week, day);
+        if (sameDay(day, new Date())) {
+            dayTracks.push({ day: "Today", chats: chats });
+        } else {
+            const weekday = day.toLocaleString('en-us', {  weekday: 'short' });
+            dayTracks.push({ day: weekday, chats: chats });
+        }
+    }
+    return dayTracks;
+}
+
 // --------------------------------------------------------------------
 // Helpers
 // --------------------------------------------------------------------
@@ -79,3 +124,17 @@ function endOfWeek(weekStart: Date, weekStartsOn: 0 | 1, inclusiveEnd = false): 
     if (inclusiveEnd) out.setMilliseconds(-1); // Sunday 23:59:59.999
     return out;
 }
+
+function sameDay(d1: Date, d2: Date) {
+    return d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth()    === d2.getMonth() &&
+        d1.getDate()     === d2.getDate();
+    }
+
+function getChatsForDay(week: ChatWeek, day: Date) {
+    return week.sessions.filter(s => {
+        const d = new Date(s.date);
+        return sameDay(d, day);
+    }).length;
+}
+

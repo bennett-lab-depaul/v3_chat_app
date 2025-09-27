@@ -71,3 +71,6 @@ djangorestframework-simplejwt
 rest_framework_simplejwt
 vaderSentiment
 keyboard
+google-genai
+google-cloud-speech
+google-cloud-texttospeech

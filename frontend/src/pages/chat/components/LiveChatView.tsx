@@ -2,19 +2,20 @@ import { useState } from "react";
 import { ToggleButton, ToggleButtonGroup } from "react-bootstrap";
 
 import { LocalChatMessage } from "@/hooks/live-chat";
+import { useAuth } from "@/context/AuthProvider";
 
-import Avatar       from "@/pages/common/avatar/Avatar";
-import AvatarView   from "./AvatarView";
+import Avatar from "@/pages/common/avatar/Avatar";
+import AvatarView from "./AvatarView";
 import ChatMessages from "./ChatMessages";
 
 // --------------------------------------------------------------------
 // Get the most recent message from the system
 // --------------------------------------------------------------------
-const default_message = "Chat with me!";
+const default_message = `Chat with me!`;
 export function getRecentMessage(messages: LocalChatMessage[], fallback = default_message): string {
     const latest = messages.reduce<LocalChatMessage | null>((acc, m) => {
-        if (m.role !== "assistant") return acc;   // skip
-        return !acc || m.ts > acc.ts ? m : acc;   // keep newer
+        if (m.role !== "assistant") return acc; // skip
+        return !acc || m.ts > acc.ts ? m : acc; // keep newer
     }, null);
     return latest ? latest.content : fallback;
 }
@@ -24,6 +25,7 @@ export function getRecentMessage(messages: LocalChatMessage[], fallback = defaul
 // ====================================================================
 export default function LiveChatView({ messages, animation }: { messages: LocalChatMessage[], animation: string }) {
     const [viewMode, setViewMode] = useState(4);
+    const { user } = useAuth();
 
     // --------------------------------------------------------------------
     // Main view for the page
@@ -33,8 +35,19 @@ export default function LiveChatView({ messages, animation }: { messages: LocalC
         const chatHistoryWrapper2 = "overflow-y-auto w-full md:w-1/2 h-1/2 md:h-full md:border-r-1 md:border-b-0 border-b-1 border-blue-200";
 
         // Chat history or Avatar views separately
-        if      (viewMode == 1) {return (<div className={chatHistoryWrapper1}> <ChatMessages messages      = {                  messages  }/> </div>);}
-        else if (viewMode == 3) {return (<div className="h-[65vh] mb-[2rem]">  <AvatarView animation={animation}  chatbotMessage = { getRecentMessage(messages) }/> </div>);}
+        if (viewMode == 1) {
+            return (
+                <div className={chatHistoryWrapper1}>
+                <ChatMessages messages={messages} />
+                </div>
+            );
+        } else if (viewMode == 3) {
+            return (
+                <div className="h-[65vh] mb-[2rem]">
+                <AvatarView animation={animation} chatbotMessage={getRecentMessage(messages)} />
+                </div>
+            );
+        }
 
         // Default / main view for the app -- keeping the other ones still though for debugging (want to be able to see the chat history)
         else if (viewMode == 4) {
@@ -60,21 +73,52 @@ export default function LiveChatView({ messages, animation }: { messages: LocalC
     // --------------------------------------------------------------------
     // Return UI component
     // --------------------------------------------------------------------
-    return (
-    <>
-        {/* Buttons to change the view mode for the page */}
-        <div className="ml-[1rem] mt-[1rem] flex justify-center">
+    if (user.is_staff) {
+        return (
+        <>
+            {/* Buttons to change the view mode for the page */}
+            <div className="ml-[1rem] mt-[1rem] flex justify-center">
             <ToggleButtonGroup type="radio" name="viewMode" defaultValue={4}>
-                <ToggleButton id="messages"   variant="outline-primary" value={1} onChange={(e) => setViewMode(+e.currentTarget.value)}> Messages           </ToggleButton>
-                <ToggleButton id="split"      variant="outline-primary" value={2} onChange={(e) => setViewMode(+e.currentTarget.value)}> Messages & Chatbot </ToggleButton>
-                <ToggleButton id="avatar_old" variant="outline-primary" value={3} onChange={(e) => setViewMode(+e.currentTarget.value)}> Chatbot (old)      </ToggleButton>
-                <ToggleButton id="avatar"     variant="outline-primary" value={4} onChange={(e) => setViewMode(+e.currentTarget.value)}> Chatbot            </ToggleButton>
+                <ToggleButton
+                id="messages"
+                variant="outline-primary"
+                value={1}
+                onChange={(e) => setViewMode(+e.currentTarget.value)}
+                >
+                Messages
+                </ToggleButton>
+                <ToggleButton
+                id="split"
+                variant="outline-primary"
+                value={2}
+                onChange={(e) => setViewMode(+e.currentTarget.value)}
+                >
+                Messages & Chatbot
+                </ToggleButton>
+                <ToggleButton
+                id="avatar_old"
+                variant="outline-primary"
+                value={3}
+                onChange={(e) => setViewMode(+e.currentTarget.value)}
+                >
+                Chatbot (old)
+                </ToggleButton>
+                <ToggleButton
+                id="avatar"
+                variant="outline-primary"
+                value={4}
+                onChange={(e) => setViewMode(+e.currentTarget.value)}
+                >
+                Chatbot
+                </ToggleButton>
             </ToggleButtonGroup>
-        </div>
+            </div>
 
-        {/* Show the active view mode (4 options) */}
-        {getView()}
-
-    </>
-    );
+            {/* Show the active view mode (4 options) */}
+            {getView()}
+        </>
+        );
+    } else {
+        return <>{getView()}</>;
+    }
 }
