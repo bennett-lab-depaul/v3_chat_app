@@ -53,7 +53,7 @@ export function Chat() {
     const [animation, setAnimation] = useState('HEAD TILT');
     const cycleAnimation = () => {
         console.log("Cycling animation")
-        const animations = ['NOD YES', 'SHAKE NO', 'HEAD TILT', 'EMBARRASSED'];
+        const animations = ['NOD YES', 'SHAKE NO', 'HEAD TILT', 'EMBARRASSED', 'DANCE'];
         const currentIndex = animations.indexOf(animation);
         const nextIndex = (currentIndex + 1) % animations.length;
         setAnimation(animations[nextIndex]);
