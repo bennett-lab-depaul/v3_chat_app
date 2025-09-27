@@ -1,17 +1,11 @@
 import { useAuth } from "@/context/AuthProvider";
-import { useChatSessions } from "@/hooks/queries/useChatSessions";
-import { getChatsInWeek, getCurrentWeek } from "@/utils/functions/getChatWeeks";
+import { ChatWeek, getChatsInWeek, getCurrentWeek } from "@/utils/functions/getChatWeeks";
 
 
-export default function WeekTrack() {
+export default function WeekTrack( {week} : {week: ChatWeek} ) {
     const { profile } = useAuth();
-    const { data: sessions, isLoading } = useChatSessions();
-    if (isLoading) { 
-        return <p>Loading goal...</p>; 
-    }
 
     const role = profile.role.toLowerCase();
-    const week = getCurrentWeek(sessions, 1);
     const dayTracks = getChatsInWeek(week);
 
     return (

@@ -19,7 +19,7 @@ export default function AlbumWeekGrid({ week } : { week: ChatWeek }) {
             <div className="flex flex-row w-full gap-2 overflow-x-auto hidden-scrollbar">
                 { week.sessions.map( (session, idx) => {
                     return (
-                        <div key={idx} className="p-4 bg-blue-100 aspect-square"> Image </div>
+                        <div key={idx} className="p-[2rem] bg-blue-100 aspect-square"> Image </div>
                     )
                 })}
             </div>
