@@ -50,20 +50,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             logout();
             return;
         }
-
         try {
             setLoading(true);
-            setUser(authTokens.user);
-            setAccess(authTokens.access);
-            await getProfile().then(setProfile).catch(console.error);
+            const newAuthTokens = await authApi.refreshToken(authTokens.refresh);
+            setUser(newAuthTokens.user);
+            setAccess(newAuthTokens.access);
+            localStorage.setItem('authTokens', JSON.stringify(newAuthTokens));
         } catch (err) {
             setError((err as Error).message); 
             console.log((err as Error).message);
-            setAccess(undefined);
-            localStorage.clear();
-            throw err; // ToDo: Add toast back here
+            logout();
         } finally     { 
-            setLoading(false); 
+            try {
+                await getProfile().then(setProfile).catch(console.error);
+            } catch (err) {
+                console.error("Error getting profile: ", err);
+            } finally {
+                setLoading(false); 
+            }
         }
     }
 
