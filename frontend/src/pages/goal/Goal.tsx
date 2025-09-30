@@ -33,7 +33,7 @@ export function Goal() {
     return (
         <div className="d-flex flex-col mx-[5rem] my-[1rem] h-full gap-5">  
             <br />
-            <Avatar />
+            <Avatar animation={""}/>
             <h3 className="m-[2rem] text-center"><b>{getMsg()}</b></h3>
             <GoalProgress />
             <WeekTrack week={week} />
