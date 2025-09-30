@@ -4,5 +4,5 @@ export { History         } from "@/pages/history/History";
 export { ChatDetails     } from "@/pages/chatDetails/ChatDetails";
 export { Chat            } from "@/pages/chat/Chat";
 export { ProgressSummary } from "@/pages/progress/ProgressSummary";
-export { Goal            } from "@/pages/goal/Goal";
+export { Goal            } from "@/pages/goal/GoalPage";
 export { ChatAlbum       } from "@/pages/album/ChatAlbum";

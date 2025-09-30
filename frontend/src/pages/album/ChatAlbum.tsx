@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { IoGridOutline, IoList } from "react-icons/io5";
 
 import AlbumWeekGrid from "./components/AlbumWeekGrid";
@@ -38,12 +38,12 @@ export function ChatAlbum() {
         <div className="flex flex-col items-center">
             {weeks.map( (week, idx ) => {
                 return (
-                    <>
+                    <React.Fragment key={idx}>
                         {display == "grid" ? 
-                            <AlbumWeekGrid key={idx} week={week} /> :
-                            <AlbumWeekList key={idx} week={week} />
+                            <AlbumWeekGrid week={week} /> :
+                            <AlbumWeekList week={week} />
                         }
-                    </>
+                    </React.Fragment>
                 )
             })}
         </div>
