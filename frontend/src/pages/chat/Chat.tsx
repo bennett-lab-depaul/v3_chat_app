@@ -68,6 +68,7 @@ export function Chat() {
         {/* View of the chatHistory and/or Avatar */}
         <LiveChatView messages={session.messages} animation={animation} /> 
         <button  className="w-fit h-fit p-5 border-1-solid border-black" onClick={() => {cycleAnimation()}}>Cycle animation</button>
+        <p>Now playing {animation}</p>
 
         {/* SaveChatModal, controlled with props */}
         <SaveChatModal show={showModal} onClose={() => setShowModal(false)} saveChat={saveChat}/>
