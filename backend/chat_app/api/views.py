@@ -1,7 +1,9 @@
 # Django Rest Framework imports
 from rest_framework import viewsets, generics, permissions
-from rest_framework_simplejwt.views       import TokenObtainPairView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.views       import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from rest_framework_simplejwt.state import token_backend
 
 # Can I move the serializers.py file into this folder ?
 from ..models      import                    Goal,           UserSettings,           Reminder,           ChatSession
@@ -127,3 +129,21 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+    
+class MyTokenRefreshSerializer(TokenRefreshSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)      # gives {"refresh": ..., "access": ...}
+        decoded_payload = token_backend.decode(data['access'], verify=True)
+        user_id=decoded_payload['user_id']
+        user = get_user_model().objects.get(id=user_id)
+        data["user"] = {
+            "id"        : user.id,
+            "username"  : user.username,
+            "first_name": user.first_name,
+            "last_name" : user.last_name,
+            "is_staff"  : user.is_staff,
+        }
+        return data
+class MyTokenRefreshView(TokenRefreshView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = MyTokenRefreshSerializer
