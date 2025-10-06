@@ -74,3 +74,4 @@ keyboard
 google-genai
 google-cloud-speech
 google-cloud-texttospeech
+transformers==4.56.2

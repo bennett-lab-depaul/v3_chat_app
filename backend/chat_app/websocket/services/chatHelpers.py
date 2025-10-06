@@ -13,6 +13,7 @@ from ...         import config        as cf
 from ...services import logging_utils as lu 
 from .speechProvider import TextToSpeechProvider
 from .bg_helpers import fire_and_log
+from .emotionHelpers import zero_shot_classifier  
 
 ERROR_UTTERANCE = "I'm sorry, I encountered an error while processing your request."
 test = "\033[42m"
@@ -42,8 +43,11 @@ async def handle_transcription(data, msg_callback, send_callback, bio_callback):
     system_utt = await generate_LLM_response(context_buffer)
     t2 = time(); logger.info(f"{lu.YELLOW}[LLM] LLM response received: (in {(t2-t1):.4f}) \n{lu.BG_MAGENTA}{system_utt} {lu.RESET}")
 
+    # Classify the LLM response using zero-shot classification
+    emotion = await classify_llm_text_async(system_utt)
+
     # Immediately send the response back through the websocket
-    await send_callback(json.dumps({'type': 'llm_response', 'data': system_utt, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
+    await send_callback(json.dumps({'type': 'llm_response', 'data': system_utt, 'emotion': emotion, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
     t3 = time(); logger.info(f"{lu.YELLOW}[LLM] Response sent {(t3-t2):.4f}s ({(t3-t0):.4f}s total). {lu.RESET}")
 
     # -----------------------------------------------------------------------
@@ -119,3 +123,15 @@ def prepare_LLM_input(context_buffer):
     LLM_input += "".join([format_turn(turn) for turn in context_buffer])
     LLM_input += f"\n<|assistant|>\n"
     return LLM_input
+# -----------------------------------------------------------------------
+# Classify the LLM text using zero-shot classification
+# -----------------------------------------------------------------------
+async def classify_llm_text_async(text: str) -> str:
+    """
+    1) On first call if the classifier is not yet built, it is created and cached.
+    2) On subsequent call, Python checks the cache and sees that the function was 
+    3) already called once, so it just returns the cached classifier.
+    """
+    loop = asyncio.get_running_loop()
+    clf = cf.get_zero_shot_classifier()
+    return await loop.run_in_executor(None, lambda: zero_shot_classifier(clf, text))
