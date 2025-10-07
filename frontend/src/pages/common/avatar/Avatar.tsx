@@ -2,7 +2,6 @@ import { PerspectiveCamera  } from "@react-three/drei";
 import { Canvas             } from "@react-three/fiber";
 
 import Model from "./Model"
-import { useState } from "react";
 
 // Avatar Model
 export default function Avatar( { animation }) {
