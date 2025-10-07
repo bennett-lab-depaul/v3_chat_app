@@ -19,6 +19,7 @@ const TITLES: Record<string, string> = {
     "/schedule"     : "Schedule",
     "/goal"         : "Goal",
     "/album"        : "Chat Album",
+    "/week"         : "Weekly Summary",
     default         : "Cognibot",
 };
 

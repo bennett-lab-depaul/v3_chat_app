@@ -9,7 +9,6 @@ import { groupSessionsByWeek } from "@/utils/functions/getChatWeeks";
 
 export function ChatAlbum() {
     const [display, setDisplay] = useState("grid");
-
     const { data: sessions, isLoading } = useChatSessions();
     if (isLoading) { 
         return <p>Loading goal...</p>; 
