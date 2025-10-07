@@ -1,16 +1,20 @@
 import { ChatSession } from "@/api";
 import { useAuth } from "@/context/AuthProvider";
 import { ChatWeek } from "@/utils/functions/getChatWeeks"
+import { dateFormatOptionsShort } from "@/utils/styling/numFormatting";
+import { useNavigate } from "react-router-dom";
 
 export default function AlbumWeekList({ week } : { week: ChatWeek }) {
-    const options: Intl.DateTimeFormatOptions = {
-        month: "short",
-        day: "numeric",
-    };
+    const navigate = useNavigate();
+
+    const toWeeklySummary = (week: ChatWeek) => navigate("/week", { state: { week } } )
 
     return (
-        <div className="flex flex-col gap-2 md:w-1/2 m-[1rem] p-[2rem] border-gray-400 border-b-2 border-solid">
-            <h2>{week.start.toLocaleDateString("en-US", options)} - {week.end.toLocaleDateString("en-US", options)} {week.end.getFullYear()}</h2>
+        <div 
+            className="flex flex-col gap-2 md:w-1/2 m-[1rem] p-[2rem] border-gray-400 border-b-2 border-solid hover:cursor-pointer" 
+            onClick={() => {toWeeklySummary(week)}}
+        >
+            <h2>{week.start.toLocaleDateString("en-US", dateFormatOptionsShort)} - {week.end.toLocaleDateString("en-US", dateFormatOptionsShort)} {week.end.getFullYear()}</h2>
             <div className="grid grid-rows-1 w-full gap-2">
                 { week.sessions.map( (session, idx) => {
                     return (

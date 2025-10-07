@@ -1,14 +1,18 @@
 import { ChatWeek } from "@/utils/functions/getChatWeeks"
+import { dateFormatOptionsShort } from "@/utils/styling/numFormatting";
+import { useNavigate } from "react-router-dom";
 
 export default function AlbumWeekGrid({ week } : { week: ChatWeek }) {
-    const options: Intl.DateTimeFormatOptions = {
-        month: "short",
-        day: "numeric",
-    };
+    const navigate = useNavigate();
+
+    const toWeeklySummary = (week: ChatWeek) => navigate("/week", { state: { week } } )
 
     return (
-        <div className="flex flex-col gap-2 md:w-1/2 m-[1rem] p-[2rem] border-gray-400 border-b-2 border-solid">
-            <h2>{week.start.toLocaleDateString("en-US", options)} - {week.end.toLocaleDateString("en-US", options)} {week.end.getFullYear()}</h2>
+        <div 
+            className="flex flex-col gap-2 w-full lg:w-1/2 m-[1rem] p-[2rem] lg:p-[4rem] bg-red-50 rounded-lg hover:cursor-pointer hover:shadow-lg/30" 
+            onClick={() => {toWeeklySummary(week)}}
+        >
+            <h2>{week.start.toLocaleDateString("en-US", dateFormatOptionsShort)} - {week.end.toLocaleDateString("en-US", dateFormatOptionsShort)} {week.end.getFullYear()}</h2>
             <div className="w-full aspect-square flex self-center">
                 <div className="flex items-end bg-blue-200 size-full p-4">
                     <h1 className="text-white">
