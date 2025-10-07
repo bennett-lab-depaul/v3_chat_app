@@ -32,7 +32,7 @@ export function Goal() {
     return (
         <div className="d-flex flex-col mx-[5rem] mt-[1rem] mb-[4rem] h-full gap-5">  
             <br />
-            <img className="size-1/2 self-center" src="/images/robot_face.png"></img>
+            <img className="lg:size-1/4 md:size-1/2 size-3/4 self-center" src="/images/robot_face.png"></img>
             <h3 className="m-[2rem] text-center"><b>{getMsg()}</b></h3>
             <GoalProgress />
             <WeekTrack week={week} />
