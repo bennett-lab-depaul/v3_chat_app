@@ -49,9 +49,7 @@ export default function Header() {
                         <NavLink to="/chat"      className={navLinkCls}> Chat      </NavLink>
                     }
                     <NavLink to="/schedule"  className={navLinkCls}> Schedule  </NavLink>
-                    <NavLink to="/dashboard" className={navLinkCls}> Analysis  </NavLink>
-                    {/* <NavLink to="/history"   className={navLinkCls}> History   </NavLink> */}
-                    {/* <NavLink to="/progress"  className={navLinkCls}> Progress  </NavLink> */}
+                    <NavLink to="/analysis" className={navLinkCls}> Analysis  </NavLink>
                 </nav>
 
                 {/* Right Side Icons */}

@@ -3,7 +3,7 @@ import { AuthProvider            } from "@/context/AuthProvider";
 
 import { Unprotected, Protected, AppLayout, IsCaregiver, IsPatient } from "@/routes";
 
-import { Dashboard, History, ChatDetails, Chat, ProgressSummary, Goal, ChatAlbum } from "@/pages";
+import { Dashboard, History, ChatDetails, Chat, ProgressSummary, Goal, ChatAlbum, DaySummary, WeekSummary, Analysis, Alert, Transcript, Practice } from "@/pages";
 import Login           from "@/pages/Login";
 import SignUp          from "@/pages/SignUp";
 import Schedule        from "@/pages/Schedule";
@@ -34,8 +34,12 @@ export default function App() {
                 </Route>
 
                 {/* Caregiver */}
-                <Route path="/dashboard"   element={<Dashboard   />} />
-                <Route path="/chatdetails" element={<ChatDetails />} />
+                <Route element={ <IsCaregiver /> } >
+                    <Route path="/dashboard"   element={<Dashboard   />} />
+                    <Route path="/chatdetails" element={<ChatDetails />} />
+                    <Route path="/alert"       element={<Alert       />} />
+                    <Route path="/practice"    element={<Practice    />} />
+                </Route>
 
                 {/* Shared */}
                 <Route path="/history"  element={<History         />} />
@@ -43,11 +47,15 @@ export default function App() {
                 <Route path="/progress" element={<ProgressSummary />} />
                 <Route path="/goal"     element={<Goal            />} />
                 <Route path="/album"    element={<ChatAlbum       />} />
+                <Route path="/week"     element={<WeekSummary     />} />
+                <Route path="/day"      element={<DaySummary      />} />
+                <Route path="/analysis" element={<Analysis        />} />
+                <Route path="/transcript" element={<Transcript    />} />
                 
             </Route>
 
             {/* Fallback */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/goal" replace />} />
             
         </Route>
 
