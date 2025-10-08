@@ -10,7 +10,6 @@
 
 .bubble {
   position: relative;
-  display: inline-block;
   padding: 2rem;
   background-color: lightblue;
   font-size: 1.5rem;

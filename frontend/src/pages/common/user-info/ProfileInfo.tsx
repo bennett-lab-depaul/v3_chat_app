@@ -49,7 +49,7 @@ export default function ProfileInfo({ profile, user } : { profile: Profile, user
     <OverlayTrigger show={show} placement="bottom" overlay={popover} trigger={[]} delay={{show: 250, hide: 400}}>
         <button onMouseEnter={open} onMouseLeave={close} onFocus={open} onBlur={close} className={overlayStyle}>
             <FaUser size={25} color={isCare ? CAREGIVER_HEX : PATIENT_HEX}/>
-            <span className="text-nowrap align-middle">{user.first_name} {user.last_name}</span>
+            <span className="text-nowrap align-middle hidden sm:block">{user.first_name} {user.last_name}</span>
         </button>
     </OverlayTrigger>
     );

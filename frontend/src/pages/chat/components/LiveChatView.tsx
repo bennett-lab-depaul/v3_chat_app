@@ -54,13 +54,14 @@ export default function LiveChatView({ messages, animation }: { messages: LocalC
         else if (viewMode == 4) {
             return (
                 <div className="flex flex-row justify-center h-[70vh] m-[1rem]">
-                    <div className="w-1/5" />
-                    <div className="mt-[1rem] w-1/2"> 
+                    <div className="sm:w-1/5" />
+                    <div className="mt-[1rem] w-full sm:w-1/2"> 
                         <Avatar animation={animation} /> 
                     </div> 
-                    <div className="bubble bubble-bottom-left"> 
+                    <div className="hidden sm:inline-block bubble"> 
                         {getRecentMessage(messages)} 
                     </div>
+                    
                 </div>
             );
         }
