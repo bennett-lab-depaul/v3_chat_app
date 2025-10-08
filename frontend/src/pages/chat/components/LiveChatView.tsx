@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthProvider";
 import Avatar from "@/pages/common/avatar/Avatar";
 import AvatarView from "./AvatarView";
 import ChatMessages from "./ChatMessages";
+import { ThreeDot } from "react-loading-indicators";
 
 // --------------------------------------------------------------------
 // Get the most recent message from the system
@@ -54,7 +55,12 @@ export default function LiveChatView({ messages, animation }: { messages: LocalC
             return (
                 <div className="flex flex-row justify-center h-[70vh] m-[1rem]">
                     <div className="w-1/5" />
-                    <AvatarView animation={animation} chatbotMessage={getRecentMessage(messages)} />
+                    <div className="mt-[1rem] w-1/2"> 
+                        <Avatar animation={animation} /> 
+                    </div> 
+                    <div className="bubble bubble-bottom-left"> 
+                        {getRecentMessage(messages)} 
+                    </div>
                 </div>
             );
         }
