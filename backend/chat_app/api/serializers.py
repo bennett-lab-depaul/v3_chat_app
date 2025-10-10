@@ -29,7 +29,8 @@ class ChatSessionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = ChatSession
-        fields = ("id", "user", "source", "date", "is_active", "start_ts", "end_ts", "duration", "topics", "sentiment", "notes", "messages", "biomarkers", "average_scores")
+        fields = ("id", "user", "source", "date", "is_active", "start_ts", "end_ts", "duration", "topics", 
+                  "sentiment", "notes", "messages", "biomarkers", "average_scores")
         read_only_fields = fields # ToDo: "notes" shouldn't be read only...
 
     def get_start_ts      (self, obj): return obj.start_ts
@@ -42,7 +43,7 @@ class ChatSessionSerializer(serializers.ModelSerializer):
 class UserSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model  = UserSettings
-        fields = ("patientViewOverall", "patientCanSchedule")
+        fields = ("patientViewOverall", "patientCanSchedule", "taskType", "taskSubtype")
         
 class ReminderSerializer(serializers.ModelSerializer):
     class Meta:

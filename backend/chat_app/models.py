@@ -196,9 +196,13 @@ class Goal(models.Model):
 
 
 class UserSettings(models.Model):
+    TASK_CHOICES = [("chat", "Chat"), ("chattopic", "ChatTopic"), ("chatimage", "ChatImage")]
+    
     user               = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name="settings_user")
     patientViewOverall = models.BooleanField(default=True)
     patientCanSchedule = models.BooleanField(default=True)
+    taskType           = models.CharField(max_length=32, choices=TASK_CHOICES, default="chat")
+    taskSubtype        = models.CharField(max_length=32, default="N/A")
 
     def __str__(self): return f"{self.user.plwd.username}'s settings"
 
