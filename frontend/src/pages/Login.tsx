@@ -39,7 +39,7 @@ export default function Login() {
        
             <h1 className="font-mono text-lg">Welcome to CogniBot!</h1>
 
-            <div className="flex flex-col gap-2 border-1 border-gray-400 rounded-lg p-4 md:w-1/2">
+            <div className="flex flex-col gap-2 border-1 border-gray-400 rounded-lg p-4 w-3/4 sm:w-1/2">
                 <label>Username</label><input required autoComplete="username"                          name="username" value={form.username} onChange={handleChange} className={loginStyle}/>
                 <label>Password</label><input required autoComplete="current-password" type="password"  name="password" value={form.password} onChange={handleChange} className={loginStyle}/>
 

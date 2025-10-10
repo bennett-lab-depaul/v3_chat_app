@@ -61,7 +61,6 @@ export default function LiveChatView({ messages, animation }: { messages: LocalC
                     <div className="hidden sm:inline-block bubble"> 
                         {getRecentMessage(messages)} 
                     </div>
-                    
                 </div>
             );
         }
