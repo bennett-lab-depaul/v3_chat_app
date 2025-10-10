@@ -3,7 +3,8 @@ import { AuthProvider            } from "@/context/AuthProvider";
 
 import { Unprotected, Protected, AppLayout, IsCaregiver, IsPatient } from "@/routes";
 
-import { Dashboard, History, ChatDetails, Chat, ProgressSummary, Goal, ChatAlbum, DaySummary, WeekSummary, Analysis, Alert, Transcript, Practice } from "@/pages";
+import { Dashboard, History, ChatDetails, Chat, ProgressSummary, Goal, ChatAlbum, DaySummary, 
+    WeekSummary, Analysis, Alert, Transcript, Practice, Settings } from "@/pages";
 import Login           from "@/pages/Login";
 import SignUp          from "@/pages/SignUp";
 import Schedule        from "@/pages/Schedule";
@@ -39,6 +40,7 @@ export default function App() {
                     <Route path="/chatdetails" element={<ChatDetails />} />
                     <Route path="/alert"       element={<Alert       />} />
                     <Route path="/practice"    element={<Practice    />} />
+                    <Route path="/settings"    element={<Settings    />} />
                 </Route>
 
                 {/* Shared */}

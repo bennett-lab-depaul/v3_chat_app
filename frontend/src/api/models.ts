@@ -7,6 +7,8 @@
 export interface UserSettings {
   patientViewOverall: boolean;
   patientCanSchedule: boolean;
+  taskType          : string;
+  taskSubtype       : string;
 }
 
 export interface Reminder {

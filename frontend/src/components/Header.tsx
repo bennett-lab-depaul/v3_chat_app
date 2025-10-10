@@ -20,6 +20,8 @@ const TITLES: Record<string, string> = {
     "/goal"         : "Goal",
     "/album"        : "Chat Album",
     "/week"         : "Weekly Summary",
+    "/day"          : "Daily Summary",
+    "/settings"     : "Settings",
     default         : "Cognibot",
 };
 
@@ -46,7 +48,7 @@ export default function Header() {
                     <NavLink to="/goal"      className={navLinkCls}> Goal      </NavLink>
                     <NavLink to="/album"     className={navLinkCls}> Album     </NavLink>
                     {isCare ? 
-                        <NavLink to="/history"   className={navLinkCls}> Practice  </NavLink> :
+                        <NavLink to="/practice"   className={navLinkCls}> Practice  </NavLink> :
                         <NavLink to="/chat"      className={navLinkCls}> Chat      </NavLink>
                     }
                     <NavLink to="/schedule"  className={navLinkCls}> Schedule  </NavLink>
@@ -56,7 +58,7 @@ export default function Header() {
                 {/* Right Side Icons */}
                 <div className="vr"></div>
                 <ProfileInfo profile={profile} user={user}/>
-                <button onClick={() => setShowModal(true)}> <GoGear size={22}/> </button>
+                <NavLink to="/settings" className="text-gray-500"> <GoGear size={22}/> </NavLink>
                 <button onClick={() => logout()} className={logOutStyle}> Log out </button>
             </div>
 

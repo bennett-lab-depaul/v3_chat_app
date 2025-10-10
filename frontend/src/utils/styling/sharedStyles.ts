@@ -11,3 +11,6 @@ export const buttStyle = "bg-violet-600 rounded p-2 text-white";
 // --------------------------------------------------------------------
 export const switchStyle = "form-check form-switch w-100";
 export const switchLabel = "font-medium";
+
+export const plainButtonStyle = "border border-solid border-gray-300 rounded p-2 text-center hover:cursor-pointer hover:bg-gray-100 w-fit";
+export const plainButtonStyleDisabled = "border border-solid border-gray-300 rounded p-2 text-center bg-gray-100 text-gray-400 w-fit";
