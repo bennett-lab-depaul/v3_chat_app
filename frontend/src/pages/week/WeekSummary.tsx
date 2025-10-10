@@ -6,16 +6,16 @@ import MyWordCloud from "../common/WordCloud";
 import { ChatMessage, ChatSession } from "@/api";
 
 export function WeekSummary() {
-    const { state } = useLocation() as { state?: { week?: ChatWeek } };
+    const { state } = useLocation() as { state?: { chatWeek?: ChatWeek, albumDisplay: string } };
     const navigate = useNavigate();
-    if (!state?.week) { navigate("/chat"); };
+    if (!state?.chatWeek) { navigate("/chat"); };
 
     const { profile } = useAuth();
     const role = profile.role.toLowerCase();
-    const chatWeek = state.week;
+    const chatWeek = state.chatWeek;
     const weeklyMessages = getWeeklyMessages(chatWeek);
 
-    const toAlbum = () => navigate("/album");
+    const toAlbum = () => navigate("/album", {state: state?.albumDisplay});
 
     return (
         <div className="m-[1rem]">

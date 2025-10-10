@@ -5,13 +5,15 @@ import AlbumWeekGrid from "./components/AlbumWeekGrid";
 import AlbumWeekList from "./components/AlbumWeekList";
 import { useChatSessions } from "@/hooks/queries/useChatSessions";
 import { groupSessionsByWeek } from "@/utils/functions/getChatWeeks";
+import { useLocation } from "react-router-dom";
 
 
 export function ChatAlbum() {
-    const [display, setDisplay] = useState("grid");
+    const { state } = useLocation() as { state?: { albumDisplay: string } };
+    const [display, setDisplay] = useState(state ?? "grid");
     const { data: sessions, isLoading } = useChatSessions();
     if (isLoading) { 
-        return <p>Loading goal...</p>; 
+        return <p>Loading...</p>; 
     }
     
     const weeks = groupSessionsByWeek(sessions).reverse();
