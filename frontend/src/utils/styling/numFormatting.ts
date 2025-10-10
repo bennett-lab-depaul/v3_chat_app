@@ -21,6 +21,12 @@ export const dateFormatOptionsShort: Intl.DateTimeFormatOptions = {
     day     : "numeric",
 };
 
+export const dateFormatOptions: Intl.DateTimeFormatOptions = {
+    month   : "short",
+    day     : "numeric",
+    year    : "numeric",
+};
+
 export const dateFormatLong = new Intl.DateTimeFormat("en-US", {
     year   : "numeric",
     month  : "short", 

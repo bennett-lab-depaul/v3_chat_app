@@ -30,7 +30,7 @@ export function AppLayout() {
         {pageHeader}
     
         {/* Routed page component */}
-        <main className="px-[1rem]"> <Outlet /> </main>
+        <main className="px-[1rem] pb-[2rem]"> <Outlet /> </main>
     </>
     );
 }
