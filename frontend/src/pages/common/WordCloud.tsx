@@ -1,5 +1,4 @@
-import React from "react";
-import { WordCloud, defaultFontSize } from "@isoterik/react-word-cloud";
+import { WordCloud } from "@isoterik/react-word-cloud";
 import { ChatMessage } from "@/api";
 
 function MyWordCloud( { messages } : { messages: ChatMessage[] }) {
@@ -52,8 +51,8 @@ function MyWordCloud( { messages } : { messages: ChatMessage[] }) {
             <div style={{width: "100%", height: "100%"}}>
                  <WordCloud 
                     words={words} 
-                    width={100} 
-                    height={50} 
+                    width={250} 
+                    height={250} 
                     fontSize={resolveFontSize}
                     transition="all .3s ease"
                     padding={2}
