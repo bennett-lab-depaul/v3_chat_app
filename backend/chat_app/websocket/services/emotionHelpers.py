@@ -92,7 +92,7 @@ def classify_emotion(text: str):
 
 def zero_shot_classifier(clf, text):    
     # Perform the classification
-    result = clf(text, EMOTIONS)
+    result = clf(text, EMOTIONS, multi_label=False)
     # Extract the top label
     top_label = result['labels'][0]
 
