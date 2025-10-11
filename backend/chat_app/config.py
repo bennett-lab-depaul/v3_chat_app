@@ -81,7 +81,7 @@ def _make_zero_shot_pipeline():
     clf = pipeline(
         "zero-shot-classification",
         model=ZEROSHOT_MODEL_PATH,
-        device=-1 #  `device=0` for GPU or `device=-1` for CPU.
+        device=0 #  `device=0` for GPU or `device=-1` for CPU.
     )
     return clf
 
