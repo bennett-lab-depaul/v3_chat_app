@@ -23,7 +23,7 @@ CHUNK_SIZE = 8_192 # How many bytes of audio we can send at a time
 # ======================================================================= ===================================
 # Process the users message & reply with the LLM ASAP
 # ======================================================================= ===================================
-async def handle_transcription(data, msg_callback, send_callback, bio_callback):
+async def handle_transcription(data, msg_callback, send_callback, bio_callback, send_emotion=False):
     """ Takes three callbacks from the consumers object """
     t0 = time()
     
@@ -44,10 +44,13 @@ async def handle_transcription(data, msg_callback, send_callback, bio_callback):
     t2 = time(); logger.info(f"{lu.YELLOW}[LLM] LLM response received: (in {(t2-t1):.4f}) \n{lu.BG_MAGENTA}{system_utt} {lu.RESET}")
 
     # Classify the LLM response using zero-shot classification
-    emotion = await classify_llm_text_async(system_utt)
+    if send_emotion:
+        emotion = await classify_llm_text_async(system_utt)
+        await send_callback(json.dumps({'type': 'llm_response', 'data': system_utt, 'emotion': emotion, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
+    else:
+        # Immediately send the response back through the websocket
+        await send_callback(json.dumps({'type': 'llm_response', 'data': system_utt, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
 
-    # Immediately send the response back through the websocket
-    await send_callback(json.dumps({'type': 'llm_response', 'data': system_utt, 'emotion': emotion, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
     t3 = time(); logger.info(f"{lu.YELLOW}[LLM] Response sent {(t3-t2):.4f}s ({(t3-t0):.4f}s total). {lu.RESET}")
 
     # -----------------------------------------------------------------------
