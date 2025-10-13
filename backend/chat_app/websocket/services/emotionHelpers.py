@@ -5,18 +5,20 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 EMOTIONS = ["Happy", "Sad", "Surprised", "Angry", "Scared", "Neutral"]
 
 # cue lists, can be expanded over time
-SURPRISE_CUES = {"wow","whoa","no way","wait what","what?","really?","oh my god", "omg", "surprise"}
-SCARED_CUES   = {"scared","afraid","terrified","anxious","worried","nervous","panic","fear", "horror"}
-ANGRY_CUES    = {"grumpy","cranky","grouchy","irritable","moody","testy", "whatever","annoying","bother","sucks"}
-SAD_CUES      = {"sad","down","depressed","upset","heartbroken","lonely","miserable","cry", "fail","miserable", "woe", "unhappy",}
-HAPPY_CUES    = {"great","good","awesome","amazing","love","glad","yay","cool","perfect","lol","haha"}
+class WordCues:
+    HAPPY = ["great","good","awesome","amazing","love","glad","yay","cool","perfect","lol","haha"]
+    SAD = ["sad","down","depressed","upset","heartbroken","lonely","miserable","cry", "fail","miserable", "woe", "unhappy",]
+    SCARED = ["scared","afraid","terrified","anxious","worried","nervous","panic","fear", "horror"]
+    SURPRISED = ["wow","whoa","no way","wait what","what?","really?","oh my god", "omg", "surprise"]
+    ANGRY = ["grumpy","cranky","grouchy","irritable","moody","testy", "whatever","annoying","bother","sucks"]
+
 
 
 def _tokens(s: str):
     s = s.lower()
     return re.findall(r"[a-z'’]+|[!?]+|[\U0001F300-\U0001FAFF]", s)
 
-def classify_emotion(text: str):
+def classify_emotion_with_vader(text: str):
     # Compound Valence via VADER
 
     analyzer = SentimentIntensityAnalyzer()
@@ -33,15 +35,15 @@ def classify_emotion(text: str):
     def has_any(cues): 
         return any(c in joined for c in cues)
     
-    if has_any(HAPPY_CUES):     
+    if has_any(WordCues.HAPPY):     
         emo_score["Happy"] += 2
-    if has_any(SAD_CUES):       
+    if has_any(WordCues.SAD):       
         emo_score["Sad"] += 2
-    if has_any(SCARED_CUES):    
+    if has_any(WordCues.SCARED):    
         emo_score["Scared"] += 2
-    if has_any(SURPRISE_CUES):  
+    if has_any(WordCues.SURPRISED):  
         emo_score["Surprised"] += 2
-    if has_any(ANGRY_CUES): 
+    if has_any(WordCues.ANGRY): 
         emo_score["Angry"] += 2
 
     # 6) Map VADER valence to emotions
@@ -62,17 +64,17 @@ def classify_emotion(text: str):
 
     # Prefer Angry over Sad when annoyance cues are present and scores are close
     if emo_score["Angry"] > 0 and emo_score["Sad"] > 0:
-        if abs(emo_score["Angry"] - emo_score["Sad"]) <= 1 and has_any(ANGRY_CUES):
+        if abs(emo_score["Angry"] - emo_score["Sad"]) <= 1 and has_any(WordCues.ANGRY):
             emo_score["Angry"] += 1
 
     # prefer Surprised over happy when surprised cues are present and scores are close
     #if emo_score["Surprised"] > 0 and emo_score["Happy"] > 0:
-        #if abs(emo_score["Surprised"] - emo_score["Happy"]) <= 1 and has_any(SURPRISE_CUES):
+        #if abs(emo_score["Surprised"] - emo_score["Happy"]) <= 1 and has_any(WordCues.SURPRISED):
             #emo_score["Surprised"] += 1
             
     # prefer scared over Sad when scared cues are present and scores are close
     #if emo_score["Scared"] > 0 and emo_score["Sad"] > 0:
-        #if abs(emo_score["Scared"] - emo_score["Sad"]) <= 1 and has_any(SCARED_CUES):
+        #if abs(emo_score["Scared"] - emo_score["Sad"]) <= 1 and has_any(WordCues.SCARED):
             #emo_score["Scared"] += 1
             
     # Final selection
@@ -86,7 +88,8 @@ def classify_emotion(text: str):
     # checks for how many emotions in the emo_score dictionary have a score equal to the top_emo's score. 
     # The second condition is true if this count is > 1.
     if emo_score[top_emo] < 2 and sum(1 for v in emo_score.values() if v == emo_score[top_emo]) > 1:
-        return "Neutral", emo_score[top_emo]
+        return "Neutral"
+
     return top_emo
 
 
