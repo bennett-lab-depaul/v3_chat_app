@@ -10,16 +10,32 @@ import SignUp          from "@/pages/SignUp";
 import Schedule        from "@/pages/Schedule";
 
 import "./App.css";
+import { useEffect, useState } from "react";
 
 // --------------------------------------------------------------------
 // Routes and Pages
 // --------------------------------------------------------------------
 // ToDo: Almost all of them are shared, we just don't show everything to patients... ?
 export default function App() {
+    const [width, setWidth] = useState(window.innerWidth);
+
+    function handleWindowSizeChange() {
+        setWidth(window.innerWidth);
+    }
+
+    useEffect(() => {
+        window.addEventListener('resize', handleWindowSizeChange);
+        return () => {
+            window.removeEventListener('resize', handleWindowSizeChange);
+        }
+    }, []);
+
+    const isMobile = width <= 768;
+
   return (
     <AuthProvider>
       <Routes>
-        <Route element={<AppLayout />}> 
+        <Route element={<AppLayout isMobile={isMobile} />}> 
 
             {/* Public Routes */}
             <Route element={ <Unprotected/> }> 
