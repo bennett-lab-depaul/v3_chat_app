@@ -99,6 +99,9 @@ export interface ChatSession {
   sentiment : number | null;
   notes     : string | null;
 
+  taskType  : string;
+  taskSubtype: string | null;
+
   messages        : ChatMessage[];
   biomarkers      : ChatBiomarkerScore[];
   average_scores? : Record<string, number>;

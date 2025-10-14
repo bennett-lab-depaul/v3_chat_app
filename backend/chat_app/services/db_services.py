@@ -1,9 +1,10 @@
 from django.db    import transaction
 from django.utils import timezone
-from ..models     import ChatSession, ChatMessage, ChatBiomarkerScore
+from ..models     import ChatSession, ChatMessage, ChatBiomarkerScore, UserSettings
 
 from .. import config as cf
 from .db_helpers import get_sentiment_topics
+from ..api.mixins import get_profile
 
 import logging
 logger = logging.getLogger(__name__)
@@ -82,6 +83,12 @@ class ChatService:
         if notes     is not None: session.notes     = notes
         if topics    is not None: session.topics    = topics
         if sentiment is not None: session.sentiment = sentiment
+        
+        profile = get_profile(user)
+        if profile is not None:
+            settings = UserSettings.objects.get(user=user)
+            session.taskType    = settings.taskType
+            session.taskSubtype = settings.taskSubtype
         session.save()
        
         logger.info(f"{cf.RLINE_1}{cf.RED}[DB] ChatSession closed for {user.username} {cf.RESET}{cf.RLINE_2}")
