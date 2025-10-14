@@ -13,3 +13,12 @@ export const navLinkCls = ({ isActive }: { isActive: boolean }) =>
         ? "underline decoration-2 text-violet-600"
         : "no-underline text-gray-500 hover:text-violet-500 visited:text-gray-500";
 
+export const footerLinkPatientCls = ({ isActive }: { isActive: boolean }) =>
+    isActive
+        ? "flex flex-col items-center no-underline underline decoration-2 text-green-600"
+        : "flex flex-col items-center no-underline text-gray-500 hover:text-green-600 visited:text-gray-500";
+
+export const footerLinkCaregiverCls = ({ isActive }: { isActive: boolean }) =>
+    isActive
+        ? "flex flex-col items-center no-underline underline decoration-2 text-violet-600"
+        : "flex flex-col items-center no-underline text-gray-500 hover:text-violet-600 visited:text-gray-500";

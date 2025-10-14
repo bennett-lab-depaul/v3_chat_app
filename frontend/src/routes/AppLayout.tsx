@@ -2,10 +2,11 @@ import { Outlet  } from "react-router-dom";
 import { useAuth } from "@/context/AuthProvider";
 import { RUN_ENV } from "@/utils/constants";
 import   Header    from "@/components/Header";
+import FooterNav from "@/components/FooterNav";
+import { useEffect, useState } from "react";
 
-export function AppLayout() {
+export function AppLayout( {isMobile} : {isMobile: boolean}) {
     const { user, profile } = useAuth();
-    
     // Header & small info bar for development
     const pageHeader = (user            ) ? (<Header/>) : null;
     const DevBar     = (RUN_ENV == "DEV") ? (
@@ -26,11 +27,13 @@ export function AppLayout() {
     return (
     <>
         {/* Headers */}
-        {DevBar}
-        {pageHeader}
+        {/* {DevBar} */}
+        {isMobile ? null : pageHeader}
     
         {/* Routed page component */}
-        <main className="px-[1rem] pb-[2rem]"> <Outlet /> </main>
+        <main className="px-[1rem] pb-[15vh]"> <Outlet /> </main>
+        {isMobile? <FooterNav /> : null}
+
     </>
     );
 }
