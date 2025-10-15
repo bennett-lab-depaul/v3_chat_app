@@ -2,6 +2,7 @@ import { ChatSession } from "@/api";
 import { useAuth } from "@/context/AuthProvider";
 import { ChatWeek } from "@/utils/functions/getChatWeeks"
 import { dateFormatOptionsShort } from "@/utils/styling/numFormatting";
+import { widthStyle } from "@/utils/styling/sharedStyles";
 import { useNavigate } from "react-router-dom";
 
 export default function AlbumWeekList({ week } : { week: ChatWeek }) {
@@ -30,7 +31,7 @@ export default function AlbumWeekList({ week } : { week: ChatWeek }) {
     }
 
     return (
-        <div className="flex flex-col gap-4 w-full sm:w-3/4 lg:w-1/2 m-[1rem] p-[2rem] border-gray-400">
+        <div className={`${widthStyle} flex flex-col gap-4 m-[1rem] p-[2rem] border-gray-400`}>
             <a className="underline hover:cursor-pointer text-3xl text-black font-bold" onClick={() => {toWeeklySummary(week)}}>
                 {week.start.toLocaleDateString("en-US", dateFormatOptionsShort)} - {week.end.toLocaleDateString("en-US", dateFormatOptionsShort)} {week.end.getFullYear()}
             </a>
