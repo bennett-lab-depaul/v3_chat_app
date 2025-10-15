@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthProvider";
 
 import { TbArrowBigDown, TbArrowBigUp } from "react-icons/tb";
 import { TopicsCard } from "../common/TopicsCard";
-import { blockStyle } from "@/utils/styling/sharedStyles";
+import { blockStyle, colStyle } from "@/utils/styling/sharedStyles";
 
 export function Analysis() {
     const role = useAuth().profile.role.toLowerCase();
@@ -29,7 +29,7 @@ export function Analysis() {
              <div className="font-bold text-2xl">
                 Analysis
             </div>
-            <div className="flex flex-col gap-[2rem] items-center mt-[2rem]">
+            <div className={colStyle}>
                 <div className={blockStyle}>
                     <h2 className="patient-text">General Cognitive Status</h2>
                     <p className="text-lg text-gray-600">An average score calculated by adding up all signs.</p>

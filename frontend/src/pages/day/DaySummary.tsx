@@ -4,21 +4,23 @@ import MyWordCloud from "../common/WordCloud";
 import { dateFormatOptions } from "@/utils/styling/numFormatting";
 import { useAuth } from "@/context/AuthProvider";
 import { TopicsCard } from "../common/TopicsCard";
+import { colStyle } from "@/utils/styling/sharedStyles";
 
 export function DaySummary() {
     const { state } = useLocation() as { state?: { chatSession?: ChatSession, albumDisplay: string } };
-    if (!state?.chatSession) { useNavigate()("/chat"); };
     const navigate = useNavigate();
+    if (!state?.chatSession) { navigate("/chat"); };
     const chatDate = new Date(state.chatSession.date)
     const role = useAuth().profile.role.toLowerCase();
     const toAlbum = () => navigate("/album", {state: state?.albumDisplay});
+    const toTranscript = () => navigate("/transcript", {state: {chatSession: state.chatSession, albumDisplay: state.albumDisplay}});
 
     function ChatSummaryCard() {
         return (
             <div className="rounded-lg w-full p-[2rem] sm:w-3/4 lg:w-1/2 bg-red-50 shadow-md shadow-gray-300">
                 <h2 className={`${role}-text`}>Chat Summary</h2>
                 <p className="text-lg">To do: Add a summary of the chat.</p>
-                <button className={`${role}-button-outline w-full`}> View Full Transcript </button>
+                <button className={`${role}-button-outline w-full`} onClick={() => {toTranscript()}}> View Full Transcript </button>
             </div>
         )
     }
@@ -37,7 +39,7 @@ export function DaySummary() {
             <div className="font-bold text-2xl justify-between hover:cursor-pointer" onClick={() => {toAlbum()}}>
                 ← {chatDate.toLocaleDateString("en-US", dateFormatOptions)}
             </div>
-            <div className="flex flex-col gap-[2rem] items-center mt-[2rem]">
+            <div className={colStyle}>
                 <TopicsCard messages={getSessionMessages(state?.chatSession)} type="Daily" />
                 <ChatSummaryCard />
                 <button className="sm:w-3/4 lg:w-1/2 w-full px-[1rem] py-[0.5rem] bg-red-50 rounded-sm hover:bg-blue-200 hover:shadow-md items-center">

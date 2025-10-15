@@ -3,7 +3,7 @@ import { ChatWeek, getWeeklyMessages } from "@/utils/functions/getChatWeeks";
 import { dateFormatOptionsShort } from "@/utils/styling/numFormatting";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TopicsCard } from "../common/TopicsCard";
-import { blockStyle } from "@/utils/styling/sharedStyles";
+import { blockStyle, colStyle } from "@/utils/styling/sharedStyles";
 
 export function WeekSummary() {
     const { state } = useLocation() as { state?: { chatWeek?: ChatWeek, albumDisplay: string } };
@@ -22,7 +22,7 @@ export function WeekSummary() {
             <div className="font-bold text-2xl justify-between hover:cursor-pointer" onClick={() => {toAlbum()}}>
                 ← {chatWeek.start.toLocaleDateString("en-US", dateFormatOptionsShort)} - {chatWeek.end.toLocaleDateString("en-US", dateFormatOptionsShort)}
             </div>
-            <div className="flex flex-col gap-[2rem] items-center mt-[2rem]">
+            <div className={colStyle}>
                 <TopicsCard messages={weeklyMessages} type="Weekly" />
                 <ChatSummaryCard />
                 <button className="md:w-1/2 w-full px-[1rem] py-[0.5rem] bg-red-50 rounded-sm hover:bg-blue-200 hover:shadow-md items-center">
