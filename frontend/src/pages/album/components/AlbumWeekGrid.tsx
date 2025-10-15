@@ -1,6 +1,6 @@
 import { ChatSession } from "@/api";
 import { ChatWeek } from "@/utils/functions/getChatWeeks"
-import { dateFormatOptionsShort } from "@/utils/styling/numFormatting";
+import { dateFormat, dateFormatOptionsShort } from "@/utils/styling/numFormatting";
 import { useNavigate } from "react-router-dom";
 
 export default function AlbumWeekGrid({ week } : { week: ChatWeek }) {
@@ -21,11 +21,16 @@ export default function AlbumWeekGrid({ week } : { week: ChatWeek }) {
                     </h1>
                 </div>
             </div>
-            <div className="flex flex-row w-full gap-2 overflow-x-auto hidden-scrollbar">
+            <div className="grid grid-flow-col auto-cols-[20%] gap-2 overflow-x-auto hidden-scrollbar">
                 { week.sessions.map( (session, idx) => {
                     return (
-                        <div key={idx} className="p-[2rem] overflow-visible bg-blue-100 aspect-square hover:cursor-pointer hover:shadow-lg/30 hover:scale-90"
-                        onClick={() => {toDaySummary(session)}}> Image </div>
+                        <div 
+                            key={idx} 
+                            className="flex-none flex items-end justify-center pb-2 bg-blue-100 aspect-square hover:cursor-pointer hover:shadow-lg/30 hover:scale-90"
+                            onClick={() => {toDaySummary(session)}}
+                        > 
+                            {new Date(session.date).toLocaleDateString("en-US", dateFormatOptionsShort)} 
+                        </div>
                     )
                 })}
             </div>
