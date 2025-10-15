@@ -6,7 +6,7 @@ export default function CircularProgress( {score} : {score: number}) {
     const series = [score];
     const options: ApexOptions = {
         chart: {
-            height: 350,
+            height: "100%",
             type: 'radialBar',
         },
         plotOptions: {
@@ -82,6 +82,6 @@ export default function CircularProgress( {score} : {score: number}) {
     }
 
      return (
-            <ReactApexChart options={options} series={series} type="radialBar" height={350} />
+            <ReactApexChart options={options} series={series} type="radialBar" height={"100%"} />
         );
     }

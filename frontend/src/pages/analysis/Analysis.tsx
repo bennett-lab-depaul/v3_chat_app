@@ -26,27 +26,27 @@ export function Analysis() {
 
     return (
         <div className="m-[1rem]">
-             <div className="font-bold text-2xl">
+             <div className="font-bold text-2xl md:hidden">
                 Analysis
             </div>
             <div className={colStyle}>
                 <div className={blockStyle}>
                     <h2 className="patient-text">General Cognitive Status</h2>
-                    <p className="text-lg text-gray-600">An average score calculated by adding up all signs.</p>
-                    <div className="grid grid-cols-2 gap-4">
+                    <p className="text-lg text-gray-600 mb-[0rem]">An average score calculated by adding up all signs.</p>
+                    <div className="flex flex-row gap-4">
                         <div className="flex flex-col">
-                            <div className="h-[20vh]">
+                            <div className="min-h-[250px] h-full w-full">
                                 <CircularProgress score={curScore} />
                             </div>
                             {prevWeek ? 
-                            <span className="p-2 border rounded-full flex flex-row justify-center items-center">
+                            <span className="p-2 mt-[-2rem] border-2 border-solid border-gray-300 rounded-full flex flex-row justify-center items-center">
                                 Compared to last week: 
                                 {scoreDiff >= 0 ? <TbArrowBigUp color={"green"} size={"1rem"} /> : <TbArrowBigDown color={"red"} size={"1rem"} />} 
                                 {scoreDiff}
                             </span> : null}
                             
                         </div>
-                        <div className="flex flex-col justify-center">
+                        <div className="flex flex-col justify-center gap-2 text-lg">
                             <b>Fairly Good</b>
                             <p>2 signs flagged</p>
                             <p>1 factor impact</p>
