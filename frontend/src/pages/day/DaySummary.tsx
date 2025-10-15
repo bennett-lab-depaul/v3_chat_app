@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import MyWordCloud from "../common/WordCloud";
 import { dateFormatOptions } from "@/utils/styling/numFormatting";
 import { useAuth } from "@/context/AuthProvider";
+import { TopicsCard } from "../common/TopicsCard";
 
 export function DaySummary() {
     const { state } = useLocation() as { state?: { chatSession?: ChatSession, albumDisplay: string } };
@@ -11,18 +12,6 @@ export function DaySummary() {
     const chatDate = new Date(state.chatSession.date)
     const role = useAuth().profile.role.toLowerCase();
     const toAlbum = () => navigate("/album", {state: state?.albumDisplay});
-
-    function TopicsCard( { messages } : { messages: ChatMessage[] } ) {
-        return (
-            <div className="rounded-lg w-full p-[2rem] sm:w-3/4 lg:w-1/2 bg-red-50 shadow-md shadow-gray-300">
-                <h2 className={`${role}-text`}>Daily Topics</h2>
-                <p className="text-lg">The larger the font size, the more frequently you talked about it during chats.</p>
-                <div className="h-fit w-4/5 place-self-center rounded-lg">
-                    <MyWordCloud messages={messages} />
-                </div>
-            </div>
-        )
-    }
 
     function ChatSummaryCard() {
         return (
@@ -49,7 +38,7 @@ export function DaySummary() {
                 ← {chatDate.toLocaleDateString("en-US", dateFormatOptions)}
             </div>
             <div className="flex flex-col gap-[2rem] items-center mt-[2rem]">
-                <TopicsCard messages={getSessionMessages(state?.chatSession)} />
+                <TopicsCard messages={getSessionMessages(state?.chatSession)} type="Daily" />
                 <ChatSummaryCard />
                 <button className="sm:w-3/4 lg:w-1/2 w-full px-[1rem] py-[0.5rem] bg-red-50 rounded-sm hover:bg-blue-200 hover:shadow-md items-center">
                     <span className="flex flex-row justify-between items-center">

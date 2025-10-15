@@ -1,4 +1,4 @@
-import { ChatSession, BiomarkerType      } from "@/api";
+import { ChatSession, BiomarkerType, ChatMessage      } from "@/api";
 import { getSessionsBefore, averageScore } from "@/utils/misc/scores";
 
 // Interface for the ChatWeek objects we return
@@ -104,6 +104,22 @@ export function getChatsInWeek(week: ChatWeek): ChatsPerDay[] {
         }
     }
     return dayTracks;
+}
+
+/**
+ * Gets the ChatMessages of every session in a ChatWeek
+ * @param week The ChatWeek to get the messages of
+ * @returns A 1-d array of all the chat messages for the week
+ */
+export function getWeeklyMessages(week: ChatWeek) {
+    var messages: ChatMessage[] = [];
+    for (var i = 0; i < week.sessions.length; i++) {
+        var session: ChatSession = week.sessions[i];
+        for (var j = 0; j < session.messages.length; j++) {
+            messages.push(session.messages[j]);
+        }
+    }
+    return messages;
 }
 
 // --------------------------------------------------------------------
