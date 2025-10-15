@@ -6,7 +6,8 @@ export const h4 = "text-xl  align-middle fw-bold mb-1";  // (used for individual
 export const cardStyle = "border-1 border-gray-300 rounded p-[2rem] hover:shadow-xl h-full w-full justify-self-start";
 export const buttStyle = "bg-violet-600 rounded p-2 text-white";
 
-export const blockStyle = "rounded-lg w-full p-[2rem] sm:w-4/5 md:w-3/4 lg:w-1/2 bg-red-50 shadow-[0px_0px_4px_4px_rgba(0,0,0,0.1)]"
+export const widthStyle = "w-full sm:w-4/5 md:w-3/4 lg:w-1/2"
+export const blockStyle = `rounded-lg p-[2rem] bg-red-50 shadow-[0px_0px_4px_4px_rgba(0,0,0,0.1)] ${widthStyle}`
 export const colStyle = "flex flex-col gap-[2rem] items-center mt-[2rem]"
 
 // --------------------------------------------------------------------

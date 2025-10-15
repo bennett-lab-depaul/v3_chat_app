@@ -1,7 +1,7 @@
 import { ChatSession } from "@/api";
 import { useLocation, useNavigate } from "react-router-dom";
 import ChatTranscript from "../chatDetails/components/ChatTranscript";
-import { blockStyle, colStyle } from "@/utils/styling/sharedStyles";
+import { blockStyle, colStyle, widthStyle } from "@/utils/styling/sharedStyles";
 import { useState } from "react";
 
 export function Transcript() {
@@ -16,23 +16,28 @@ export function Transcript() {
             <div className="font-bold text-2xl justify-between hover:cursor-pointer" onClick={() => {toDaySummary()}}>
                 ← Transcript
             </div>
-            <select onChange={(e) => setBiomarker(e.target.value)} className="w-full p-2 border border-gray-400 rounded-lg mt-[1rem] bg-red-50 text-center">
-                <option disabled>Choose a Sign To Analyze</option>
-                <option value="grammar">Altered Grammar</option>
-                <option value="anomia">Anomia</option>
-                <option value="pragmatic">Pragmatic</option>
-                <option value="pronunciation">Pronunciation</option>
-                <option value="prosody">Prosody</option>
-                <option value="turnTaking">Turn Taking</option>
-            </select>
-            <button className="w-full py-2 px-4 rounded-full mt-[1rem] shadow-[0px_0px_2px_2px_rgba(0,0,0,0.1)] bg-red-50 hover:bg-red-100">
-                Play Audio
-            </button>
             <div className={colStyle}>
+                <select 
+                    onChange={(e) => setBiomarker(e.target.value)} 
+                    className={`${widthStyle} p-2 border-1 border-solid border-gray-400 rounded-lg mt-[1rem] bg-red-50 text-center text-xl hover:cursor-pointer`}
+                    defaultValue="select"
+                >
+                    <option value="select" disabled>Choose a Sign To Analyze</option>
+                    <option value="grammar">Altered Grammar</option>
+                    <option value="anomia">Anomia</option>
+                    <option value="pragmatic">Pragmatic</option>
+                    <option value="pronunciation">Pronunciation</option>
+                    <option value="prosody">Prosody</option>
+                    <option value="turnTaking">Turn Taking</option>
+                </select>
+                <button className={`${widthStyle} py-2 px-4 rounded-full mt-1 shadow-[0px_0px_2px_2px_rgba(0,0,0,0.1)] bg-red-50 hover:bg-red-100`}>
+                    Play Audio
+                </button>
                 <div className={blockStyle}>
                     <ChatTranscript chatSession={state.chatSession} />
                 </div>
             </div>
+            
         </div>
     )
 }

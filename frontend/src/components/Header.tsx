@@ -22,6 +22,7 @@ const TITLES: Record<string, string> = {
     "/week"         : "Weekly Summary",
     "/day"          : "Daily Summary",
     "/settings"     : "Settings",
+    "/analysis"     : "Analysis",
     default         : "Cognibot",
 };
 
