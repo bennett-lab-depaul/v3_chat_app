@@ -47,7 +47,7 @@ export function Chat() {
 	const saveChat = () => {
 		save();
 		setShowModal(false);
-		navigate("/progress");
+		navigate("/goal");
 	}; // use the stop speaking callback
 
     const [animation, setAnimation] = useState('HEAD TILT');

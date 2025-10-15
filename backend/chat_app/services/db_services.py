@@ -86,7 +86,7 @@ class ChatService:
         
         profile = get_profile(user)
         if profile is not None:
-            settings = UserSettings.objects.get(user=user)
+            settings = UserSettings.objects.get(user=profile)
             session.taskType    = settings.taskType
             session.taskSubtype = settings.taskSubtype
         session.save()
