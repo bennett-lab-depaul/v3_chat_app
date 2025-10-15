@@ -25,7 +25,7 @@ export function WeekSummary() {
             <div className={colStyle}>
                 <TopicsCard messages={weeklyMessages} type="Weekly" />
                 <ChatSummaryCard />
-                <button className="md:w-1/2 w-full px-[1rem] py-[0.5rem] bg-red-50 rounded-sm hover:bg-blue-200 hover:shadow-md items-center">
+                <button className="w-full sm:w-4/5 md:w-3/4 lg:w-1/2 px-[1rem] py-[0.5rem] bg-red-50 rounded-sm hover:bg-blue-200 hover:shadow-md items-center">
                     <span className="flex flex-row justify-between items-center">
                         <h4>Weekly Analysis</h4>
                         <h4>→</h4>
