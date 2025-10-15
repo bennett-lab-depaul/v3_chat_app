@@ -19,7 +19,7 @@ def _tokens(s: str):
     s = s.lower()
     return re.findall(r"[a-z'’]+|[!?]+|[\U0001F300-\U0001FAFF]", s)
 
-async def classify_emotion_with_vader(text: str):
+def classify_emotion_with_vader(text: str):
     # Compound Valence via VADER
     try: 
         analyzer = SentimentIntensityAnalyzer()
@@ -91,7 +91,7 @@ async def classify_emotion_with_vader(text: str):
         logger.error(f"Error occured during word cue-based emotion score calculation: {e}")
 
 
-async def zero_shot_classifier(clf, text):    
+def zero_shot_classifier(clf, text):    
     # Perform the classification
     try:
         result = clf(text, EMOTIONS, multi_label=False)
