@@ -40,25 +40,24 @@ function MyWordCloud( { messages } : { messages: ChatMessage[] }) {
     const {words, numWords} = tokenize();
 
     const resolveFontSize = (word) => {
-        const minFontSize = 4;
-        const maxFontSize = 24;
+        const minFontSize = 10;
+        const maxFontSize = 32;
         const size = (word.value ** 3 / numWords) * (maxFontSize - minFontSize) + minFontSize;
         return size;
     }
 
     if (messages.length > 0) {
         return (
-            <div style={{width: "100%", height: "100%"}}>
-                 <WordCloud 
-                    words={words} 
-                    width={250} 
-                    height={250} 
-                    fontSize={resolveFontSize}
-                    transition="all .3s ease"
-                    padding={2}
-                    timeInterval={1}
-                />
-            </div>
+            <WordCloud 
+                words={words} 
+                width={100} 
+                height={100} 
+                fontSize={resolveFontSize}
+                transition="all .3s ease"
+                padding={1}
+                rotate={() => { return 0;}}
+                timeInterval={1}
+            />
         );
     } else {
         return (
