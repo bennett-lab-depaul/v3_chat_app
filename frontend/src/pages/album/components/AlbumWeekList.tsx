@@ -19,7 +19,7 @@ export default function AlbumWeekList({ week } : { week: ChatWeek }) {
                 <div className="bg-blue-200 p-10 overflow-hidden rounded-l-md">Image</div>
                 <div className="flex flex-col w-full p-[1rem]">
                     <div className="flex justify-between w-full">
-                        <b>{date.toLocaleDateString("en-US", {month: "short", day: "numeric"})}</b>
+                        <b className="underline">{date.toLocaleDateString("en-US", {month: "short", day: "numeric"})}</b>
                         <p className="">{session.duration / 60} minutes</p>
                     </div>
                     <div className={`${role}-text font-bold text-xl`}>
