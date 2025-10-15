@@ -116,7 +116,7 @@ try:
     )
 
      # --- LOG ADDED: Finished loading and show the PID and device ---
-    logger.warning(
+    logger.info(
         f"[EMO] Zero-shot classifier INITIALIZED successfully in PID={os.getpid()} using device={ZERO_SHOT_CLASSIFIER_PIPELINE.device}"
     )
 

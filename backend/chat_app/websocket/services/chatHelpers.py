@@ -45,7 +45,7 @@ async def handle_transcription(data, msg_callback, send_callback, bio_callback, 
 
     # Classify the LLM response using zero-shot classification
     if send_emotion:
-        emotion = await classify_llm_text_emotion_async(system_utt, type="vader")
+        emotion = await classify_llm_text_emotion_async(system_utt, emo_classifier_type="vader")
         await send_callback(json.dumps({'type': 'llm_response', 'data': system_utt, 'emotion': emotion, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
     else:
         # Immediately send the response back through the websocket
@@ -129,7 +129,7 @@ def prepare_LLM_input(context_buffer):
 # -----------------------------------------------------------------------
 # Classify the LLM text using zero-shot classification
 # -----------------------------------------------------------------------
-async def classify_llm_text_emotion_async(text: str, type="zero_shot") -> str:
+async def classify_llm_text_emotion_async(text: str, emo_classifier_type: str="zero_shot") -> str:
     """
     Asynchronously classify emotion using either Zero-Shot or VADER method.
 
@@ -141,13 +141,17 @@ async def classify_llm_text_emotion_async(text: str, type="zero_shot") -> str:
         str: The classified emotion label.
     """
     loop = asyncio.get_running_loop()
+    try:
+        if emo_classifier_type == "vader":
+            return await loop.run_in_executor(None, lambda: classify_emotion_with_vader(text))
 
-    if type == "vader":
-        return await loop.run_in_executor(None, lambda: classify_emotion_with_vader(text))
+        elif emo_classifier_type == "zero_shot":
+            clf = cf.get_zero_shot_classifier()
+            return await loop.run_in_executor(None, lambda: zero_shot_classifier(clf, text))
+        else:
+            logger.warning(f"Unknown classifier_type: {emo_classifier_type}. Returning 'Neutral'.")
+            return "Neutral"
 
-    elif type == "zero_shot":
-        clf = cf.get_zero_shot_classifier()
-        return await loop.run_in_executor(None, lambda: zero_shot_classifier(clf, text))
-
-    else:
-        raise ValueError(f"Unknown classifier type: {type}")
+    except Exception as e:
+        logger.exception(f"Emotion classification failed (returning 'Neutral'): {e}")
+        return "Neutral"
