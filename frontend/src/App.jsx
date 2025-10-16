@@ -47,7 +47,7 @@ export default function App() {
             <Route element={ <Protected/> }>
                 {/* Patient */}
                 <Route element={ <IsPatient/> }>
-                    <Route path="/chat" element={<Chat />} />
+                    <Route path="/chat" element={<Chat isMobile={isMobile}/>} />
                 </Route>
 
                 {/* Caregiver */}

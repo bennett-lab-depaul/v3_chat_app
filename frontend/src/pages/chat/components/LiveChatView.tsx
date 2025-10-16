@@ -24,7 +24,7 @@ export function getRecentMessage(messages: LocalChatMessage[], fallback = defaul
 // ====================================================================
 // LiveChatView (show the Avater and/or the messages from the conversation)
 // ====================================================================
-export default function LiveChatView({ messages, animation }: { messages: LocalChatMessage[], animation: string }) {
+export default function LiveChatView({ messages, animation, isMobile }: { messages: LocalChatMessage[], animation: string, isMobile: boolean }) {
     const [viewMode, setViewMode] = useState(4);
     const { user } = useAuth();
 
@@ -51,7 +51,7 @@ export default function LiveChatView({ messages, animation }: { messages: LocalC
         }
 
         // Default / main view for the app -- keeping the other ones still though for debugging (want to be able to see the chat history)
-        else if (viewMode == 4) {
+        else if (viewMode == 4 && !isMobile) {
             return (
                 <div className="flex flex-row justify-center h-[70vh] m-[1rem]">
                     <div className="sm:w-1/5" />
@@ -63,6 +63,15 @@ export default function LiveChatView({ messages, animation }: { messages: LocalC
                     </div>
                 </div>
             );
+        } 
+        
+        else if (viewMode == 4 && isMobile) {
+            return (
+                <div className="flex flex-col mx-[1rem] mt-[2rem] h-[65vh]">
+                    <img className="object-contain h-1/2 place-self-center" src="/images/robot_face.png" />
+                    <div className="text-3xl font-extrabold mt-[4rem] mx-[2rem] overflow-y-auto hidden-scrollbar h-full">{getRecentMessage(messages)}</div>
+                </div>
+            )
         }
 
         // Combined split view
