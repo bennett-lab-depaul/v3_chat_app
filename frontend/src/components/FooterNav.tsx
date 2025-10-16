@@ -62,7 +62,7 @@ export default function FooterNav() {
                 </div>
                 <div className="flex flex-col items-center">
                     <NavLink to="/chat" className="flex flex-col items-center p-2 text-white no-underline rounded-full bg-gray-400 hover:bg-green-600 aspect-square translate-y-[-1.5rem]">
-                        <VscRobot size={"2rem"} />
+                        <img className="aspect-square w-[2rem] " src="/images/QT_icon.svg" />
                         Chat
                     </NavLink>
                 </div>

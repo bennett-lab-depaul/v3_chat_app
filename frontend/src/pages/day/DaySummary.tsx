@@ -5,6 +5,7 @@ import { dateFormatOptions } from "@/utils/styling/numFormatting";
 import { useAuth } from "@/context/AuthProvider";
 import { TopicsCard } from "../common/TopicsCard";
 import { colStyle, widthStyle } from "@/utils/styling/sharedStyles";
+import DropdownModal from "@/components/modals/DropdownModal";
 
 export function DaySummary() {
     const { state } = useLocation() as { state?: { chatSession?: ChatSession, albumDisplay: string } };
@@ -43,12 +44,7 @@ export function DaySummary() {
             <div className={colStyle}>
                 <TopicsCard messages={getSessionMessages(state?.chatSession)} type="Daily" />
                 <ChatSummaryCard />
-                <button className="sm:w-3/4 lg:w-1/2 w-full px-[1rem] py-[0.5rem] bg-red-50 rounded-sm hover:bg-blue-200 hover:shadow-md items-center">
-                    <span className="flex flex-row justify-between items-center">
-                        <h4>Speech Analysis</h4>
-                        <h4>→</h4>
-                    </span>
-                </button>
+                <DropdownModal title="Speech Analysis" content={content} />
                 <button className={`${role}-button p-[1rem] text-xl rounded-md sm:w-3/4 ${widthStyle}`}>
                     Download as PDF
                 </button>
@@ -56,3 +52,7 @@ export function DaySummary() {
         </div>
     )
 }
+
+const content = [`You speech reflects perfect pronunciation. You have focused on all the topics as well.`, 
+                `You sometimes get stuck finding and your sentence complexity can be improved as well.`, 
+                `You can play word games or read out loud to practice your speech abilities in daily life.`]
