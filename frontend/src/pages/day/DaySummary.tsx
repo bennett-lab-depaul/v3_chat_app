@@ -4,7 +4,7 @@ import MyWordCloud from "../common/WordCloud";
 import { dateFormatOptions } from "@/utils/styling/numFormatting";
 import { useAuth } from "@/context/AuthProvider";
 import { TopicsCard } from "../common/TopicsCard";
-import { colStyle } from "@/utils/styling/sharedStyles";
+import { colStyle, widthStyle } from "@/utils/styling/sharedStyles";
 
 export function DaySummary() {
     const { state } = useLocation() as { state?: { chatSession?: ChatSession, albumDisplay: string } };
@@ -20,7 +20,7 @@ export function DaySummary() {
             <div className="rounded-lg w-full p-[2rem] sm:w-3/4 lg:w-1/2 bg-red-50 shadow-md shadow-gray-300">
                 <h2 className={`${role}-text`}>Chat Summary</h2>
                 <p className="text-lg">To do: Add a summary of the chat.</p>
-                <button className={`${role}-button-outline w-full`} onClick={() => {toTranscript()}}> View Full Transcript </button>
+                <button className={`${role}-button-outline p-[1rem] text-xl rounded-md w-full`} onClick={() => {toTranscript()}}> View Full Transcript </button>
             </div>
         )
     }
@@ -36,9 +36,10 @@ export function DaySummary() {
     
     return (
         <div className="m-[1rem]">
-            <div className="font-bold text-2xl justify-between hover:cursor-pointer" onClick={() => {toAlbum()}}>
-                ← {chatDate.toLocaleDateString("en-US", dateFormatOptions)}
+            <div className="font-bold text-lg font-normal justify-between hover:cursor-pointer" onClick={() => {toAlbum()}}>
+                ← Back to Chat Album
             </div>
+            <div className="font-bold text-2xl mt-[1rem]">{chatDate.toLocaleDateString("en-US", dateFormatOptions)}</div>
             <div className={colStyle}>
                 <TopicsCard messages={getSessionMessages(state?.chatSession)} type="Daily" />
                 <ChatSummaryCard />
@@ -48,7 +49,7 @@ export function DaySummary() {
                         <h4>→</h4>
                     </span>
                 </button>
-                <button className={`${role}-button sm:w-3/4 lg:w-1/2`}>
+                <button className={`${role}-button p-[1rem] text-xl rounded-md sm:w-3/4 ${widthStyle}`}>
                     Download as PDF
                 </button>
             </div>

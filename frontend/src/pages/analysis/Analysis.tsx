@@ -7,6 +7,8 @@ import { useAuth } from "@/context/AuthProvider";
 import { TbArrowBigDown, TbArrowBigUp } from "react-icons/tb";
 import { TopicsCard } from "../common/TopicsCard";
 import { blockStyle, colStyle } from "@/utils/styling/sharedStyles";
+import BiomarkerCard from "./components/BiomarkerCard";
+import { averageScore, getExemplarDays, getFlaggedDays } from "@/utils/misc/scores";
 
 export function Analysis() {
     const role = useAuth().profile.role.toLowerCase();
@@ -17,12 +19,25 @@ export function Analysis() {
     const weeks = groupSessionsByWeek(sessions);
     const currentWeek = weeks.length ? weeks[weeks.length - 1] : null;
     const prevWeek = weeks.length > 1 ? weeks[weeks.length - 2] : null;
+    const avg = averageScore(currentWeek.sessions);
 
     const curScore = getCognitiveScore(currentWeek);
     const prevScore = getCognitiveScore(prevWeek);
     const scoreDiff = prevScore ? curScore - prevScore : 0;
 
     const weeklyMessages = getWeeklyMessages(currentWeek);
+
+    const getPerformance = (score: number) : string => {
+        if (score <= 0.30) {
+            return "Poor";
+        } else if (score <= 0.5) {
+            return "Fair";
+        } else if (score <= 0.75) {
+            return "Good";
+        } else {
+            return "Excellent";
+        }
+    }
 
     return (
         <div className="m-[1rem]">
@@ -50,14 +65,23 @@ export function Analysis() {
                             <b>Fairly Good</b>
                             <p>2 signs flagged</p>
                             <p>1 factor impact</p>
-                            <button className={`${role}-button`}>Check Details</button>
+                            <button className={`${role}-button p-[1rem] text-xl rounded-md`}>Check Details</button>
                         </div>
                     </div>
                 </div>
                 <TopicsCard messages={weeklyMessages} type="Weekly" />
-                <div className={blockStyle}>
-                    Here would be a card detailing biomarkers that need attention.
-                </div>         
+                {Object.entries(avg).map((entry, idx) => {
+                    if (entry[1] <= 0.5 || entry[1] > 0.75) {
+                        const flagged = getFlaggedDays(currentWeek.sessions, entry[0])
+                        const exemplar = getExemplarDays(currentWeek.sessions, entry[0])
+                        const performance = getPerformance(entry[1]);
+                        return (
+                            <BiomarkerCard key={idx} biomarker={entry[0]} flaggedDays={flagged} exemplarDays={exemplar} performance={performance} />
+                        )
+                    } else {
+                        return null;
+                    }
+                })}
             </div>
         </div>
     )

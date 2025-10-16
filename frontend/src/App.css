@@ -16,14 +16,13 @@
 
 .caregiver-button {
     background-color: oklch(54.1% 0.281 293.009);
+    border: 1px solid oklch(54.1% 0.281 293.009);
     color: white;
-    border-radius: 0.375rem;
-    padding: 1rem;
-    font-size: 1.25rem;
 }
 
 .caregiver-button:hover {
     background-color: oklch(40.32% 0.20461 293.376);
+    border: 1px solid oklch(40.32% 0.20461 293.376);
     color: white;
 }
 
@@ -31,9 +30,6 @@
     border: 1px solid oklch(54.1% 0.281 293.009);
     background-color: transparent;
     color: oklch(54.1% 0.281 293.009);
-    border-radius: 0.375rem;
-    padding: 1rem;
-    font-size: 1.25rem;
 }
 
 .caregiver-button-outline:hover {
@@ -43,14 +39,13 @@
 
 .patient-button {
     background-color: oklch(62.7% 0.194 149.214);
+    border: 1px solid oklch(62.7% 0.194 149.214);
     color: white;
-    border-radius: 0.375rem;
-    padding: 1rem;
-    font-size: 1.25rem;
 }
 
 .patient-button:hover {
     background-color: oklch(47.239% 0.13703 147.93);
+    border: 1px solid oklch(47.239% 0.13703 147.93);
     color: white;
 }
 
@@ -58,9 +53,6 @@
     border: 1px solid oklch(62.7% 0.194 149.214);
     background-color: transparent;
     color: oklch(62.7% 0.194 149.214);
-    border-radius: 0.375rem;
-    padding: 1rem;
-    font-size: 1.25rem;
 }
 
 .patient-button-outline:hover {
