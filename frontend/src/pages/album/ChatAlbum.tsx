@@ -28,8 +28,8 @@ export function ChatAlbum() {
     
     // Return UI Component
     return (
-        <>
-        <div className="ml-[1rem] mt-[1rem]">
+        <div className="bg-gray-100 p-[1rem] pb-[15vh]">
+        <div className="ml-[1rem]">
             <button onClick={() => {changeDisplay()}} >
                 { display == "list" ?
                     <IoGridOutline size={50} /> :
@@ -48,6 +48,6 @@ export function ChatAlbum() {
                 )
             })}
         </div>
-        </>
+        </div>
     );
 }

@@ -10,7 +10,6 @@ from datetime import date, timedelta
 init_args    = dict(null=True, blank=True)
 DAYS_OF_WEEK = ((0, 'Monday'), (1, 'Tuesday'), (2, 'Wednesday'), (3, 'Thursday'), (4, 'Friday'), (5, 'Saturday'), (6, 'Sunday'),)
 
-
 # =======================================================================
 # ChatSession 
 # =======================================================================
@@ -36,7 +35,7 @@ class ChatSession(models.Model):
 
     # Optional metadata to be filled when closing
     notes     = models.TextField(**init_args)
-    topics    = models.CharField(**init_args, max_length=255, default="N/A")
+    topics    = models.CharField(**init_args, max_length=255, default="['No','Topics','Available']")
     sentiment = models.CharField(**init_args, max_length=255, default="N/A")
     taskType  = models.CharField(**init_args, max_length=255, default="chat")
     taskSubtype = models.CharField(**init_args, max_length=255, default="N/A")

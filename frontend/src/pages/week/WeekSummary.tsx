@@ -30,12 +30,9 @@ export function WeekSummary() {
     }
 
     return (
-        <div className="m-[1rem]">
-            <div className="font-bold text-lg font-normal justify-between hover:cursor-pointer" onClick={() => {toAlbum()}}>
-                ← Back to Chat Album
-            </div>
-            <div className="font-bold text-2xl mt-[1rem]">
-                {chatWeek.start.toLocaleDateString("en-US", dateFormatOptionsShort)} - {chatWeek.end.toLocaleDateString("en-US", dateFormatOptionsShort)}
+        <div>
+            <div className="font-bold text-2xl font-bold p-[1rem] justify-between hover:cursor-pointer" onClick={() => {toAlbum()}}>
+                ← {chatWeek.start.toLocaleDateString("en-US", dateFormatOptionsShort)} - {chatWeek.end.toLocaleDateString("en-US", dateFormatOptionsShort)}
             </div>
             <div className={colStyle}>
                 <TopicsCard messages={weeklyMessages} type="Weekly" role={role} />

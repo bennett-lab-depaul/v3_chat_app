@@ -23,13 +23,16 @@ const TITLES: Record<string, string> = {
     "/day"          : "Daily Summary",
     "/settings"     : "Settings",
     "/analysis"     : "Analysis",
+    "/transcript"   : "Transcript",
     default         : "Cognibot",
 };
+
+const SHOW_HEADER: string[] = ["/chat", "/album", "/analysis", "/goal", "/practice", "/schedule"]
 
 // ====================================================================
 // Header
 // ====================================================================
-export default function Header() {
+export default function Header( {isMobile} : {isMobile: boolean} ) {
     const { user, profile, logout } = useAuth();
     const { pathname } = useLocation();
     const [showModal, setShowModal] = useState(false);
@@ -39,10 +42,11 @@ export default function Header() {
 
     // Return UI component
     const logOutStyle = "flex items-center gap-2 rounded bg-violet-600 px-3 py-1 text-white hover:bg-violet-700";
-    return (
-        <header className="flex items-center gap-6 px-[2rem] pt-[1rem]">
+    if (SHOW_HEADER.includes(pathname)) {
+        return (
+        <header className={"flex items-center gap-6 px-[2rem] pt-[1rem]"}>
             <h1 className="text-4xl whitespace-nowrap"><b> {title} </b></h1>
-            <div className="ml-auto flex items-center gap-3">
+            <div className={`${isMobile? "hidden" : "block"} ml-auto flex items-center gap-3`}>
 
                 {/* Navigation Links */}
                 <nav className="flex gap-4 text-xl">
@@ -70,5 +74,7 @@ export default function Header() {
             }
 
         </header>
-    );
+    );} else {
+        return (null);
+    }
 }

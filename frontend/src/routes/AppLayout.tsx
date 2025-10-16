@@ -3,12 +3,11 @@ import { useAuth } from "@/context/AuthProvider";
 import { RUN_ENV } from "@/utils/constants";
 import   Header    from "@/components/Header";
 import FooterNav from "@/components/FooterNav";
-import { useEffect, useState } from "react";
 
 export function AppLayout( {isMobile} : {isMobile: boolean}) {
     const { user, profile } = useAuth();
     // Header & small info bar for development
-    const pageHeader = (user            ) ? (<Header/>) : null;
+    const pageHeader = (user            ) ? (<Header isMobile={isMobile} />) : null;
     const DevBar     = (RUN_ENV == "DEV") ? (
         <div className="bg-yellow-100 px-4 py-1 text-xs flex gap-4">
             
@@ -28,10 +27,10 @@ export function AppLayout( {isMobile} : {isMobile: boolean}) {
     <>
         {/* Headers */}
         {/* {DevBar} */}
-        {isMobile ? null : pageHeader}
+        {pageHeader}
     
         {/* Routed page component */}
-        <main className="px-[1rem] pb-[15vh]"> <Outlet /> </main>
+        <main className=""> <Outlet /> </main>
         {isMobile? <FooterNav /> : null}
 
     </>

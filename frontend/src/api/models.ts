@@ -95,7 +95,7 @@ export interface ChatSession {
   end_ts    : string | null;
   duration? : number;          // in seconds
 
-  topics    : string[];        // stored as JSONField
+  topics    : string;        // stored as an unparsed list string
   sentiment : number | null;
   notes     : string | null;
 

@@ -5,7 +5,7 @@ import { LuImage } from "react-icons/lu";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaChartBar, FaRegCompass } from "react-icons/fa";
 import { VscRobot } from "react-icons/vsc";
-import { footerLinkPatientCls, footerLinkCaregiverCls } from "@/utils/styling/colors";
+import { footerLinkPatientCls, footerLinkCaregiverCls, footerLinkChat } from "@/utils/styling/colors";
 
 export default function FooterNav() {
     const { profile } = useAuth();
@@ -61,7 +61,7 @@ export default function FooterNav() {
                     </NavLink>
                 </div>
                 <div className="flex flex-col items-center">
-                    <NavLink to="/chat" className="flex flex-col items-center p-2 text-white no-underline rounded-full bg-gray-400 hover:bg-green-600 aspect-square translate-y-[-1.5rem]">
+                    <NavLink to="/chat" className={footerLinkChat}>
                         <img className="aspect-square w-[2rem] " src="/images/QT_icon.svg" />
                         Chat
                     </NavLink>

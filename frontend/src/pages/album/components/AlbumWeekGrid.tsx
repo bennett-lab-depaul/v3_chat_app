@@ -12,7 +12,7 @@ export default function AlbumWeekGrid({ week } : { week: ChatWeek }) {
 
     return (
         <div 
-            className={`${blockStyle} flex flex-col gap-2 m-[1rem] lg:p-[4rem] bg-red-50`} 
+            className={`${blockStyle} flex flex-col gap-2 m-[1rem] lg:p-[4rem] bg-white`} 
         >
             <h2>{week.start.toLocaleDateString("en-US", dateFormatOptionsShort)} - {week.end.toLocaleDateString("en-US", dateFormatOptionsShort)} {week.end.getFullYear()}</h2>
             <div className="w-full aspect-square flex self-center">
