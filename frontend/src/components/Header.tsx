@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { useState             } from "react";
+import { useEffect, useState             } from "react";
 import { GoGear               } from "react-icons/go";
+import { FaCircleUser } from "react-icons/fa6";
 
 import { useAuth    } from "@/context/AuthProvider";
 import { navLinkCls } from "@/utils/styling/colors";
@@ -34,22 +35,30 @@ const SHOW_HEADER: string[] = ["/chat", "/album", "/analysis", "/goal", "/practi
 // ====================================================================
 export default function Header( {isMobile} : {isMobile: boolean} ) {
     const { user, profile, logout } = useAuth();
+    const role = profile.role.toLowerCase();
     const { pathname } = useLocation();
     const [showModal, setShowModal] = useState(false);
+
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [pathname])
 
     const title  = TITLES[pathname] ?? TITLES.default;
     const isCare = user.id == profile.caregiver.id;
 
     // Return UI component
-    const logOutStyle = "flex items-center gap-2 rounded bg-violet-600 px-3 py-1 text-white hover:bg-violet-700";
+    const logOutStyle = `flex items-center gap-2 rounded ${role}-bg px-3 py-2 text-white hover:shadow-md/30`;
     if (SHOW_HEADER.includes(pathname)) {
         return (
-        <header className={"flex items-center gap-6 px-[2rem] pt-[1rem]"}>
+        <header className={"flex items-center gap-6 px-[2rem] py-[1rem]"}>
+            <div className={`${isMobile ? "block" : "hidden"} ${role}-text`}>
+                <FaCircleUser size={"2.5rem"} />
+            </div>
             <h1 className="text-4xl whitespace-nowrap"><b> {title} </b></h1>
-            <div className={`${isMobile? "hidden" : "block"} ml-auto flex items-center gap-3`}>
+            <div className={`ml-auto flex items-center gap-3`}>
 
                 {/* Navigation Links */}
-                <nav className="flex gap-4 text-xl">
+                <nav className={`${isMobile? "hidden" : "block"} flex gap-4 text-xl`}>
                     <NavLink to="/goal"      className={navLinkCls}> Goal      </NavLink>
                     <NavLink to="/album"     className={navLinkCls}> Album     </NavLink>
                     {isCare ? 
@@ -61,9 +70,13 @@ export default function Header( {isMobile} : {isMobile: boolean} ) {
                 </nav>
 
                 {/* Right Side Icons */}
-                <div className="vr"></div>
-                <ProfileInfo profile={profile} user={user}/>
-                <NavLink to="/settings" className="text-gray-500"> <GoGear size={22}/> </NavLink>
+                {isMobile ? null : 
+                    <>
+                        <div className={`vr`}></div>
+                        <ProfileInfo profile={profile} user={user}/>
+                        <NavLink to="/settings" className={`text-gray-500`}> <GoGear size={22}/> </NavLink>
+                    </>
+                }
                 <button onClick={() => logout()} className={logOutStyle}> Log out </button>
             </div>
 

@@ -1,11 +1,13 @@
-import { Outlet  } from "react-router-dom";
+import { Outlet, useLocation  } from "react-router-dom";
 import { useAuth } from "@/context/AuthProvider";
 import { RUN_ENV } from "@/utils/constants";
 import   Header    from "@/components/Header";
 import FooterNav from "@/components/FooterNav";
+import { useEffect } from "react";
 
 export function AppLayout( {isMobile} : {isMobile: boolean}) {
     const { user, profile } = useAuth();
+    const { pathname } = useLocation();
     // Header & small info bar for development
     const pageHeader = (user            ) ? (<Header isMobile={isMobile} />) : null;
     const DevBar     = (RUN_ENV == "DEV") ? (
@@ -31,7 +33,7 @@ export function AppLayout( {isMobile} : {isMobile: boolean}) {
     
         {/* Routed page component */}
         <main className=""> <Outlet /> </main>
-        {isMobile? <FooterNav /> : null}
+        {isMobile && pathname != "/login" ? <FooterNav /> : null}
 
     </>
     );

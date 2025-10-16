@@ -61,11 +61,13 @@ export function Analysis() {
                         <b>Fairly Good</b>
                         <p>2 signs flagged</p>
                         <p>1 factor impact</p>
-                        <button className={`${role}-button p-2 text-lg rounded-md`}>Check Details</button>
+                        <button className={`${role}-button p-2 text-lg rounded-md`}
+                        onClick={() => document.getElementById('factors')?.scrollIntoView()}>Check Details</button>
                     </div>
                 </div>
             </div>
             <TopicsCard messages={weeklyMessages} type="Weekly" role={role} />
+            <p id="factors" className="h-0 w-0"/>
             {Object.entries(avg).map((entry, idx) => {
                 if (entry[1] <= 0.5 || entry[1] > 0.75) {
                     const flagged = getFlaggedDays(currentWeek.sessions, entry[0])
