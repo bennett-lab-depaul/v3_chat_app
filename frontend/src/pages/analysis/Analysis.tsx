@@ -50,9 +50,11 @@ export function Analysis() {
                             <CircularProgress score={curScore} role={role} />
                         </div>
                         {prevWeek ? 
-                        <span className="p-2 mt-[-2rem] border-2 border-solid border-gray-300 rounded-full flex flex-row justify-center items-center mx-[1rem]">
+                        <span className="p-2 mt-[-2rem] gap-2 border-2 border-solid border-gray-300 rounded-full flex flex-row justify-center items-center mx-[1rem]">
                             Compared to last week: 
-                            {scoreDiff >= 0 ? <TbArrowBigUp color={"green"} size={"1rem"} /> : <TbArrowBigDown color={"red"} size={"1rem"} />} 
+                            {scoreDiff >= 0 ? 
+                                <TbArrowBigUp color={"green"} size={"1rem"} /> : 
+                                <TbArrowBigDown color={"red"} size={"1rem"} />} 
                             {scoreDiff}
                         </span> : null}
                         

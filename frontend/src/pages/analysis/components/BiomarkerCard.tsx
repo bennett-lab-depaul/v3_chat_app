@@ -33,7 +33,7 @@ export default function BiomarkerCard({
             <h5 className={`${role}-text font-normal text-lg mb-0`}>({getBiomarkerName(biomarker)})</h5>
             <p>{getBiomarkerDefinition(biomarker)}</p>
             <h3 className={`${role}-text`}>Example</h3>
-            <p>An example of good (exemplar) and bad (flagged) ability to find words ({biomarker})</p>
+            <p>An example of good (exemplar) and bad (flagged) {getBiomarkerDescription(biomarker).toLowerCase()} ({getBiomarkerName(biomarker)}).</p>
             <span className="flex flex-row justify-between">
                 <div className="flex flex-row gap-0">
                     <button className={`${role}-button${example == "exemplar" ? "" : "-outline"} p-2 rounded-l-md flex flex-row items-center`} 

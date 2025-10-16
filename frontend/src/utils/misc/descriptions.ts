@@ -8,7 +8,7 @@ export interface Message {
 const biomarkerDetails = {
     "anomia": {
         "name": "Anomia",
-        "description": "Ability to find words",
+        "description": "Ability to Find Words",
         "definition": `Forgetting words or phrases. For example, when people go "uh" "mmm" while trying to think of what they want to say.`,
         "exemplarExample": [
             {"sender": "A", "text": "I was at the store yesterday, and I bought a jacket."},
@@ -24,16 +24,16 @@ const biomarkerDetails = {
     "alteredgrammar": {
         "name": "Altered Grammar",
         "description": "Sentence Complexity",
-        "definition": "Reduced syntactic complexity, such as using simpler language structures instead of more complex.",
+        "definition": "Reduced syntactic complexity, such as using simpler language structures instead of more complex ones.",
         "exemplarExample": [
             {"sender": "A", "text": "I went to the store this morning to pick up a few things, including some bread, milk, and vegetables. I also grabbed a few snacks because I was craving something."},
-            {"sender": "B", "text": "Sounds like a good shopping trip! Did you find everything you needed?"},
-            {"sender": "A", "text": "Yes, I did! The store had everything on my list, and I also found some new items I hadn't seen before."}
+            {"sender": "B", "text": "Sounds like a good shopping trip! Did you also buy milk?"},
+            {"sender": "A", "text": "Yes, I did! The store had my favorite kind of milk, and I also found some new items I hadn't seen before."}
         ],
         "flaggedExample": [
-            {"sender": "A", "text": "I, uh, went to, uh, store, and... uh... bought it. Uh... it was, um, good. I got, um, some, uh... it... and... I don't remember."},
+            {"sender": "A", "text": "I went to the store. It was this morning. I bought bread."},
             {"sender": "B", "text": "Oh, okay! Did you also get milk?"},
-            {"sender": "A", "text": "Uh... yes. Milk. I, uh... bought milk."}
+            {"sender": "A", "text": "Yes. I bought milk."}
         ]
     },
     "pronunciation": {
@@ -56,35 +56,35 @@ const biomarkerDetails = {
         "description": "Use of Contextual Language",
         "definition": "A lack of using the proper contextual language, such as metaphors, saracasm, politeness, or context-dependent words or phrases.",
         "exemplarExample": [
-            {"sender": "A", "text": "Great weather, isn't it? It's all rainy and gloomy outside."},
-            {"sender": "B", "text": "You're right, perhaps we should stay inside and read a book."},
-            {"sender": "A", "text": "Yeah, do we want to read the one you recommended yesterday?"}
+            {"sender": "A", "text": "Could you pass me the pen, please? I need it to fill out these forms."},
+            {"sender": "B", "text": "Here it is. What forms do you need to fill out?"},
+            {"sender": "A", "text": "<em>Taxes.</em> Super fun, right?"}
         ],
         "flaggedExample": [
-            {"sender": "A", "text": "Give me the pen. I watched baseball yesterday."},
-            {"sender": "B", "text": "Did you have a good time watching the game?"},
-            {"sender": "A", "text": "What game? Which game?"}
+            {"sender": "A", "text": "Give me the pen. I need to fill this out."},
+            {"sender": "B", "text": "Here's your pen. What forms do you need to fill out?"},
+            {"sender": "A", "text": "What forms? Which forms?"}
         ]
         
     },
     "prosody": {
         "name": "Prosody",
-        "description": "Tone and Inflection",
+        "description": "Proper Tone and Inflection",
         "definition": "Using incorrect patterns of stress and intonation in spoken language, such as pitch variation, loudness, tempo, and pauses.",
         "exemplarExample": [
-            {"sender": "A", "text": "I said that <em>Robert</em> liked apples, not me."},
-            {"sender": "B", "text": "Oh, I'll give Robert this apple then. What do fruit do you like?"},
-            {"sender": "A", "text": "Any fruit other than <em>tomatoes</em>. Gross!"}
+            {"sender": "A", "text": "I saw my daughter's <em>adorable</em> dog yesterday! He's grown up <em>so</em> much."},
+            {"sender": "B", "text": "That's cute! Did you have a good time?"},
+            {"sender": "A", "text": "I had a <em>great</em> time!"}
         ],
         "flaggedExample": [
             {"sender": "A", "text": "I visited my dog yesterday. It was really fun and exciting."},
-            {"sender": "B", "text": "You don't sound excited about it."},
-            {"sender": "A", "text": "I don't. I wonder why. I really love my dog."}
+            {"sender": "B", "text": "Oh, wonderful! Did you have a good time?"},
+            {"sender": "A", "text": "Of course. I really love my dog."}
         ]
     },
     "turntaking": {
         "name": "Turn Taking",
-        "description": "Conversational Flow",
+        "description": "Good Conversational Flow",
         "definition": "Speaking at the incorrect time; either interrupting or leaving long silences in a conversation.",
         "exemplarExample": [
             {"sender": "A", "text": "How many birds did you see yesterday?"},
@@ -92,9 +92,9 @@ const biomarkerDetails = {
             {"sender": "A", "text": "I liked the blue jay too!"}
         ],
         "flaggedExample": [
-            {"sender": "A", "text": "Dinner last nice was good. The main course was very tasty."},
-            {"sender": "B", "text": "Yes, I really--"},
-            {"sender": "A", "text": "But the dessert wasn't great...I wish they had ice cream."}
+            {"sender": "A", "text": "How many birds did you see yesterday?"},
+            {"sender": "B", "text": "Well, I counted--"},
+            {"sender": "A", "text": "I loved watching the...birds. They were pretty."}
         ]
     },
 }
