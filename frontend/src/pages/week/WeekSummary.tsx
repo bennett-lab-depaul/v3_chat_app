@@ -38,7 +38,7 @@ export function WeekSummary() {
                 {chatWeek.start.toLocaleDateString("en-US", dateFormatOptionsShort)} - {chatWeek.end.toLocaleDateString("en-US", dateFormatOptionsShort)}
             </div>
             <div className={colStyle}>
-                <TopicsCard messages={weeklyMessages} type="Weekly" />
+                <TopicsCard messages={weeklyMessages} type="Weekly" role={role} />
                 <ChatSummaryCard />
                 <DropdownModal title="Weekly Analysis" content={content} />
             </div>

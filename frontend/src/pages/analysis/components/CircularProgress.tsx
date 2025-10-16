@@ -2,8 +2,63 @@ import { ApexOptions } from "apexcharts";
 import { useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
-export default function CircularProgress( {score} : {score: number}) {
+export default function CircularProgress( {score, role} : {score: number, role: string}) {
     const series = [score];
+
+    const colorStops = role == "patient" ? 
+    [
+        {
+            offset: 0,
+            color: '#b0dfc1ff',
+            opacity: 1
+        },
+        {
+            offset: 30,
+            color: '#8ccda0ff',
+            opacity: 1
+        },
+        {
+            offset: 60,
+            color: '#61c880ff',
+            opacity: 1
+        },
+        {
+            offset: 90,
+            color: '#3dd26aff',
+            opacity: 1
+        },
+        {
+            offset: 150,
+            color: '#0ac945',
+            opacity: 1
+        },
+    ] : [
+        {
+            offset: 0,
+            color: '#e9e1faff',
+            opacity: 1
+        },
+        {
+            offset: 30,
+            color: '#d6c7f8ff',
+            opacity: 1
+        },
+        {
+            offset: 60,
+            color: '#b79df5ff',
+            opacity: 1
+        },
+        {
+            offset: 90,
+            color: '#a17cf7ff',
+            opacity: 1
+        },
+        {
+            offset: 150,
+            color: '#8b5cf6',
+            opacity: 1
+        },
+    ]
     const options: ApexOptions = {
         chart: {
             height: "100%",
@@ -42,37 +97,10 @@ export default function CircularProgress( {score} : {score: number}) {
                 shade: 'light',
                 type: 'horizontal',
                 shadeIntensity: 0.5,
-                gradientToColors: ['#0ac945'],
                 inverseColors: true,
                 opacityFrom: 1,
                 opacityTo: 1,
-                colorStops: [
-                    {
-                        offset: 0,
-                        color: '#b0dfc1ff',
-                        opacity: 1
-                    },
-                    {
-                        offset: 30,
-                        color: '#8ccda0ff',
-                        opacity: 1
-                    },
-                    {
-                        offset: 60,
-                        color: '#61c880ff',
-                        opacity: 1
-                    },
-                    {
-                        offset: 90,
-                        color: '#3dd26aff',
-                        opacity: 1
-                    },
-                    {
-                        offset: 150,
-                        color: '#0ac945',
-                        opacity: 1
-                    },
-                ]
+                colorStops: colorStops,
             }
         },
         stroke: {

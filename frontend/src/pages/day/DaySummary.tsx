@@ -42,7 +42,7 @@ export function DaySummary() {
             </div>
             <div className="font-bold text-2xl mt-[1rem]">{chatDate.toLocaleDateString("en-US", dateFormatOptions)}</div>
             <div className={colStyle}>
-                <TopicsCard messages={getSessionMessages(state?.chatSession)} type="Daily" />
+                <TopicsCard messages={getSessionMessages(state?.chatSession)} type="Daily" role={role} />
                 <ChatSummaryCard />
                 <DropdownModal title="Speech Analysis" content={content} />
                 <button className={`${role}-button p-[1rem] text-xl rounded-md sm:w-3/4 ${widthStyle}`}>
