@@ -9,17 +9,23 @@ import { IoShieldCheckmarkOutline, IoFlag } from "react-icons/io5";
 import ChatExample from "./ChatExample";
 import { dateFormatOptionsShort } from "@/utils/styling/numFormatting";
 import { useNavigate } from "react-router-dom";
+import SpeechExample from "./SpeechExample";
+import DropdownModal from "@/components/modals/DropdownModal";
+import { ChatWeek } from "@/utils/functions/getChatWeeks";
+import DetailGraph from "./DetailGraph";
 
 export default function BiomarkerCard({
     biomarker, 
-    flaggedDays, 
-    exemplarDays, 
+    week,
+    exemplarDays,
+    flaggedDays,
     performance 
 } : {
-    biomarker: BiomarkerType, 
-    flaggedDays: ChatSession[], 
-    exemplarDays: ChatSession[], 
-    performance: string
+    biomarker   : BiomarkerType, 
+    week        : ChatWeek,
+    exemplarDays: ChatSession[],
+    flaggedDays : ChatSession[],
+    performance : string
 }) {
     const role = useAuth().profile.role.toLowerCase();
     const navigate = useNavigate();
@@ -32,22 +38,9 @@ export default function BiomarkerCard({
             <h2 className={`${role}-text mb-0`}>{getBiomarkerDescription(biomarker)}</h2>
             <h5 className={`${role}-text font-normal text-lg mb-0`}>({getBiomarkerName(biomarker)})</h5>
             <p>{getBiomarkerDefinition(biomarker)}</p>
-            <h3 className={`${role}-text`}>Example</h3>
-            <p>An example of good (exemplar) and bad (flagged) {getBiomarkerDescription(biomarker).toLowerCase()} ({getBiomarkerName(biomarker)}).</p>
-            <span className="flex flex-row justify-between">
-                <div className="flex flex-row gap-0">
-                    <button className={`${role}-button${example == "exemplar" ? "" : "-outline"} p-2 rounded-l-md flex flex-row items-center`} 
-                        onClick={() => setExample("exemplar")}> <IoShieldCheckmarkOutline size={"2rem"} /> Exemplar</button>
-                    <button className={`${role}-button${example == "flagged" ? "" : "-outline"} p-2 rounded-r-md flex flex-row items-center`} 
-                        onClick={() => setExample("flagged")}> <IoFlag size={"2rem"} /> Flagged</button>
-                </div>
-                <button className={`${role}-button-outline rounded-md p-2`}><HiMiniSpeakerWave size={"2rem"} /></button>
-            </span>
-            <div className="text-lg my-[1rem]">
-                <ChatExample messages={example == "exemplar" ? getBiomarkerExemplar(biomarker) : getBiomarkerFlagged(biomarker)} />
-            </div>
+            <SpeechExample biomarker={biomarker} role={role} example={example} setExample={setExample} />
             <div className="text-lg border-t border-solid border-gray-300 py-2">
-                <p><b>Your Performance</b></p>
+                <p><b>{role == "patient" ? "Your" : useAuth().user.first_name + "'s"} Performance</b></p>
                 <ul className={`list-disc marker:text-${role == "patient" ? "green" : "violet"}-600`}>
                     <li><p>This past week: <b>{performance}</b></p></li>
                     <li>
@@ -78,6 +71,7 @@ export default function BiomarkerCard({
                     </li>
                 </ul>
             </div>
+            <DetailGraph biomarker={biomarker} week={week} />
         </div>
     )
 }

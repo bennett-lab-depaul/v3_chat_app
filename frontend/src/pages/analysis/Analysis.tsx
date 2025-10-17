@@ -76,7 +76,7 @@ export function Analysis() {
                     const exemplar = getExemplarDays(currentWeek.sessions, entry[0])
                     const performance = getPerformance(entry[1]);
                     return (
-                        <BiomarkerCard key={idx} biomarker={entry[0]} flaggedDays={flagged} exemplarDays={exemplar} performance={performance} />
+                        <BiomarkerCard key={idx} biomarker={entry[0]} week={currentWeek} flaggedDays={flagged} exemplarDays={exemplar} performance={performance} />
                     )
                 } else {
                     return null;

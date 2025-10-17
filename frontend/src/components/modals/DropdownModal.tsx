@@ -15,7 +15,7 @@ export default function DropdownModal( {title, content} : {title: string, conten
                     {show ? <IoIosArrowDown size={"1.5rem"} /> : <IoIosArrowForward size={"1.5rem"} />}
                 </span>
             </button>
-            <div className={`${show ? "block" : "hidden"} bg-white border-x-1 border-bottom-1 border-solid border-gray-300 rounded-b-lg p-2`}>
+            <div className={`${show ? "block" : "hidden"} bg-white border-x-1 border-b-1 border-solid border-gray-300 rounded-b-lg p-2`}>
                 {content.map((text, idx) => {
                     return (
                         <p key={idx}>{text}</p>
