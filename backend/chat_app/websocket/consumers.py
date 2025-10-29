@@ -135,7 +135,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def receive_json(self, data, **kwargs):
         if   data["type"] == "overlapped_speech" : await self._handle_overlap(data=data)
         elif data["type"] == "audio_data"        : await self._handle_audio_data(data)
-        elif data["type"] == "transcription"     : await handle_transcription(data, msg_callback=self._add_message_CB, send_callback=self.send, bio_callback=self._utt_bio)
+        elif data["type"] == "transcription_with_emotion"     : await handle_transcription(data, msg_callback=self._add_message_CB, send_callback=self.send, bio_callback=self._utt_bio, send_emotion=True)
         elif data["type"] == "end_chat"          : 
             self.stt_provider.stop()
             await database_sync_to_async(ChatService.close_session)(self.user, self.session, source=self.source)

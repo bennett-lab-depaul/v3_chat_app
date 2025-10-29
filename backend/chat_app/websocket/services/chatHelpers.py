@@ -13,6 +13,7 @@ from ...         import config        as cf
 from ...services import logging_utils as lu 
 from .speechProvider import TextToSpeechProvider
 from .bg_helpers import fire_and_log
+from .emotionHelpers import zero_shot_classifier, classify_emotion_with_vader
 from .lipsyncHelpers import to_wav_file, run_rhubarb, load_rhubarb_json
 
 ERROR_UTTERANCE = "I'm sorry, I encountered an error while processing your request."
@@ -23,7 +24,7 @@ CHUNK_SIZE = 8_192 # How many bytes of audio we can send at a time
 # ======================================================================= ===================================
 # Process the users message & reply with the LLM ASAP
 # ======================================================================= ===================================
-async def handle_transcription(data, msg_callback, send_callback, bio_callback):
+async def handle_transcription(data, msg_callback, send_callback, bio_callback, send_emotion=False):
     """ Takes three callbacks from the consumers object """
     t0 = time()
     
@@ -43,8 +44,14 @@ async def handle_transcription(data, msg_callback, send_callback, bio_callback):
     system_utt = await generate_LLM_response(context_buffer)
     t2 = time(); logger.info(f"{lu.YELLOW}[LLM] LLM response received: (in {(t2-t1):.4f}) \n{lu.BG_MAGENTA}{system_utt} {lu.RESET}")
 
-    # Immediately send the response back through the websocket
-    await send_callback(json.dumps({'type': 'llm_response', 'data': system_utt, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
+    # Classify the LLM response using zero-shot classification
+    if send_emotion:
+        emotion = await classify_llm_text_emotion_async(system_utt, emo_classifier_type="vader")
+        await send_callback(json.dumps({'type': 'llm_response', 'data': system_utt, 'emotion': emotion, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
+    else:
+        # Immediately send the response back through the websocket
+        await send_callback(json.dumps({'type': 'llm_response', 'data': system_utt, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
+
     t3 = time(); logger.info(f"{lu.YELLOW}[LLM] Response sent {(t3-t2):.4f}s ({(t3-t0):.4f}s total). {lu.RESET}")
 
     # -----------------------------------------------------------------------
@@ -126,3 +133,32 @@ def prepare_LLM_input(context_buffer):
     LLM_input += "".join([format_turn(turn) for turn in context_buffer])
     LLM_input += f"\n<|assistant|>\n"
     return LLM_input
+# -----------------------------------------------------------------------
+# Classify the LLM text using zero-shot classification
+# -----------------------------------------------------------------------
+async def classify_llm_text_emotion_async(text: str, emo_classifier_type: str="zero_shot") -> str:
+    """
+    Asynchronously classify emotion using either Zero-Shot or VADER method.
+
+    Args:
+        text (str): The text to classify.
+        type (str): The type of classifier to use ("zero_shot" or "vader").
+
+    Returns:
+        str: The classified emotion label.
+    """
+    loop = asyncio.get_running_loop()
+    try:
+        if emo_classifier_type == "vader":
+            return await loop.run_in_executor(None, lambda: classify_emotion_with_vader(text))
+
+        elif emo_classifier_type == "zero_shot":
+            clf = cf.get_zero_shot_classifier()
+            return await loop.run_in_executor(None, lambda: zero_shot_classifier(clf, text))
+        else:
+            logger.warning(f"Unknown classifier_type: {emo_classifier_type}. Returning 'Neutral'.")
+            return "Neutral"
+
+    except Exception as e:
+        logger.exception(f"Emotion classification failed (returning 'Neutral'): {e}")
+        return "Neutral"
