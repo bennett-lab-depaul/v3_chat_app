@@ -1,14 +1,14 @@
-import { BiomarkerType } from "@/api";
+import { BiomarkerType, ChatSession } from "@/api";
 import { ChatWeek } from "@/utils/functions/getChatWeeks";
 import { dateFormatShort } from "@/utils/styling/numFormatting";
 import ReactApexChart from "react-apexcharts";
 
-export default function BiomarkerGraph( {biomarker, week} : {biomarker: BiomarkerType, week: ChatWeek} ) {
+export default function BiomarkerGraph( {biomarker, sessions} : {biomarker: BiomarkerType, sessions: ChatSession[]} ) {
     // Prepare chart data
-    const labels = week.sessions.map((s) => dateFormatShort.format(new Date(s.date)));
+    const labels = sessions.map((s) => dateFormatShort.format(new Date(s.date)));
      const series = [{
         name: biomarker,
-        data: week.sessions.map(session => Math.round(session.average_scores[biomarker] * 10)),
+        data: sessions.map(session => Math.round(session.average_scores[biomarker] * 10)),
     }];
 
     const colors = series[0].data.map((s) => {
@@ -29,14 +29,34 @@ export default function BiomarkerGraph( {biomarker, week} : {biomarker: Biomarke
                 foreColor   : "#6b7280",
             },
             xaxis       : { categories: labels, labels: { format: "MMM dd" }, tickPlacement: "on" }, // type: "datetime",
-            yaxis       : { labels: { show: false }, },
-            plotOptions : { bar: { columnWidth: "40%", borderRadius: 6 } },
+            yaxis       : { 
+                labels: { show: false }, 
+                min: 0,
+                max: 10,
+            },
+            plotOptions : { bar: { 
+                columnWidth: "40%", 
+                borderRadius: 6,
+                dataLabels: {
+                    position: 'top', // top, center, bottom
+                },
+            } },
             grid        : { show: false},
-            dataLabels  : { enabled: false, },
+            dataLabels: {
+                enabled: true,
+                formatter: function (val) {
+                  return val;
+                },
+                offsetY: -20,
+                style: {
+                  fontSize: '12px',
+                  colors: ["#304758"]
+                }
+              },
             noData      : { text: "No sessions found." },
             colors      : colors,
             tooltip     : {
-                enabled         : true,
+                enabled         : false,
                 shared          : true,
                 followCursor    : false,
                 intersect       : false,
