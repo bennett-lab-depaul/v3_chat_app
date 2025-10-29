@@ -81,10 +81,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # TODO: I added the timestamps in just now for biomarker scores, but I actually don't really like how this works at the moment...
         # Actually since I want to remove the "resume" chat thing, probably don't need to do this with the context buffer (loading in old data)
         self.context_buffer = [(m.role, m.content, m.ts.timestamp()) for m in recent]
-
+        
         # Adding one default message at the start of the chat every time (so I have a reference timestamp before every user message)
         self.context_buffer = [("assistant", "How can I help you today?", time())] + self.context_buffer
-
+        
         # Other misc. setup
         self.overlapped_speech_count  = 0.0
         self.audio_windows_count      = 0.0
@@ -135,9 +135,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def receive_json(self, data, **kwargs):
         if   data["type"] == "overlapped_speech" : await self._handle_overlap(data=data)
         elif data["type"] == "audio_data"        : await self._handle_audio_data(data)
-        elif data["type"] == "transcription"     : await handle_transcription(data, msg_callback=self._add_message_CB, send_callback=self.send, bio_callback=self._utt_bio)
         elif data["type"] == "transcription_with_emotion"     : await handle_transcription(data, msg_callback=self._add_message_CB, send_callback=self.send, bio_callback=self._utt_bio, send_emotion=True)
-        elif data["type"] == "end_chat"          : await database_sync_to_async(ChatService.close_session)(self.user, self.session, source=self.source)
+        elif data["type"] == "end_chat"          : 
+            self.stt_provider.stop()
+            await database_sync_to_async(ChatService.close_session)(self.user, self.session, source=self.source)
         elif data["type"] == "toggle_stream": self._toggle_stream(data)
 
     # -----------------------------------------------------------------------

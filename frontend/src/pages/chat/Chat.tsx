@@ -14,7 +14,7 @@ import { useLocalChatSession } from "@/hooks/live-chat";
 // ====================================================================
 // ToDo: Move speech providers folder to utils, fix the index
 // ToDo: Might need to add the user/token stuff to the websocket
-export function Chat() {
+export function Chat( {isMobile} : {isMobile: boolean}) {
     const navigate = useNavigate();
 
     // Local (frontend, view-related only) chat tracking
@@ -47,9 +47,10 @@ export function Chat() {
 	const saveChat = () => {
 		save();
 		setShowModal(false);
-		navigate("/progress");
+		navigate("/goal");
 	}; // use the stop speaking callback
 
+    const [animation, setAnimation] = useState('HEAD TILT');
 
     // --------------------------------------------------------------------
     // Return UI elements
@@ -57,17 +58,21 @@ export function Chat() {
     const stopStyle = "flex flex-col gap-2 items-center";
     return (
     <>
-        {/* Buttons for starting/pausing the chat & saving the chat history/ending the chat */}
-        <div className="flex flex-row justify-center mb-[2em] pt-[3em] gap-[4em] items-center">
-            <RecordButton recording={recording} stopRecording={pauseChat} startRecording={startChat}/>
-            <button className={stopStyle} onClick={endChatModal}> <BsStopCircle size={50} color={"black"} /> End Chat </button>
-        </div>
+        <div className="flex flex-col justify-between h-[85vh]">
+            {/* View of the chatHistory and/or Avatar */}
+            <LiveChatView messages={session.messages} animation={animation} isMobile={isMobile} /> 
 
-        {/* View of the chatHistory and/or Avatar */}
-        <LiveChatView messages={session.messages}/> 
+            {/* Buttons for starting/pausing the chat & saving the chat history/ending the chat */}
+            <div className={`flex flex-row mb-[1em] mx-[20vw] gap-[4em] justify-${isMobile ? "between" : "center"}`}>
+                <RecordButton recording={recording} stopRecording={pauseChat} startRecording={startChat}/>
+                <button className={stopStyle} onClick={endChatModal}> <BsStopCircle size={"8vh"} color={"black"} /> End Chat </button>
+            </div>
+        </div>
+        
 
         {/* SaveChatModal, controlled with props */}
         <SaveChatModal show={showModal} onClose={() => setShowModal(false)} saveChat={saveChat}/>
+
     </>
     );
 }
@@ -77,7 +82,7 @@ export function Chat() {
 function RecordButton({ recording, stopRecording, startRecording } : { recording: boolean, stopRecording: () => void, startRecording: () => void }) {
     const style = "flex flex-col gap-2 items-center";
 
-    const icon    = recording ? <BsPauseCircle size={50} style={{color: "black"}}/> : <BsPlayCircle size={50} style={{color: "black"}}/>;
+    const icon    = recording ? <BsPauseCircle size={"8vh"} style={{color: "black"}}/> : <BsPlayCircle size={"8vh"} style={{color: "black"}}/>;
     const text    = recording ? "Pause Chat" : "Start Chat";
     const onClick = recording ? stopRecording : startRecording;
 
