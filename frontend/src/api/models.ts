@@ -96,7 +96,7 @@ export interface ChatSession {
   duration? : number;          // in seconds
 
   topics    : string;        // stored as an unparsed list string
-  sentiment : number | null;
+  sentiment : "Positive" | "Negative" | "Neutral" | "N/A" | null;
   notes     : string | null;
 
   taskType  : string;

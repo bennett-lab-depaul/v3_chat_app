@@ -4,13 +4,9 @@ import { getBiomarkerDefinition, getBiomarkerDescription, getBiomarkerExemplar, 
 import { blockStyle } from "@/utils/styling/sharedStyles";
 import { useState } from "react";
 
-import { HiMiniSpeakerWave } from "react-icons/hi2";
-import { IoShieldCheckmarkOutline, IoFlag } from "react-icons/io5";
-import ChatExample from "./ChatExample";
 import { dateFormatOptionsShort } from "@/utils/styling/numFormatting";
 import { useNavigate } from "react-router-dom";
 import SpeechExample from "./SpeechExample";
-import DropdownModal from "@/components/modals/DropdownModal";
 import { ChatWeek } from "@/utils/functions/getChatWeeks";
 import DetailGraph from "./DetailGraph";
 
