@@ -18,7 +18,7 @@ ZEROSHOT_MODEL_PATH =  "/app/chat_app/websocket/services/emotion_model/deberta-v
 
 # LLM Parameters
 MAX_LENGTH = 256
-PROMPT = "You are an assistant for dementia patients. Provide any response as much short as possible."
+PROMPT = "You are an assistant for dementia patients. Provide any response as short as possible."
 
 # TODO: Find all imports using these and make them use the new logging_utils.py file instead
 # Colors for logging

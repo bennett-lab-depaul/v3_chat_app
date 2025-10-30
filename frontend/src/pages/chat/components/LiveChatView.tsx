@@ -68,7 +68,7 @@ export default function LiveChatView({ messages, animation, isMobile }: { messag
         else if (viewMode == 4 && isMobile) {
             return (
                 <div className="flex flex-col mx-[1rem] mt-[2rem] h-[65vh]">
-                    <img className="object-contain h-1/2 place-self-center" src="/images/robot_face.png" />
+                    <Avatar animation={animation} />
                     <div className="text-3xl font-extrabold mt-[4rem] mx-[2rem] overflow-y-auto hidden-scrollbar h-full">{getRecentMessage(messages)}</div>
                 </div>
             )

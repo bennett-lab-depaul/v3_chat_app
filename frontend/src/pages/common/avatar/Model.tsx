@@ -8,33 +8,32 @@ import { LoopOnce, LoopPingPong } from 'three';
 
 export default function Model({
     animation,
+    animCount,
     ...props
 }) {
-    const { nodes, materials, animations } = useGLTF('/models/Buddy_Robot.glb') //animations: DANCE NOD_YES, SHAKE_NO, HEAD_TILT, EMBARRASSED
+    const { nodes, animations } = useGLTF('/models/Buddy_Robot.glb') //animations: DANCE, NOD YES, SHAKE NO, HEAD TILT, EMBARRASSED
     const group = useRef();
     const { actions, mixer } = useAnimations(animations, group);
-    useEffect(() => {
-          // Make sure the animations are there before trying to play them / fade out
-          if (!actions || !actions[animation]) {
-            console.warn("Animation action not ready yet"); 
-            return;
-        }
 
-        let curAnimation = actions[animation];
-        curAnimation.setLoop(LoopPingPong, Infinity);
-        curAnimation.clampWhenFinished = true;
-        curAnimation.enabled = true;
-        curAnimation.play();
-        
-        return () => {
-            if (actions[animation]) {
-                actions[animation].fadeOut(0.1);
-                actions[animation].stop();
-                actions[animation].reset();
-            }
-        }
-      
-    }, [animation]);
+    useEffect(() => {
+        if (!actions || !animation) return;
+
+        Object.values(actions).forEach((a) => a.stop());
+        const action = actions[animation];
+        if (!action) return;
+
+        action.reset();
+        action.setLoop(LoopOnce, 1);
+        action.clampWhenFinished = true;
+        action.fadeIn(0.3).play();
+
+        const handleFinish = () => {
+            console.log("Animation finished:", animation);
+        };
+
+        mixer.addEventListener("finished", handleFinish);
+        return () => mixer.removeEventListener("finished", handleFinish);
+    }, [animation, animCount, actions]);
 
 
       return (

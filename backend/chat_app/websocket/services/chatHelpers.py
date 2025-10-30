@@ -70,7 +70,7 @@ async def handle_stt_output(data, msg_callback, send_callback, bio_callback):
     await send_callback(json.dumps({'type': 'user_utt', 'data': user_utt, 'time': datetime.now(timezone.utc).strftime("%H:%M:%S")}))
     logger.info(f"{lu.YELLOW}[LLM] Sent user utterance to frontend: {user_utt} {lu.RESET}")
     
-    system_utt = await handle_transcription(data, msg_callback, send_callback, bio_callback)
+    system_utt = await handle_transcription(data, msg_callback, send_callback, bio_callback, True)
     
     # Synthesize the speech 
     tts_provider = TextToSpeechProvider()
