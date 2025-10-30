@@ -36,7 +36,6 @@ export default function useChatSocket({
         const type = response.type;
         const data = response.data;
         if (type === "llm_response") {
-            console.log(response)
             onLLMResponse(response);
         } else if (type === "biomarker_scores") {
             console.log("On-Utterance scores received");

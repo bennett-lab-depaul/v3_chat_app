@@ -6,7 +6,9 @@ import useLiveChat   from "@/hooks/useLiveChat";
 import LiveChatView  from "./components/LiveChatView";
 import SaveChatModal from "@/components/modals/SaveChatModal";
 
-import { useLocalChatSession } from "@/hooks/live-chat";
+import { LocalChatMessage, useLocalChatSession } from "@/hooks/live-chat";
+import Avatar from "../common/avatar/Avatar";
+import { Spinner } from "react-bootstrap";
 
 
 // ====================================================================
@@ -16,29 +18,39 @@ import { useLocalChatSession } from "@/hooks/live-chat";
 // ToDo: Might need to add the user/token stuff to the websocket
 export function Chat( {isMobile} : {isMobile: boolean}) {
     const navigate = useNavigate();
+    const [botMessage, setBotMessage] = useState(<>Chat with me!</>);
+    const [animation, setAnimation] = useState();
+    const [animCount, setAnimCount] = useState(0);
 
     // Local (frontend, view-related only) chat tracking
     const { pushMessage, session } = useLocalChatSession();
-    const onUserUtterance   = (text: string) => { pushMessage("user",      text); };
-    const onSystemUtterance = (text: string) => { pushMessage("assistant", text); };
-
-    // Animations: DANCE, NOD_YES, SHAKE_NO, HEAD_TILT, EMBARRASSED
-    const [animation, setAnimation] = useState('HEAD TILT');
+    const onUserUtterance   = (text: string) => { 
+        pushMessage("user",      text); 
+        setBotMessage( 
+            <div className="flex flex-row gap-2 justify-center">
+                <Spinner animation="grow" />
+                <Spinner animation="grow" />
+                <Spinner animation="grow" />
+            </div>
+        );
+    };
+    const onSystemUtterance = (text: string) => { 
+        pushMessage("assistant", text); 
+        setBotMessage(<>{text}</>)
+    };
     // Happy, Sad, Surprised, Scared, Angry, Neutral
     const onEmotion = (emotion: string) => {
-        if (emotion == "Happy") {
-            setAnimation("DANCE");
-        } else if (emotion == "Sad") {
-            setAnimation("SHAKE_NO");
-        } else if (emotion == "Surprised") {
-            setAnimation("EMBARRASSED");
-        } else if (emotion == "Scared") {
-            setAnimation("SHAKE_NO");
-        } else if (emotion == "Angry") {
-            setAnimation("SHAKE_NO");
-        } else if (emotion == "Neutral") {
-            setAnimation("HEAD_TILT");
-        }
+        const map = {
+            Happy: "DANCE",
+            Sad: "SHAKE NO",
+            Surprised: "EMBARRASSED",
+            Scared: "SHAKE NO",
+            Angry: "SHAKE NO",
+            Neutral: "HEAD TILT",
+        };
+        const value = map[emotion] || "NOD YES";
+        setAnimation(value);
+        setAnimCount((t) => t + 1);
     }
 
     // Live-chat hook
@@ -77,10 +89,28 @@ export function Chat( {isMobile} : {isMobile: boolean}) {
     <>
         <div className="flex flex-col justify-between h-[85vh]">
             {/* View of the chatHistory and/or Avatar */}
-            <LiveChatView messages={session.messages} animation={animation} isMobile={isMobile} /> 
+            {!isMobile ? 
+                <div className="flex flex-row justify-center h-[70vh] m-[1rem]">
+                    <div className="sm:w-1/5" />
+                    <div className="mt-[1rem] w-full sm:w-1/2"> 
+                        <Avatar animation={animation} animCount={animCount} /> 
+                    </div> 
+                    <div className="hidden sm:inline-block bubble"> 
+                        {botMessage} 
+                    </div>
+                </div>
+                :
+                    
+                <div className="flex flex-col mx-[1rem] mt-[2rem] h-[65vh]">
+                    <Avatar animation={animation} animCount={animCount} />
+                    <div className="text-3xl font-extrabold mt-[4rem] mx-[2rem] overflow-y-auto hidden-scrollbar h-full">
+                        {botMessage}
+                    </div>
+                </div>
+            }
 
             {/* Buttons for starting/pausing the chat & saving the chat history/ending the chat */}
-            <div className={`flex flex-row mb-[1em] mx-[20vw] gap-[4em] justify-${isMobile ? "between" : "center"}`}>
+            <div className={`flex flex-row mb-[5rem] mx-[20vw] gap-[4em] justify-${isMobile ? "between" : "center"}`}>
                 <RecordButton recording={recording} stopRecording={pauseChat} startRecording={startChat}/>
                 <button className={stopStyle} onClick={endChatModal}> <BsStopCircle size={"8vh"} color={"black"} /> End Chat </button>
             </div>
@@ -104,4 +134,13 @@ function RecordButton({ recording, stopRecording, startRecording } : { recording
     const onClick = recording ? stopRecording : startRecording;
 
     return <button className={style} onClick={onClick}> {icon} {text} </button>;
+}
+
+const default_message = `Chat with me!`;
+export function getRecentMessage(messages: LocalChatMessage[], fallback = default_message): string {
+    const latest = messages.reduce<LocalChatMessage | null>((acc, m) => {
+        if (m.role !== "assistant") return acc; // skip
+        return !acc || m.ts > acc.ts ? m : acc; // keep newer
+    }, null);
+    return latest ? latest.content : fallback;
 }

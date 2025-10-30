@@ -76,7 +76,8 @@ class Command(BaseCommand):
 
             # 1) Create a ChatSession object
             session = ChatSession.objects.create(user=plwd_user, source="webapp", is_active=False, end_ts=ended_at, 
-                                                 topics="['Moon Landing','Granddaughter','Gardening','Morning Routine']")
+                                                 topics="['Moon Landing','Granddaughter','Gardening','Morning Routine']",
+                                                 sentiment="Positive")
             session.date = started_at
             session.save(update_fields=["date"])
 
