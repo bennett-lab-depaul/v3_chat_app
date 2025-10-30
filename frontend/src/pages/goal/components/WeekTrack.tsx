@@ -1,12 +1,12 @@
 import { useAuth } from "@/context/AuthProvider";
-import { ChatWeek, getChatsInWeek, getCurrentWeek } from "@/utils/functions/getChatWeeks";
+import { ChatWeek, getNumChatsInWeek, getCurrentWeek } from "@/utils/functions/getChatWeeks";
 
 
 export default function WeekTrack( {week} : {week: ChatWeek} ) {
     const { profile } = useAuth();
 
     const role = profile.role.toLowerCase();
-    const dayTracks = getChatsInWeek(week);
+    const dayTracks = getNumChatsInWeek(week);
 
     return (
         <div className="flex flex-row gap-5 justify-center">

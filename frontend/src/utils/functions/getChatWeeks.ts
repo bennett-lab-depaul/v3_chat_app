@@ -14,6 +14,10 @@ export interface ChatsPerDay {
     chats : number;  // Number of chats on that day
 }
 
+export interface SessionsOnDay {
+    day     : string;
+    sessions: ChatSession[];
+}
 
 // ====================================================================
 // Groups chat-sessions into Monday-to-Sunday buckets
@@ -90,20 +94,36 @@ export function getCurrentWeek(sessions: ChatSession[], weekStartsOn: 0 | 1 = 1)
     })
 }
 
-export function getChatsInWeek(week: ChatWeek): ChatsPerDay[] {
+export function getNumChatsInWeek(week: ChatWeek): ChatsPerDay[] {
     const dayTracks: ChatsPerDay[] = [];
     for (let i = 0; i < 7; i++) {
         const day = new Date(week.start);
         day.setDate(day.getDate() + i);
-        const chats = getChatsForDay(week, day);
+        const chats = getChatsOnDay(week, day);
         if (sameDay(day, new Date())) {
-            dayTracks.push({ day: "Today", chats: chats });
+            dayTracks.push({ day: "Today", chats: chats.length });
         } else {
             const weekday = day.toLocaleString('en-us', {  weekday: 'short' });
-            dayTracks.push({ day: weekday, chats: chats });
+            dayTracks.push({ day: weekday, chats: chats.length });
         }
     }
     return dayTracks;
+}
+
+export function getChatsInWeek(week: ChatWeek): SessionsOnDay[] {
+    const chatTrack: SessionsOnDay[] = [];
+    for (let i = 0; i < 7; i++) {
+        const day = new Date(week.start);
+        day.setDate(day.getDate() + i);
+        const chats = getChatsOnDay(week, day);
+        if (sameDay(day, new Date())) {
+            chatTrack.push({ day: "Today", sessions: chats});
+        } else {
+            const weekday = day.toLocaleString('en-us', {  weekday: 'short' });
+            chatTrack.push({ day: weekday, sessions: chats});
+        }
+    }
+    return chatTrack;
 }
 
 /**
@@ -147,10 +167,9 @@ function sameDay(d1: Date, d2: Date) {
         d1.getDate()     === d2.getDate();
     }
 
-function getChatsForDay(week: ChatWeek, day: Date) {
+function getChatsOnDay(week: ChatWeek, day: Date) {
     return week.sessions.filter(s => {
         const d = new Date(s.date);
         return sameDay(d, day);
-    }).length;
+    });
 }
-
