@@ -1,6 +1,6 @@
 import { BiomarkerType, ChatSession } from "@/api";
 import { useAuth } from "@/context/AuthProvider";
-import { getBiomarkerDefinition, getBiomarkerDescription, getBiomarkerExemplar, getBiomarkerFlagged, getBiomarkerName } from "@/utils/misc/descriptions";
+import { getBiomarkerDefinition, getBiomarkerDescription, getBiomarkerName } from "@/utils/misc/descriptions";
 import { blockStyle } from "@/utils/styling/sharedStyles";
 import { useState } from "react";
 

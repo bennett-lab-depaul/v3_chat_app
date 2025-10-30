@@ -22,8 +22,27 @@ export function Chat( {isMobile} : {isMobile: boolean}) {
     const onUserUtterance   = (text: string) => { pushMessage("user",      text); };
     const onSystemUtterance = (text: string) => { pushMessage("assistant", text); };
 
+    // Animations: DANCE, NOD_YES, SHAKE_NO, HEAD_TILT, EMBARRASSED
+    const [animation, setAnimation] = useState('HEAD TILT');
+    // Happy, Sad, Surprised, Scared, Angry, Neutral
+    const onEmotion = (emotion: string) => {
+        if (emotion == "Happy") {
+            setAnimation("DANCE");
+        } else if (emotion == "Sad") {
+            setAnimation("SHAKE_NO");
+        } else if (emotion == "Surprised") {
+            setAnimation("EMBARRASSED");
+        } else if (emotion == "Scared") {
+            setAnimation("SHAKE_NO");
+        } else if (emotion == "Angry") {
+            setAnimation("SHAKE_NO");
+        } else if (emotion == "Neutral") {
+            setAnimation("HEAD_TILT");
+        }
+    }
+
     // Live-chat hook
-    const { start, stop, save } = useLiveChat({ onUserUtterance, onSystemUtterance, onScores: () => {} });
+    const { start, stop, save } = useLiveChat({ onUserUtterance, onSystemUtterance, onScores: () => {}, onEmotion});
     
     // Separate recording flag that we control ourselves
     const [recording, setRecording ] = useState(false);
@@ -49,8 +68,6 @@ export function Chat( {isMobile} : {isMobile: boolean}) {
 		setShowModal(false);
 		navigate("/goal");
 	}; // use the stop speaking callback
-
-    const [animation, setAnimation] = useState('HEAD TILT');
 
     // --------------------------------------------------------------------
     // Return UI elements

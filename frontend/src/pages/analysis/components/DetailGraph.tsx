@@ -1,8 +1,6 @@
 import { BiomarkerType } from "@/api";
 import { ChatWeek } from "@/utils/functions/getChatWeeks";
-import { widthStyle } from "@/utils/styling/sharedStyles";
 import { useState } from "react";
-import { Overlay, OverlayTrigger } from "react-bootstrap";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import BiomarkerGraph from "./BiomarkerGraph";
 

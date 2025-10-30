@@ -18,6 +18,7 @@ Phi-3_finetuned.gguf
 new_LSA.csv
 stanford-parser-4.2.0-models.jar
 google-stt-key.json
+backend/chat_app/websocket/services/emotion_model/
 
 # Shell Files (never in the repo, I just have them here for editing)
 deploy.sh

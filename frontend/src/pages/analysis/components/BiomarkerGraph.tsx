@@ -1,5 +1,4 @@
 import { BiomarkerType, ChatSession } from "@/api";
-import { ChatWeek } from "@/utils/functions/getChatWeeks";
 import { dateFormatShort } from "@/utils/styling/numFormatting";
 import ReactApexChart from "react-apexcharts";
 

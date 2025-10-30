@@ -10,7 +10,7 @@ export default function Model({
     animation,
     ...props
 }) {
-    const { nodes, materials, animations } = useGLTF('/models/Buddy_Robot.glb') //animations: DANCE NOD_YES, SHAKE_NO, HEAD_TILT, EMBARRASSED
+    const { nodes, materials, animations } = useGLTF('/models/Buddy_Robot.glb') //animations: DANCE, NOD_YES, SHAKE_NO, HEAD_TILT, EMBARRASSED
     const group = useRef();
     const { actions, mixer } = useAnimations(animations, group);
     useEffect(() => {
