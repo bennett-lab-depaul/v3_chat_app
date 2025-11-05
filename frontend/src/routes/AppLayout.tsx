@@ -3,7 +3,6 @@ import { useAuth } from "@/context/AuthProvider";
 import { RUN_ENV } from "@/utils/constants";
 import   Header    from "@/components/Header";
 import FooterNav from "@/components/FooterNav";
-import { useEffect } from "react";
 
 export function AppLayout( {isMobile} : {isMobile: boolean}) {
     const { user, profile } = useAuth();
