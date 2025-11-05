@@ -45,7 +45,7 @@ export function Chat( {isMobile} : {isMobile: boolean}) {
             Sad: "SHAKE NO",
             Surprised: "EMBARRASSED",
             Scared: "SHAKE NO",
-            Angry: "SHAKE NO",
+            Angry: "EMBARRASSED",
             Neutral: "HEAD TILT",
         };
         const value = map[emotion] || "NOD YES";
