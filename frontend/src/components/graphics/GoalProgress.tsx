@@ -1,4 +1,4 @@
-import LinearProgress from '@mui/material/LinearProgress';
+// import LinearProgress from '@mui/material/LinearProgress';
 import { useAuth     } from "@/context/AuthProvider";
 
 // Patient Goal Progress Bar
@@ -12,7 +12,8 @@ export default function GoalProgress () {
 
     return (
         <div className={barColor}>
-            <LinearProgress variant={"determinate"} color={"inherit"} value={percent} sx={{ height: "3rem", borderRadius: "2rem", border: "solid black"}} />
+            {/* <LinearProgress variant={"determinate"} color={"inherit"} value={percent} sx={{ height: "3rem", borderRadius: "2rem", border: "solid black"}} /> */}
+            <progress value={percent} max={100}></progress>
             <h2 className="text-black w-full text-center">{current} / {target} </h2>
         </div>
     )
