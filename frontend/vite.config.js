@@ -40,4 +40,18 @@ export default defineConfig({
         allowedHosts : ["localhost", "127.0.0.1", "frontend", "cognibot.org", "deployment.cognibot.org", "sandbox.cognibot.org"],
     },
     resolve: { alias: { "@": path.resolve(__dirname, "src"), },}, // sets the "@" symbol to the src directory, makes things quicker sometimes
+    optimizeDeps: {
+        include: [
+            '@mui/material/LinearProgress',
+            '@mui/material/styles',
+        ],
+    },
+    ssr: {
+        noExternal: ['@mui/material', '@emotion/react', '@emotion/styled'],
+    },
+    build: {
+        rollupOptions: {
+            external: [],
+        },
+    },
 })
