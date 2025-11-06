@@ -1,19 +1,20 @@
-// import LinearProgress from '@mui/material/LinearProgress';
 import { useAuth     } from "@/context/AuthProvider";
 
 // Patient Goal Progress Bar
 export default function GoalProgress () {
     const { profile } = useAuth();
-    const barColor = profile.role == "Patient" ? "patient-text" : "caregiver-text";
+    const role = profile.role.toLowerCase();
     const current = profile.goal.current;
     const target  = profile.goal.target
 
     const percent = Math.round((current / target) * 100);
 
     return (
-        <div className={barColor}>
-            {/* <LinearProgress variant={"determinate"} color={"inherit"} value={percent} sx={{ height: "3rem", borderRadius: "2rem", border: "solid black"}} /> */}
-            <progress value={percent} max={100}></progress>
+        <div className={`${role}-text`}>
+            <div className="h-[2rem] rounded-full w-full bg-white border-gray-500 border-2 border-solid">
+                <div className={`${role}-bg h-full rounded-full`} style={{width: `${percent}%`}}>
+                </div>
+            </div>
             <h2 className="text-black w-full text-center">{current} / {target} </h2>
         </div>
     )

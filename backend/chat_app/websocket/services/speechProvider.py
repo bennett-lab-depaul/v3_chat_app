@@ -1,4 +1,4 @@
-from google.cloud import speech, texttospeech
+from google.cloud import speech
 from google.genai import types
 from google import genai
 
@@ -133,34 +133,6 @@ class TextToSpeechProvider:
         # )
         self._client = genai.Client()
         self._audio_config = None
-                        
-    # def synthesize_speech(self, text: str, encoding: str) -> bytes:
-    #     '''Synthesizes speech synchronously using the Google Cloud TTS API. Returns the 
-    #     audio content as bytes encoded in the specified format.'''
-    #     if encoding == "mp3":
-    #         self._audio_config = texttospeech.AudioConfig(
-    #             audio_encoding=texttospeech.AudioEncoding.MP3,
-    #         )
-    #     elif encoding == "pcm":
-    #         self._audio_config = texttospeech.AudioConfig(
-    #             audio_encoding=texttospeech.AudioEncoding.PCM,
-    #         )
-    #     elif encoding == "wav":
-    #         self._audio_config = texttospeech.AudioConfig(
-    #             audio_encoding=texttospeech.AudioEncoding.LINEAR16,
-    #         )
-    #     else:
-    #         logger.error(f"{cf.RED}[TTS] Unsupported audio encoding: {encoding}")
-    #         return None
-    #     try:
-    #         synthesis_input = texttospeech.SynthesisInput(text=text)
-    #         response = self._client.synthesize_speech(
-    #             input=synthesis_input, voice=self._voice, audio_config=self._audio_config,
-    #         )
-    #         logger.info(f"{cf.YELLOW}[TTS] Speech synthesized")
-    #         return response.audio_content
-    #     except Exception as e:
-    #         logger.error(f"{cf.RED}[TTS] Error synthesizing speech: {e}")
     
     # May not need if we decide to use the Google Cloud TTS instead
     def synthesize_speech(self, text: str, encoding: str) -> bytes:
