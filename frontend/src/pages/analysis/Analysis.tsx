@@ -3,7 +3,7 @@ import { getWeeklyMessages, groupSessionsByWeek } from "@/utils/functions/getCha
 import { useAuth } from "@/context/AuthProvider";
 
 import { TopicsCard } from "../common/TopicsCard";
-import { colStyle } from "@/utils/styling/sharedStyles";
+import { colStyle, widthStyle } from "@/utils/styling/sharedStyles";
 import BiomarkerCard from "./components/BiomarkerCard";
 import { averageScore, getExemplarDays, getFlaggedDays } from "@/utils/misc/scores";
 import MoodCard from "./components/MoodCard";
@@ -41,7 +41,7 @@ export function Analysis() {
             <TopicsCard messages={weeklyMessages} type="Weekly" role={role} />
             <MoodCard week={currentWeek} />
             <p id="factors" className="h-0 w-0 p-0 m-0"/>
-            <h2 className="flex w-full mt-[-2rem]">Flagged Signs</h2>
+            <h2 className={`flex ${widthStyle} mt-[-2rem]`}>Flagged Signs</h2>
             {Object.entries(avg).map((entry, idx) => {
                 if (entry[1] <= 0.5) {
                     const flagged = getFlaggedDays(currentWeek.sessions, entry[0])
@@ -54,7 +54,7 @@ export function Analysis() {
                     return null;
                 }
             })}
-            <h2 className="flex w-full">Exemplar Signs</h2>
+            <h2 className={`flex ${widthStyle}`}>Exemplar Signs</h2>
             {Object.entries(avg).map((entry, idx) => {
                 if (entry[1] > 0.75) {
                     const flagged = getFlaggedDays(currentWeek.sessions, entry[0])
@@ -67,7 +67,7 @@ export function Analysis() {
                     return null;
                 }
             })}
-            <h2 className="flex w-full">Impact Factors</h2>
+            <h2 className={`flex ${widthStyle}`}>Impact Factors</h2>
             <ImpactFactorsCard />
         </div>
     )
