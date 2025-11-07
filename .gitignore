@@ -40,6 +40,7 @@ Include/
 Scripts/
 share/
 node_modules/
+dist/
 
 frontend/package-lock.json
 
