@@ -103,3 +103,20 @@
   background-color: white;
   border-bottom-right-radius: 4rem 3rem;
 }
+
+.practice-card {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    border: 2px solid oklch(54.1% 0.281 293.009);
+    background-color: white;
+}
+
+.practice-card:hover {
+    cursor: pointer;
+    background-color: oklch(0.894 0.057 293.283);
+}
