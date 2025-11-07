@@ -50,7 +50,7 @@ function FlaggedWordAlert( { wordAlerts } : { wordAlerts: WordAlert[] } ) {
                             <div className="text-xl col-span-3 flex flex-row flex-wrap gap-x-4 border-1 border-gray-200 rounded-md p-1">
                                 {alert.words.map((word, widx) => {
                                     return (
-                                        <p className="text-orange-600 font-semibold m-0">{word}</p>
+                                        <p key={widx} className="text-orange-600 font-semibold m-0">{word}</p>
                                     )
                                 })}
                             </div>
