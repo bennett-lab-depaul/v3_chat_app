@@ -2,12 +2,14 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useEffect, useState             } from "react";
 import { GoGear               } from "react-icons/go";
 import { FaCircleUser } from "react-icons/fa6";
+import { IoMailUnreadOutline } from "react-icons/io5";
 
 import { useAuth    } from "@/context/AuthProvider";
 import { navLinkCls } from "@/utils/styling/colors";
 import GoalModal              from "@/components/modals/GoalModal";
 import CaregiverSettingsModal from "@/components/modals/CaregiverSettingsModal";
 import ProfileInfo            from "@/pages/common/user-info/ProfileInfo";
+import { Icon } from "@iconify/react/dist/iconify.js";
 
 // Page title
 const TITLES: Record<string, string> = {
@@ -26,10 +28,11 @@ const TITLES: Record<string, string> = {
     "/analysis"     : "Analysis",
     "/transcript"   : "Transcript",
     "/practice"     : "Practice",
+    "/alert"        : "Alerts",
     default         : "Cognibot",
 };
 
-const SHOW_HEADER: string[] = ["/chat", "/album", "/analysis", "/goal", "/practice", "/schedule"]
+const SHOW_HEADER: string[] = ["/chat", "/album", "/analysis", "/goal", "/practice", "/schedule", "/alert"]
 
 // ====================================================================
 // Header
@@ -78,6 +81,9 @@ export default function Header( {isMobile} : {isMobile: boolean} ) {
                         <NavLink to="/settings" className={`text-gray-500`}> <GoGear size={22}/> </NavLink>
                     </>
                 }
+                <NavLink to="/alert">
+                    <Icon icon="fluent-color:mail-alert-32" width={"3rem"} height={"3rem"} />
+                </NavLink>
                 <button onClick={() => logout()} className={logOutStyle}> Log out </button>
             </div>
 
