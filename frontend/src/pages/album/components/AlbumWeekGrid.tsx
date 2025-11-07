@@ -7,8 +7,9 @@ import { useNavigate } from "react-router-dom";
 export default function AlbumWeekGrid({ week } : { week: ChatWeek }) {
     const navigate = useNavigate();
 
-    const toWeeklySummary = (week: ChatWeek) => navigate("/week", { state: { chatWeek: week, albumDisplay: "grid" } } )
-    const toDaySummary = (session: ChatSession) => navigate("/day", { state: { chatSession: session, albumDisplay: "grid" } } )
+    const toWeeklySummary = (week: ChatWeek) => navigate("/week", { state: { chatWeek: week, albumDisplay: "grid" } } );
+    const toDaySummary = (session: ChatSession) => navigate("/day", { state: { chatSession: session, albumDisplay: "grid" } } );
+    const sessions = week.sessions.slice().reverse();
 
     return (
         <div 
@@ -23,7 +24,7 @@ export default function AlbumWeekGrid({ week } : { week: ChatWeek }) {
                 </div>
             </div>
             <div className="grid grid-flow-col auto-cols-[20%] gap-2 overflow-x-auto hidden-scrollbar">
-                { week.sessions.map( (session, idx) => {
+                { sessions.map( (session, idx) => {
                     return (
                         <div 
                             key={idx} 

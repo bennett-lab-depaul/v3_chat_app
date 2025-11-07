@@ -19,7 +19,14 @@ const biomarkerDetails = {
             {"sender": "A", "text": "I was at the uh... you know, the place where they sell clothes... and I got a, um, a thing to wear."},
             {"sender": "B", "text": "Do you mean the store?"},
             {"sender": "A", "text": "Yes! That's it! The store. I was at the store, and, uh... I bought, um, the thing I needed." }
-        ]
+        ],
+        "practiceCards": [
+            "Practice card 1 for Anomia.",
+            "Practice card 2 for Anomia.",
+            "Practice card 3 for Anomia.",
+            "Practice card 4 for Anomia.",
+            "Practice card 5 for Anomia."
+        ],
     },
     "alteredgrammar": {
         "name": "Altered Grammar",
@@ -34,7 +41,14 @@ const biomarkerDetails = {
             {"sender": "A", "text": "I went to the store. It was this morning. I bought bread."},
             {"sender": "B", "text": "Oh, okay! Did you also get milk?"},
             {"sender": "A", "text": "Yes. I bought milk."}
-        ]
+        ],
+        "practiceCards": [
+            "Practice card 1 for Altered Grammar.",
+            "Practice card 2 for Altered Grammar.",
+            "Practice card 3 for Altered Grammar.",
+            "Practice card 4 for Altered Grammar.",
+            "Practice card 5 for Altered Grammar."
+        ],
     },
     "pronunciation": {
         "name": "Pronunciation",
@@ -49,11 +63,18 @@ const biomarkerDetails = {
             {"sender": "A", "text": "I ju... jush finis... f-finishe... r-r-reading th-tha... th-thaht... b-b-book you... recc... r-r... r-recommended..."},
             {"sender": "B", "text": "It sounds like you're having a bit of trouble. Are you okay?"},
             {"sender": "A", "text": "Y-y-yeah... jusht... jusht tired, is all."}
-        ]
+        ],
+        "practiceCards": [
+            "Practice card 1 for Pronunciation.",
+            "Practice card 2 for Pronunciation.",
+            "Practice card 3 for Pronunciation.",
+            "Practice card 4 for Pronunciation.",
+            "Practice card 5 for Pronunciation."
+        ],
     },
     "pragmatic": {
         "name": "Pragmatic",
-        "description": "Use of Contextual Language",
+        "description": "Staying on Topic",
         "definition": "A lack of using the proper contextual language, such as metaphors, saracasm, politeness, or context-dependent words or phrases.",
         "exemplarExample": [
             {"sender": "A", "text": "Could you pass me the pen, please? I need it to fill out these forms."},
@@ -64,12 +85,18 @@ const biomarkerDetails = {
             {"sender": "A", "text": "Give me the pen. I need to fill this out."},
             {"sender": "B", "text": "Here's your pen. What forms do you need to fill out?"},
             {"sender": "A", "text": "What forms? Which forms?"}
-        ]
-        
+        ],
+        "practiceCards": [
+            "Practice card 1 for Pragmatic.",
+            "Practice card 2 for Pragmatic.",
+            "Practice card 3 for Pragmatic.",
+            "Practice card 4 for Pragmatic.",
+            "Practice card 5 for Pragmatic."
+        ],     
     },
     "prosody": {
         "name": "Prosody",
-        "description": "Proper Tone and Inflection",
+        "description": "Changing Tones",
         "definition": "Using incorrect patterns of stress and intonation in spoken language, such as pitch variation, loudness, tempo, and pauses.",
         "exemplarExample": [
             {"sender": "A", "text": "I saw my daughter's <em>adorable</em> dog yesterday! He's grown up <em>so</em> much."},
@@ -80,11 +107,18 @@ const biomarkerDetails = {
             {"sender": "A", "text": "I visited my dog yesterday. It was really fun and exciting."},
             {"sender": "B", "text": "Oh, wonderful! Did you have a good time?"},
             {"sender": "A", "text": "Of course. I really love my dog."}
-        ]
+        ],
+        "practiceCards": [
+            "Practice card 1 for Prosody.",
+            "Practice card 2 for Prosody.",
+            "Practice card 3 for Prosody.",
+            "Practice card 4 for Prosody.",
+            "Practice card 5 for Prosody."
+        ],
     },
     "turntaking": {
         "name": "Turn Taking",
-        "description": "Good Conversational Flow",
+        "description": "Interrupting Others",
         "definition": "Speaking at the incorrect time; either interrupting or leaving long silences in a conversation.",
         "exemplarExample": [
             {"sender": "A", "text": "How many birds did you see yesterday?"},
@@ -95,7 +129,14 @@ const biomarkerDetails = {
             {"sender": "A", "text": "How many birds did you see yesterday?"},
             {"sender": "B", "text": "Well, I counted--"},
             {"sender": "A", "text": "I loved watching the...birds. They were pretty."}
-        ]
+        ],
+        "practiceCards": [
+            "Practice card 1 for Turn Taking.",
+            "Practice card 2 for Turn Taking.",
+            "Practice card 3 for Turn Taking.",
+            "Practice card 4 for Turn Taking.",
+            "Practice card 5 for Turn Taking."
+        ],
     },
 }
 
@@ -117,4 +158,20 @@ export function getBiomarkerExemplar(biomarker: BiomarkerType) : Message[] {
 
 export function getBiomarkerFlagged(biomarker: BiomarkerType) : Message[] {
     return biomarkerDetails[biomarker].flaggedExample;
+}
+
+export function getBiomarkerCards(biomarker: BiomarkerType) : string[] {
+    return biomarkerDetails[biomarker].practiceCards;
+}
+
+export function getAllBiomarkers() : string[] {
+    return Object.keys(biomarkerDetails);
+}
+
+export function getAllBiomarkerNames() : string[] {
+    return Object.values(biomarkerDetails).map( biomarker => biomarker.name );
+}
+
+export function getAllBiomarkerDescriptions() : string[] {
+    return Object.values(biomarkerDetails).map( biomarker => biomarker.description );
 }

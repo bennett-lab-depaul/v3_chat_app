@@ -25,6 +25,7 @@ const TITLES: Record<string, string> = {
     "/settings"     : "Settings",
     "/analysis"     : "Analysis",
     "/transcript"   : "Transcript",
+    "/practice"     : "Practice",
     default         : "Cognibot",
 };
 
