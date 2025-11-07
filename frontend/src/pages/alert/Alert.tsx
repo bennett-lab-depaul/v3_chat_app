@@ -15,8 +15,8 @@ export function Alert() {
 
     const week = getCurrentWeek(sessions);
 
-    const moodAlertDays = getMoodAlert(sessions);
-    const wordAlerts = getWordAlert(sessions);
+    const moodAlertDays = getMoodAlert(week.sessions);
+    const wordAlerts = getWordAlert(week.sessions);
 
     return (
         <div className={colStyle}>
