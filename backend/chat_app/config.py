@@ -108,7 +108,7 @@ try:
     # Load the zero-shot classifier model globally once
     from transformers import pipeline
 
-    logger.info(f"[EMO] Starting zero-shot classifier pipeline load in PID={os.getpid()}...") 
+    # logger.info(f"[EMO] Starting zero-shot classifier pipeline load in PID={os.getpid()}...") 
     # ZERO_SHOT_CLASSIFIER_PIPELINE = pipeline(
     #     task="zero-shot-classification",
     #     model=zeroshot_model_path,
@@ -117,9 +117,9 @@ try:
     # )
 
      # --- LOG ADDED: Finished loading and show the PID and device ---
-    logger.info(
-        f"[EMO] Zero-shot classifier INITIALIZED successfully in PID={os.getpid()} using device={ZERO_SHOT_CLASSIFIER_PIPELINE.device}"
-    )
+    # logger.info(
+    #     f"[EMO] Zero-shot classifier INITIALIZED successfully in PID={os.getpid()} using device={ZERO_SHOT_CLASSIFIER_PIPELINE.device}"
+    # )
 
 
     """ 
