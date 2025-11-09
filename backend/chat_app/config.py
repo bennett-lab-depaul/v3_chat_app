@@ -14,7 +14,6 @@ USE_CLOUD     = False  # (return default values instead of using the cloud APIs 
 USE_LLM       = os.getenv("APP_ENVIRONMENT", "production") != "sandbox" # (don't actually need to load the LLM to test)
 THIS_LANGUAGE = "en-US"
 ZERO_SHOT_CLASSIFIER_PIPELINE = None
-ZEROSHOT_MODEL_PATH =  "/app/chat_app/websocket/services/emotion_model/deberta-v3-base-nli/"
 
 # LLM Parameters
 MAX_LENGTH = 256
@@ -93,6 +92,7 @@ try:
     rf_model_path = "/websocket/biomarkers/rf_models"
     pronunciation_model_path = current_path + f"{rf_model_path}/pronunciation_rf_v4.pkl"
     prosody_model_path       = current_path + f"{rf_model_path}/prosody_rf_v1.pkl"
+    zeroshot_model_path      = current_path + "/websocket/services/emotion_model/deberta-v3-base-nli"
 
     # Make sure the saved models exist
     check_for_model_files(pronunciation_model_path, prosody_model_path)
@@ -110,9 +110,10 @@ try:
 
     logger.info(f"[EMO] Starting zero-shot classifier pipeline load in PID={os.getpid()}...") 
     ZERO_SHOT_CLASSIFIER_PIPELINE = pipeline(
-        "zero-shot-classification",
-        model=ZEROSHOT_MODEL_PATH,
-        device=-1 #  `device=0` for GPU or `device=-1` for CPU.
+        task="zero-shot-classification",
+        model=zeroshot_model_path,
+        device=-1, #  `device=0` for GPU or `device=-1` for CPU.
+        local_files_only=True,
     )
 
      # --- LOG ADDED: Finished loading and show the PID and device ---
