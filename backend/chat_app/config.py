@@ -14,7 +14,7 @@ USE_CLOUD     = False  # (return default values instead of using the cloud APIs 
 USE_LLM       = os.getenv("APP_ENVIRONMENT", "production") != "sandbox" # (don't actually need to load the LLM to test)
 THIS_LANGUAGE = "en-US"
 ZERO_SHOT_CLASSIFIER_PIPELINE = None
-ZEROSHOT_MODEL_PATH =  "/app/chat_app/websocket/services/emotion_model/deberta-v3-base-nli"
+ZEROSHOT_MODEL_PATH =  "/app/chat_app/websocket/services/emotion_model/deberta-v3-base-nli/"
 
 # LLM Parameters
 MAX_LENGTH = 256
