@@ -32,7 +32,7 @@ export function AppLayout( {isMobile} : {isMobile: boolean}) {
     
         {/* Routed page component */}
         <main className=""> <Outlet /> </main>
-        {isMobile && pathname != "/login" ? <FooterNav /> : null}
+        {isMobile && (pathname != "/login" && pathname != "/signup") ? <FooterNav /> : null}
 
     </>
     );

@@ -30,7 +30,7 @@ export function Goal() {
     }
 
     return (
-        <div className="d-flex flex-col px-[5rem] pt-[1rem] pb-[4rem] h-full gap-5">  
+        <div className="d-flex flex-col px-[5vw] md:pt-[1rem] pb-[4rem] mb-[5rem] h-full md:gap-5 gap-2">  
             <br />
             <img className="lg:size-1/4 md:size-1/2 size-3/4 self-center" src="/images/robot_face.png"></img>
             <h3 className="m-[2rem] text-center"><b>{getMsg()}</b></h3>

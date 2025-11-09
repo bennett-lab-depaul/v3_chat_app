@@ -7,7 +7,7 @@ services:
   # --------------------------------------------------------------------
   # Database is only accessable through the backend Django server
   db:
-    image: postgres
+    image: postgres:17
     container_name: db
     env_file: [.env]
     networks: [appnet]
@@ -44,8 +44,8 @@ services:
 # Docker will also create them automatically if this file is run individually.
 volumes:
   db_data:
-    external: true
+    # external: true
 
 networks:
   appnet:
-    external: true
+    # external: true

@@ -12,14 +12,14 @@ export function Transcript() {
     const toDaySummary = () => {navigate("/day", {state: {chatSession: state.chatSession, albumDisplay: state.albumDisplay}})}
 
     return (
-        <div className="m-[1rem]">
-            <div className="font-bold text-2xl justify-between hover:cursor-pointer" onClick={() => {toDaySummary()}}>
+        <div className="pt-[1rem]">
+            <div className="pl-[1rem] pb-[1rem] font-bold text-2xl justify-between hover:cursor-pointer" onClick={() => {toDaySummary()}}>
                 ← Transcript
             </div>
             <div className={colStyle}>
                 <select 
                     onChange={(e) => setBiomarker(e.target.value)} 
-                    className={`${widthStyle} p-2 border-1 border-solid border-gray-400 rounded-lg mt-[1rem] bg-red-50 text-center text-xl hover:cursor-pointer`}
+                    className={`${widthStyle} p-2 border-1 border-solid border-gray-400 rounded-lg mt-[1rem] text-center text-xl hover:cursor-pointer`}
                     defaultValue="select"
                 >
                     <option value="select" disabled>Choose a Sign To Analyze</option>
@@ -30,7 +30,7 @@ export function Transcript() {
                     <option value="prosody">Prosody</option>
                     <option value="turnTaking">Turn Taking</option>
                 </select>
-                <button className={`${widthStyle} py-2 px-4 rounded-full mt-1 shadow-[0px_0px_2px_2px_rgba(0,0,0,0.1)] bg-red-50 hover:bg-red-100`}>
+                <button className={`${widthStyle} py-2 px-4 rounded-full mt-1 shadow-[0px_0px_2px_2px_rgba(0,0,0,0.1)] hover:bg-violet-200`}>
                     Play Audio
                 </button>
                 <div className={blockStyle}>

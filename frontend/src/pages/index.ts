@@ -12,5 +12,6 @@ export { Analysis        } from "@/pages/analysis/Analysis";
 export { Alert           } from "@/pages/alert/Alert";
 export { Transcript      } from "@/pages/transcript/Transcript";
 export { Practice        } from "@/pages/practice/Practice";
+export { PracticePage    } from "@/pages/practice-page/PracticePage";
 export { Settings        } from "@/pages/settings/Settings";
 export { AnimationTest   } from "@/pages/animationTest/AnimationTest";

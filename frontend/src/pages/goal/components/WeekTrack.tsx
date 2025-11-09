@@ -9,7 +9,7 @@ export default function WeekTrack( {week} : {week: ChatWeek} ) {
     const dayTracks = getNumChatsInWeek(week);
 
     return (
-        <div className="flex flex-row gap-5 justify-center">
+        <div className="flex flex-row justify-between">
             {dayTracks.map((d, idx) => (
                 <DayTrack key={idx} day={d.day} chats={d.chats} role={role}/>
             ))}

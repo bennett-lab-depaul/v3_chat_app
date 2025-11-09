@@ -1,6 +1,5 @@
-import { useAuth     } from "@/context/AuthProvider";
+import { useAuth } from "@/context/AuthProvider";
 
-// Patient Goal Progress Bar
 export default function GoalProgress () {
     const { profile } = useAuth();
     const role = profile.role.toLowerCase();
