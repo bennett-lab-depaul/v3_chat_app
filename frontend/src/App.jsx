@@ -73,7 +73,7 @@ export default function App() {
                 
             </Route>
 
-            <Route path="test-animation" element={<AnimationTest />} />
+            <Route path="/animation-test" element={<AnimationTest />} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/goal" replace />} />
