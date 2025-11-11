@@ -20,6 +20,8 @@ services:
 # ====================================================================
 volumes:
   letsencrypt:
+    external: true
+    name: letsencrypt 
 
 # Declared, not created. Root file will create it.
 networks:
