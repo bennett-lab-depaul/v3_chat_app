@@ -6,7 +6,7 @@ set -euo pipefail
 # --------------------------------------------------------------------------------
 echo "[entry] Rendering nginx template for ${DOMAIN}"
 echo "[entry] Checking initial cert: /etc/letsencrypt/live/${DOMAIN}/fullchain.pem"
-
+mkdir -p /var/www/certbot/.well-known/acme-challenge
 # Render template
 envsubst '${DOMAIN} ${DOMAIN_WWW}' \
   < /etc/nginx/templates/default.template \
