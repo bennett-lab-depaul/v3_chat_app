@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
 import Avatar from "../common/avatar/Avatar";
+import { NavLink } from "react-router-dom";
+import { footerLinkChat, footerLinkPatientCls } from "@/utils/styling/colors";
+import { GiAlliedStar } from "react-icons/gi";
+import { LuImage } from "react-icons/lu";
+import { IoCalendarOutline } from "react-icons/io5";
+import { FaChartBar } from "react-icons/fa";
 
 export function AnimationTest() {
     const [botMessage, setBotMessage] = useState("Chat with me!");
@@ -82,6 +88,38 @@ export function AnimationTest() {
                     </div>
                 </div>
             }
+        </div>
+        <div className="fixed bottom-0 left-0 right-0 shadow-inner flex flex-row justify-between items-center px-5 pb-2 bg-white">
+            <div className="flex flex-col items-center">
+                <NavLink to="/animation-test" className={footerLinkPatientCls}>
+                    <GiAlliedStar size={"2rem"} />
+                    Goal
+                </NavLink>
+            </div>
+            <div className="flex flex-col items-center">
+                <NavLink to="/animation-test" className={footerLinkPatientCls}>
+                    <LuImage size={"2rem"} />
+                    Album
+                </NavLink>
+            </div>
+            <div className="flex flex-col items-center">
+                <NavLink to="/animation-test" className={footerLinkChat}>
+                    <img className="aspect-square w-[2rem] " src="/images/QT_icon.svg" />
+                    Chat
+                </NavLink>
+            </div>
+            <div className="flex flex-col items-center">
+                <NavLink to="/animation-test" className={footerLinkPatientCls}>
+                    <IoCalendarOutline size={"2rem"} />
+                    Schedule
+                </NavLink>
+            </div>
+            <div className="flex flex-col items-center">
+                <NavLink to="/animation-test" className={footerLinkPatientCls}>
+                    <FaChartBar size={"2rem"} />
+                    Analysis
+                </NavLink>
+            </div>
         </div>
     </>
     )
