@@ -14,6 +14,7 @@ from ...services import logging_utils as lu
 from .speechProvider import TextToSpeechProvider
 from .bg_helpers import fire_and_log
 from .emotionHelpers import classify_emotion_with_vader, zero_shot_classifier
+from .emotionHelpers import classify_emotion_with_vader, zero_shot_classifier
 from .lipsyncHelpers import to_wav_file, run_rhubarb, load_rhubarb_json
 
 ERROR_UTTERANCE = "I'm sorry, I encountered an error while processing your request."
