@@ -1,4 +1,5 @@
-import { getBiomarkerCards, getBiomarkerDescription } from "@/utils/misc/descriptions";
+import { getBiomarkerDescription } from "@/utils/misc/descriptions";
+import { getBiomarkerCards } from "@/utils/misc/practiceCards";
 import { colStyle, widthStyle } from "@/utils/styling/sharedStyles";
 import { useEffect, useState } from "react";
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
@@ -34,7 +35,7 @@ export function PracticePage() {
                     <div className="self-center hover:cursor-pointer" onClick={() => decreaseCardNum()}>
                             <IoIosArrowDropleft size={"2.5rem"} color={cardNum == 0 ? "gray" : "black"} />
                     </div>
-                    <div className="w-9/10 text-center self-center">
+                    <div className="w-9/10 h-full text-center self-center">
                         {cards[cardNum]}
                     </div>
                     <div className="self-center hover:cursor-pointer" onClick={() => increaseCardNum()}>
