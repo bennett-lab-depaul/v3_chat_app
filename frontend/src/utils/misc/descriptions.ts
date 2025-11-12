@@ -20,13 +20,6 @@ const biomarkerDetails = {
             {"sender": "B", "text": "Do you mean the store?"},
             {"sender": "A", "text": "Yes! That's it! The store. I was at the store, and, uh... I bought, um, the thing I needed." }
         ],
-        "practiceCards": [
-            "Practice card 1 for Anomia.",
-            "Practice card 2 for Anomia.",
-            "Practice card 3 for Anomia.",
-            "Practice card 4 for Anomia.",
-            "Practice card 5 for Anomia."
-        ],
     },
     "alteredgrammar": {
         "name": "Altered Grammar",
@@ -41,13 +34,6 @@ const biomarkerDetails = {
             {"sender": "A", "text": "I went to the store. It was this morning. I bought bread."},
             {"sender": "B", "text": "Oh, okay! Did you also get milk?"},
             {"sender": "A", "text": "Yes. I bought milk."}
-        ],
-        "practiceCards": [
-            "Practice card 1 for Altered Grammar.",
-            "Practice card 2 for Altered Grammar.",
-            "Practice card 3 for Altered Grammar.",
-            "Practice card 4 for Altered Grammar.",
-            "Practice card 5 for Altered Grammar."
         ],
     },
     "pronunciation": {
@@ -64,13 +50,6 @@ const biomarkerDetails = {
             {"sender": "B", "text": "It sounds like you're having a bit of trouble. Are you okay?"},
             {"sender": "A", "text": "Y-y-yeah... jusht... jusht tired, is all."}
         ],
-        "practiceCards": [
-            "Practice card 1 for Pronunciation.",
-            "Practice card 2 for Pronunciation.",
-            "Practice card 3 for Pronunciation.",
-            "Practice card 4 for Pronunciation.",
-            "Practice card 5 for Pronunciation."
-        ],
     },
     "pragmatic": {
         "name": "Pragmatic",
@@ -86,13 +65,6 @@ const biomarkerDetails = {
             {"sender": "B", "text": "Here's your pen. What forms do you need to fill out?"},
             {"sender": "A", "text": "What forms? Which forms?"}
         ],
-        "practiceCards": [
-            "Practice card 1 for Pragmatic.",
-            "Practice card 2 for Pragmatic.",
-            "Practice card 3 for Pragmatic.",
-            "Practice card 4 for Pragmatic.",
-            "Practice card 5 for Pragmatic."
-        ],     
     },
     "prosody": {
         "name": "Prosody",
@@ -108,13 +80,6 @@ const biomarkerDetails = {
             {"sender": "B", "text": "Oh, wonderful! Did you have a good time?"},
             {"sender": "A", "text": "Of course. I really love my dog."}
         ],
-        "practiceCards": [
-            "Practice card 1 for Prosody.",
-            "Practice card 2 for Prosody.",
-            "Practice card 3 for Prosody.",
-            "Practice card 4 for Prosody.",
-            "Practice card 5 for Prosody."
-        ],
     },
     "turntaking": {
         "name": "Turn Taking",
@@ -129,13 +94,6 @@ const biomarkerDetails = {
             {"sender": "A", "text": "How many birds did you see yesterday?"},
             {"sender": "B", "text": "Well, I counted--"},
             {"sender": "A", "text": "I loved watching the...birds. They were pretty."}
-        ],
-        "practiceCards": [
-            "Practice card 1 for Turn Taking.",
-            "Practice card 2 for Turn Taking.",
-            "Practice card 3 for Turn Taking.",
-            "Practice card 4 for Turn Taking.",
-            "Practice card 5 for Turn Taking."
         ],
     },
 }
@@ -159,11 +117,6 @@ export function getBiomarkerExemplar(biomarker: BiomarkerType) : Message[] {
 export function getBiomarkerFlagged(biomarker: BiomarkerType) : Message[] {
     return biomarkerDetails[biomarker].flaggedExample;
 }
-
-export function getBiomarkerCards(biomarker: BiomarkerType) : string[] {
-    return biomarkerDetails[biomarker].practiceCards;
-}
-
 export function getAllBiomarkers() : string[] {
     return Object.keys(biomarkerDetails);
 }

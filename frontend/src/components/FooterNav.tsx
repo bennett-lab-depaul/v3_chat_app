@@ -4,7 +4,6 @@ import { GiAlliedStar } from "react-icons/gi";
 import { LuImage } from "react-icons/lu";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaChartBar, FaRegCompass } from "react-icons/fa";
-import { VscRobot } from "react-icons/vsc";
 import { footerLinkPatientCls, footerLinkCaregiverCls, footerLinkChat } from "@/utils/styling/colors";
 
 export default function FooterNav() {
