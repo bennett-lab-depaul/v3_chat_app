@@ -91,13 +91,13 @@ def classify_emotion_with_vader(text: str):
         logger.error(f"Error occured during word cue-based emotion score calculation: {e}")
 
 
-def zero_shot_classifier(clf, text):    
-    # Perform the classification
-    try:
-        result = clf(text, EMOTIONS, multi_label=False)
-        # Extract the top label
-        top_label = result['labels'][0]
+# def zero_shot_classifier(clf, text):    
+#     # Perform the classification
+#     try:
+#         result = clf(text, EMOTIONS, multi_label=False)
+#         # Extract the top label
+#         top_label = result['labels'][0]
 
-        return top_label
-    except Exception as e:
-        logger.error(f"Zero-shot classification failed: {e}")
+#         return top_label
+#     except Exception as e:
+#         logger.error(f"Zero-shot classification failed: {e}")
