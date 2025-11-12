@@ -92,7 +92,7 @@ try:
     rf_model_path = "/websocket/biomarkers/rf_models"
     pronunciation_model_path = current_path + f"{rf_model_path}/pronunciation_rf_v4.pkl"
     prosody_model_path       = current_path + f"{rf_model_path}/prosody_rf_v1.pkl"
-    # zeroshot_model_path      = current_path + "/websocket/services/emotion_model/deberta-v3-base-nli"
+    zeroshot_model_path      = current_path + "/websocket/services/emotion_model/deberta-v3-base-nli"
 
     # Make sure the saved models exist
     check_for_model_files(pronunciation_model_path, prosody_model_path)
@@ -106,7 +106,7 @@ try:
     logger.info("LLM initialized successfully")
 
     # Load the zero-shot classifier model globally once
-    from transformers import pipeline
+    # from transformers import pipeline
 
     logger.info(f"[EMO] Starting zero-shot classifier pipeline load in PID={os.getpid()}...") 
     ZERO_SHOT_CLASSIFIER_PIPELINE = pipeline(
@@ -116,10 +116,10 @@ try:
         local_files_only=True,
     )
 
-     # --- LOG ADDED: Finished loading and show the PID and device ---
-    logger.info(
-        f"[EMO] Zero-shot classifier INITIALIZED successfully in PID={os.getpid()} using device={ZERO_SHOT_CLASSIFIER_PIPELINE.device}"
-    )
+    #  --- LOG ADDED: Finished loading and show the PID and device ---
+    # logger.info(
+    #     f"[EMO] Zero-shot classifier INITIALIZED successfully in PID={os.getpid()} using device={ZERO_SHOT_CLASSIFIER_PIPELINE.device}"
+    # )
 
 
     """ 

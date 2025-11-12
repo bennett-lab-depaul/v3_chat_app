@@ -14,6 +14,7 @@ from ...services import logging_utils as lu
 from .speechProvider import TextToSpeechProvider
 from .bg_helpers import fire_and_log
 from .emotionHelpers import classify_emotion_with_vader, zero_shot_classifier
+from .emotionHelpers import classify_emotion_with_vader, zero_shot_classifier
 from .lipsyncHelpers import to_wav_file, run_rhubarb, load_rhubarb_json
 
 ERROR_UTTERANCE = "I'm sorry, I encountered an error while processing your request."
@@ -153,8 +154,9 @@ async def classify_llm_text_emotion_async(text: str, emo_classifier_type: str="v
             return await loop.run_in_executor(None, lambda: classify_emotion_with_vader(text))
 
         elif emo_classifier_type == "zero_shot":
-            clf = cf.get_zero_shot_classifier()
-            return await loop.run_in_executor(None, lambda: zero_shot_classifier(clf, text))
+            # clf = cf.get_zero_shot_classifier()
+            # return await loop.run_in_executor(None, lambda: zero_shot_classifier(clf, text))
+            return "Neutral"
         else:
             logger.warning(f"Unknown classifier_type: {emo_classifier_type}. Returning 'Neutral'.")
             return "Neutral"

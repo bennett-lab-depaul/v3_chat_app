@@ -51,11 +51,10 @@ export default function Header( {isMobile} : {isMobile: boolean} ) {
     const isCare = user.id == profile.caregiver.id;
 
     // Return UI component
-    const logOutStyle = `flex items-center gap-2 rounded ${role}-bg px-3 py-2 text-white hover:shadow-md/30`;
     if (SHOW_HEADER.includes(pathname)) {
         return (
         <header className={"flex items-center gap-6 px-[2rem] py-[1rem]"}>
-            <div className={`${isMobile ? "block" : "hidden"} ${role}-text`}>
+            <div className={`${isMobile ? "block" : "hidden"} ${role}-text hover:cursor-pointer`} onClick={() => logout()}>
                 <FaCircleUser size={"2.5rem"} />
             </div>
             <h1 className="text-4xl whitespace-nowrap"><b> {title} </b></h1>
@@ -81,10 +80,13 @@ export default function Header( {isMobile} : {isMobile: boolean} ) {
                         <NavLink to="/settings" className={`text-gray-500`}> <GoGear size={22}/> </NavLink>
                     </>
                 }
-                <NavLink to="/alert">
-                    <Icon icon="fluent-color:mail-alert-32" width={"3rem"} height={"3rem"} />
-                </NavLink>
-                <button onClick={() => logout()} className={logOutStyle}> Log out </button>
+                {
+                    isCare ? 
+                    <NavLink to="/alert">
+                        <Icon icon="fluent-color:mail-alert-32" width={"3rem"} height={"3rem"} />
+                    </NavLink> : null
+                }
+                
             </div>
 
             {/* Modal */}

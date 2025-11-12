@@ -16,17 +16,17 @@ export default function GeneralStatusCard( {currentWeek, prevWeek} : {currentWee
          <div className={blockStyle}>
             <h2 className={`${role}-text`}>General Cognitive Status</h2>
             <p className="text-lg text-gray-600 mb-[0rem]">An average score calculated by adding up all signs.</p>
-            <div className="flex flex-row ml-[-1rem]">
-                <div className="flex flex-col">
-                    <div className="min-h-[250px] h-full w-full">
+            <div className="grid grid-cols-2 mx-[-1rem] gap-2">
+                <div className="flex flex-col max-w-[40vw]">
+                    <div className="aspect-square min-w-[10rem]">
                         <CircularProgress score={curScore} role={role} />
                     </div>
                     {prevWeek ? 
-                    <span className="p-2 mt-[-2rem] gap-2 border-2 border-solid border-gray-300 rounded-full flex flex-row justify-center items-center mx-[1rem]">
-                        Compared to last week: 
+                    <span className="p-2 mt-[-10vw] lg:mt-[-5vw] gap-2 border-2 border-solid border-gray-300 rounded-full flex flex-row justify-center items-center">
+                        <p className="mb-0 text-center">From last week:</p>
                         {scoreDiff >= 0 ? 
-                            <TbArrowBigUp color={"green"} size={"1rem"} /> : 
-                            <TbArrowBigDown color={"red"} size={"1rem"} />} 
+                            <TbArrowBigUp color={"green"} size={"2rem"} /> : 
+                            <TbArrowBigDown color={"red"} size={"2rem"} />} 
                         {scoreDiff}
                     </span> : null}
                     
@@ -35,8 +35,12 @@ export default function GeneralStatusCard( {currentWeek, prevWeek} : {currentWee
                     <b>Fairly Good</b>
                     <p>2 signs flagged</p>
                     <p>1 factor impact</p>
-                    <button className={`${role}-button p-2 text-lg rounded-md`}
-                    onClick={() => document.getElementById('factors')?.scrollIntoView()}>Check Details</button>
+                    <button 
+                        className={`${role}-button p-2 w-[90%] text-lg rounded-md`}
+                        onClick={() => document.getElementById('factors')?.scrollIntoView()}
+                    >
+                            Check Details
+                    </button>
                 </div>
             </div>
         </div>

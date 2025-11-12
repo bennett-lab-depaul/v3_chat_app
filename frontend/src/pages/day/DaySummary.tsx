@@ -36,7 +36,7 @@ export function DaySummary() {
 
     
     return (
-        <div>
+        <div className="pb-[3rem]">
             <div className="font-bold text-2xl font-bold p-[1rem] justify-between hover:cursor-pointer" onClick={() => {toAlbum()}}>
                 ← {chatDate.toLocaleDateString("en-US", dateFormatOptions)}
             </div>

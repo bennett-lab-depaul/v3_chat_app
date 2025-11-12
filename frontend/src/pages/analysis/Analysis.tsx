@@ -67,8 +67,12 @@ export function Analysis() {
                     return null;
                 }
             })}
-            <h2 className={`flex ${widthStyle}`}>Impact Factors</h2>
-            <ImpactFactorsCard />
+            {role == "patient" ? null : 
+                <>
+                    <h2 className={`flex ${widthStyle}`}>Impact Factors</h2>
+                    <ImpactFactorsCard />
+                </>
+            }
         </div>
     )
 }
