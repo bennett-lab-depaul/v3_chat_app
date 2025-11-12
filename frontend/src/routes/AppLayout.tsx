@@ -31,7 +31,7 @@ export function AppLayout( {isMobile} : {isMobile: boolean}) {
         {pathname != "/animation-test" ? pageHeader : null}
     
         {/* Routed page component */}
-        <main className=""> <Outlet /> </main>
+        <main> <Outlet /> </main>
         {isMobile && (pathname != "/login" && pathname != "/signup" && pathname != "/animation-test") ? <FooterNav /> : null}
 
     </>

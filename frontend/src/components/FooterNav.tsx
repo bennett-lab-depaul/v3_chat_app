@@ -46,7 +46,7 @@ export default function FooterNav() {
         );
     } else {
         return (
-            <div className="fixed bottom-0 left-0 right-0 shadow-inner flex flex-row justify-between items-center px-5 pb-2 bg-white">
+            <div className="fixed bottom-0 left-0 right-0 shadow-inner flex flex-row justify-between items-center px-[5vw] pb-2 bg-white">
                 <div className="flex flex-col items-center">
                     <NavLink to="/goal" className={footerLinkPatientCls}>
                         <GiAlliedStar size={"2rem"} />

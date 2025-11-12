@@ -9,7 +9,7 @@ export default function MoodCard( { week } : { week: ChatWeek}) {
     return (
         <div className={`${blockStyle}`}>
             <h2 className={`${role}-text mb-0`}>Mood Analysis</h2>
-            <p className="text-lg mt-[1rem]">Here would be an analysis of {useAuth().profile.plwd.first_name}'s mood along with advice. </p>
+            <p className="text-lg mt-[1rem]">Here would be an analysis of { role == "caregiver" ? useAuth().profile.plwd.first_name + "'s" : "your"} mood along with advice. </p>
             <WeeklyMoods week={week} />
         </div>
     )

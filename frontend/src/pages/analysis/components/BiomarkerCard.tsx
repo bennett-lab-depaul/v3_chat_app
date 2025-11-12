@@ -67,7 +67,9 @@ export default function BiomarkerCard({
                     </li>
                 </ul>
             </div>
+            {role == "patient" ? null : 
             <DetailGraph biomarker={biomarker} week={week} />
+            }
         </div>
     )
 }

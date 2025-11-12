@@ -9,7 +9,7 @@ export default function WeeklyMoods( { week } : { week: ChatWeek } ) {
     const emoteStyle = "size-[3rem] rounded-full"
 
     return (
-        <div className="flex flex-row justify-between w-full">
+        <div className="grid grid-cols-7 gap-2 w-full">
             {sessions.map((day, idx) => {
                 return (
                     <div className="flex flex-col items-center" key={idx}>

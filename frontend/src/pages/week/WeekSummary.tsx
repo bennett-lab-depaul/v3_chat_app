@@ -30,7 +30,7 @@ export function WeekSummary() {
     }
 
     return (
-        <div>
+        <div className="pb-[3rem]">
             <div className="font-bold text-2xl font-bold p-[1rem] justify-between hover:cursor-pointer" onClick={() => {toAlbum()}}>
                 ← {chatWeek.start.toLocaleDateString("en-US", dateFormatOptionsShort)} - {chatWeek.end.toLocaleDateString("en-US", dateFormatOptionsShort)}
             </div>

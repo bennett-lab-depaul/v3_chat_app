@@ -13,7 +13,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 USE_CLOUD     = False  # (return default values instead of using the cloud APIs while testing)
 USE_LLM       = os.getenv("APP_ENVIRONMENT", "production") != "sandbox" # (don't actually need to load the LLM to test)
 THIS_LANGUAGE = "en-US"
-ZERO_SHOT_CLASSIFIER_PIPELINE = None
+# ZERO_SHOT_CLASSIFIER_PIPELINE = None
 
 # LLM Parameters
 MAX_LENGTH = 256
@@ -73,12 +73,12 @@ def check_for_model_files(pronunciation_model_path, prosody_model_path):
         logger.error           (missing_str)
         raise FileNotFoundError(missing_str)
 
-def get_zero_shot_classifier():
-    """
-    Accessor for the globally loaded zero-shot classifier pipeline.
-    If the model fails to load, this will return None.
-    """
-    return ZERO_SHOT_CLASSIFIER_PIPELINE
+# def get_zero_shot_classifier():
+#     """
+#     Accessor for the globally loaded zero-shot classifier pipeline.
+#     If the model fails to load, this will return None.
+#     """
+#     return ZERO_SHOT_CLASSIFIER_PIPELINE
     
 
 # =======================================================================
@@ -106,20 +106,20 @@ try:
     logger.info("LLM initialized successfully")
 
     # Load the zero-shot classifier model globally once
-    from transformers import pipeline
+    # from transformers import pipeline
 
-    logger.info(f"[EMO] Starting zero-shot classifier pipeline load in PID={os.getpid()}...") 
-    ZERO_SHOT_CLASSIFIER_PIPELINE = pipeline(
-        task="zero-shot-classification",
-        model=zeroshot_model_path,
-        device=-1, #  `device=0` for GPU or `device=-1` for CPU.
-        local_files_only=True,
-    )
+    # logger.info(f"[EMO] Starting zero-shot classifier pipeline load in PID={os.getpid()}...") 
+    # ZERO_SHOT_CLASSIFIER_PIPELINE = pipeline(
+    #     task="zero-shot-classification",
+    #     model=zeroshot_model_path,
+    #     device=-1, #  `device=0` for GPU or `device=-1` for CPU.
+    #     local_files_only=True,
+    # )
 
     #  --- LOG ADDED: Finished loading and show the PID and device ---
-    logger.info(
-        f"[EMO] Zero-shot classifier INITIALIZED successfully in PID={os.getpid()} using device={ZERO_SHOT_CLASSIFIER_PIPELINE.device}"
-    )
+    # logger.info(
+    #     f"[EMO] Zero-shot classifier INITIALIZED successfully in PID={os.getpid()} using device={ZERO_SHOT_CLASSIFIER_PIPELINE.device}"
+    # )
 
 
     """ 

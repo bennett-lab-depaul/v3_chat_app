@@ -78,14 +78,15 @@ export default function CircularProgress( {score, role} : {score: number, role: 
                         offsetY: -10,
                         show: true,
                         color: '#888',
-                        fontSize: '17px'
+                        fontSize: '16px'
                     },
                     value: {
                         formatter: function(val: number) {
                             return val.toString();
                         },
+                        offsetY: 0,
                         color: '#111',
-                        fontSize: '36px',
+                        fontSize: '30px',
                         show: true,
                     }
                 }
