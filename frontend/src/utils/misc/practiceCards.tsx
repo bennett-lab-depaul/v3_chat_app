@@ -23,7 +23,7 @@ const cards = {
             {
                 content: <>
                             <h1>"I'd like to eat tacos at Taco Bell."</h1>
-                            <h1 className="line-through">"I'd like to eat those there."</h1>
+                            <h1 className="line-through decoration-red-500">"I'd like to eat those there."</h1>
                         </>,
                 caption: "Use specific, concrete nouns, rather than pronouns."
             },
