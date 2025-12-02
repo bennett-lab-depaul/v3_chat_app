@@ -209,4 +209,10 @@ class UserSettings(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["user"], name="one_settings_per_user")]
+        
+class AlbumImage(models.Model):
+    topic = models.CharField(max_length=255, primary_key=True)
+    image = models.ImageField(blank=True)
+    
+    def __str__(self): return f"AlbumImage: {self.topic}"
 

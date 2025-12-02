@@ -69,3 +69,4 @@ vaderSentiment
 google-genai
 google-cloud-speech
 transformers==4.56.2
+Pillow
